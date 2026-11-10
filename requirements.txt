@@ -1,6 +1,6 @@
 numpy>=1.26
 torch>=2.0
-transformers>=4.40
+transformers>=4.40,<5
 Pillow>=10.0
 requests>=2.31
 faiss-cpu>=1.8
