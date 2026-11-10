@@ -1,0 +1,242 @@
+[
+  {
+    "image_id": 1,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K_2/1.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 2,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/2.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 3,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/3.jpg",
+    "width": 640,
+    "height": 480
+  },
+  {
+    "image_id": 4,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/4.jpg",
+    "width": 640,
+    "height": 480
+  },
+  {
+    "image_id": 5,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/5.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 6,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/6.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 7,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/7.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 8,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/8.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 9,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/9.jpg",
+    "width": 640,
+    "height": 480
+  },
+  {
+    "image_id": 10,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/10.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 11,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/11.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 12,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/12.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 13,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/13.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 14,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/14.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 15,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/15.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 16,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/16.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 17,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/17.jpg",
+    "width": 800,
+    "height": 640
+  },
+  {
+    "image_id": 18,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/18.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 19,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/19.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 20,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/20.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 21,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/21.jpg",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "image_id": 22,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/22.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 23,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/23.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 24,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/24.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 25,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/25.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 26,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/26.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 27,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/27.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 28,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/28.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 29,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/29.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 30,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/30.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 31,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/31.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 32,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/32.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 33,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/33.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 34,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/34.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 35,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/35.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 36,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/36.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 37,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/37.jpg",
+    "width": 800,
+    "height": 600
+  },
+  {
+    "image_id": 38,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/38.jpg",
+    "width": 782,
+    "height": 800
+  },
+  {
+    "image_id": 39,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/39.jpg",
+    "width": 800,
+    "height": 534
+  },
+  {
+    "image_id": 40,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/40.jpg",
+    "width": 560,
+    "height": 800
+  }
+]

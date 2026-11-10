@@ -1,0 +1,9 @@
+{
+  "test_queries": 10,
+  "metric": {
+    "recall@1": 0.0,
+    "recall@5": 0.2,
+    "recall@10": 0.3,
+    "mrr": 0.08452672957210162
+  }
+}

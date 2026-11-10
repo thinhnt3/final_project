@@ -1,0 +1,11 @@
+dataset: visual_genome
+task: text_to_image
+graph_model: graphsage_pending
+clip_backend: frozen_clip_pending
+candidate_k: 40
+alpha: 0.7
+seeds: [13, 37, 97]
+metrics: [recall@1, recall@5, recall@10, mrr]
+source:
+  scene_graphs: https://visualgenome.org/files/static/data/dataset/scene_graphs.json
+  image_data: https://visualgenome.org/files/static/data/dataset/image_data.json

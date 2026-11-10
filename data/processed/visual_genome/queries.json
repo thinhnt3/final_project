@@ -1,0 +1,322 @@
+[
+  {
+    "query_id": "vg-1-0",
+    "text": "a shade on street",
+    "relevant_ids": [
+      1
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-2-0",
+    "text": "a man wears backpack",
+    "relevant_ids": [
+      2
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-3-0",
+    "text": "a keyboard in front of monitor",
+    "relevant_ids": [
+      3
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-4-0",
+    "text": "a chair has padding",
+    "relevant_ids": [
+      4
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-5-0",
+    "text": "a cables on floor",
+    "relevant_ids": [
+      5
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-6-0",
+    "text": "a apple on counter",
+    "relevant_ids": [
+      6
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-7-0",
+    "text": "a book on desk",
+    "relevant_ids": [
+      7
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-8-0",
+    "text": "a man has sleeves",
+    "relevant_ids": [
+      8
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-9-0",
+    "text": "a room has lights",
+    "relevant_ids": [
+      9
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-10-0",
+    "text": "a headphones on desk",
+    "relevant_ids": [
+      10
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-11-0",
+    "text": "a chair at desk",
+    "relevant_ids": [
+      11
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-12-0",
+    "text": "a surge protector under desk",
+    "relevant_ids": [
+      12
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-13-0",
+    "text": "a telephone on desk",
+    "relevant_ids": [
+      13
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-14-0",
+    "text": "a computer monitor on desk",
+    "relevant_ids": [
+      14
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-15-0",
+    "text": "a papers are here. on desk",
+    "relevant_ids": [
+      15
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-16-0",
+    "text": "a see four men. walk down street",
+    "relevant_ids": [
+      16
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-17-0",
+    "text": "a painting hanging on wall",
+    "relevant_ids": [
+      17
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-18-0",
+    "text": "a man has hair",
+    "relevant_ids": [
+      18
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-19-0",
+    "text": "a mouse on top if mousepad",
+    "relevant_ids": [
+      19
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-20-0",
+    "text": "a books are on self",
+    "relevant_ids": [
+      20
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-21-0",
+    "text": "a album on lap",
+    "relevant_ids": [
+      21
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-22-0",
+    "text": "a car on street",
+    "relevant_ids": [
+      22
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-23-0",
+    "text": "a car behind girls",
+    "relevant_ids": [
+      23
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-24-0",
+    "text": "a marks on road",
+    "relevant_ids": [
+      24
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-25-0",
+    "text": "a child in stroller",
+    "relevant_ids": [
+      25
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-26-0",
+    "text": "a man walking on sidewalk",
+    "relevant_ids": [
+      26
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-27-0",
+    "text": "a switch on wall",
+    "relevant_ids": [
+      27
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-28-0",
+    "text": "a picture on wall",
+    "relevant_ids": [
+      28
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-29-0",
+    "text": "a woman facing ocean",
+    "relevant_ids": [
+      29
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-30-0",
+    "text": "a luggage on floor",
+    "relevant_ids": [
+      30
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-31-0",
+    "text": "a kleenex in box",
+    "relevant_ids": [
+      31
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-32-0",
+    "text": "a sink and faucet",
+    "relevant_ids": [
+      32
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-33-0",
+    "text": "a glasses empty glasses empty glasses",
+    "relevant_ids": [
+      33
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-34-0",
+    "text": "a chair has metal rods",
+    "relevant_ids": [
+      34
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-35-0",
+    "text": "a computer in office",
+    "relevant_ids": [
+      35
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-36-0",
+    "text": "a bagels on table",
+    "relevant_ids": [
+      36
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-37-0",
+    "text": "a pillow has photo",
+    "relevant_ids": [
+      37
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-38-0",
+    "text": "a table has cloth",
+    "relevant_ids": [
+      38
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-39-0",
+    "text": "a clutter on table",
+    "relevant_ids": [
+      39
+    ],
+    "type": "indirect"
+  },
+  {
+    "query_id": "vg-40-0",
+    "text": "a lamp stand on table",
+    "relevant_ids": [
+      40
+    ],
+    "type": "indirect"
+  }
+]

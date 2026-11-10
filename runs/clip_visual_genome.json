@@ -1,0 +1,92 @@
+{
+  "backend": "openai/clip-vit-base-patch32",
+  "images": 40,
+  "val_queries": 10,
+  "test_queries": 10,
+  "alpha": 0.25,
+  "seeds": [
+    {
+      "seed": 13,
+      "clip_only": {
+        "recall@1": 0.1,
+        "recall@5": 0.2,
+        "recall@10": 0.4,
+        "mrr": 0.19917790542790542
+      },
+      "clip_graph": {
+        "recall@1": 0.1,
+        "recall@5": 0.3,
+        "recall@10": 0.4,
+        "mrr": 0.21265984015984016
+      }
+    },
+    {
+      "seed": 37,
+      "clip_only": {
+        "recall@1": 0.1,
+        "recall@5": 0.2,
+        "recall@10": 0.4,
+        "mrr": 0.19917790542790542
+      },
+      "clip_graph": {
+        "recall@1": 0.1,
+        "recall@5": 0.3,
+        "recall@10": 0.4,
+        "mrr": 0.21265984015984016
+      }
+    },
+    {
+      "seed": 97,
+      "clip_only": {
+        "recall@1": 0.1,
+        "recall@5": 0.2,
+        "recall@10": 0.4,
+        "mrr": 0.19917790542790542
+      },
+      "clip_graph": {
+        "recall@1": 0.1,
+        "recall@5": 0.3,
+        "recall@10": 0.4,
+        "mrr": 0.21265984015984016
+      }
+    }
+  ],
+  "aggregate": {
+    "clip_only": {
+      "recall@1": {
+        "mean": 0.1,
+        "std": 0.0
+      },
+      "recall@5": {
+        "mean": 0.2,
+        "std": 0.0
+      },
+      "recall@10": {
+        "mean": 0.4,
+        "std": 0.0
+      },
+      "mrr": {
+        "mean": 0.19917790542790542,
+        "std": 0.0
+      }
+    },
+    "clip_graph": {
+      "recall@1": {
+        "mean": 0.1,
+        "std": 0.0
+      },
+      "recall@5": {
+        "mean": 0.3,
+        "std": 0.0
+      },
+      "recall@10": {
+        "mean": 0.4,
+        "std": 0.0
+      },
+      "mrr": {
+        "mean": 0.21265984015984016,
+        "std": 0.0
+      }
+    }
+  }
+}

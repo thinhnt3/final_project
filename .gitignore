@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+.env
+.env.*
+
+# Large raw Visual Genome downloads; re-fetch via the URLs in configs/project_scope.yaml
+data/raw/

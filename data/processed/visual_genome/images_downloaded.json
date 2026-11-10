@@ -1,0 +1,322 @@
+[
+  {
+    "image_id": 1,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K_2/1.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/1.jpg",
+    "bytes": 106557
+  },
+  {
+    "image_id": 2,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/2.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/2.jpg",
+    "bytes": 94087
+  },
+  {
+    "image_id": 3,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/3.jpg",
+    "width": 640,
+    "height": 480,
+    "path": "data/processed/visual_genome/images/3.jpg",
+    "bytes": 85740
+  },
+  {
+    "image_id": 4,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/4.jpg",
+    "width": 640,
+    "height": 480,
+    "path": "data/processed/visual_genome/images/4.jpg",
+    "bytes": 55758
+  },
+  {
+    "image_id": 5,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/5.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/5.jpg",
+    "bytes": 57326
+  },
+  {
+    "image_id": 6,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/6.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/6.jpg",
+    "bytes": 57619
+  },
+  {
+    "image_id": 7,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/7.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/7.jpg",
+    "bytes": 53692
+  },
+  {
+    "image_id": 8,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/8.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/8.jpg",
+    "bytes": 60705
+  },
+  {
+    "image_id": 9,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/9.jpg",
+    "width": 640,
+    "height": 480,
+    "path": "data/processed/visual_genome/images/9.jpg",
+    "bytes": 67464
+  },
+  {
+    "image_id": 10,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/10.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/10.jpg",
+    "bytes": 49123
+  },
+  {
+    "image_id": 11,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/11.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/11.jpg",
+    "bytes": 62198
+  },
+  {
+    "image_id": 12,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/12.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/12.jpg",
+    "bytes": 65637
+  },
+  {
+    "image_id": 13,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/13.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/13.jpg",
+    "bytes": 62740
+  },
+  {
+    "image_id": 14,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/14.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/14.jpg",
+    "bytes": 68525
+  },
+  {
+    "image_id": 15,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/15.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/15.jpg",
+    "bytes": 41723
+  },
+  {
+    "image_id": 16,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/16.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/16.jpg",
+    "bytes": 71967
+  },
+  {
+    "image_id": 17,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/17.jpg",
+    "width": 800,
+    "height": 640,
+    "path": "data/processed/visual_genome/images/17.jpg",
+    "bytes": 343027
+  },
+  {
+    "image_id": 18,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/18.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/18.jpg",
+    "bytes": 60222
+  },
+  {
+    "image_id": 19,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/19.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/19.jpg",
+    "bytes": 37860
+  },
+  {
+    "image_id": 20,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/20.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/20.jpg",
+    "bytes": 57635
+  },
+  {
+    "image_id": 21,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/21.jpg",
+    "width": 256,
+    "height": 256,
+    "path": "data/processed/visual_genome/images/21.jpg",
+    "bytes": 16838
+  },
+  {
+    "image_id": 22,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/22.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/22.jpg",
+    "bytes": 75198
+  },
+  {
+    "image_id": 23,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/23.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/23.jpg",
+    "bytes": 75484
+  },
+  {
+    "image_id": 24,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/24.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/24.jpg",
+    "bytes": 84045
+  },
+  {
+    "image_id": 25,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/25.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/25.jpg",
+    "bytes": 71459
+  },
+  {
+    "image_id": 26,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/26.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/26.jpg",
+    "bytes": 108316
+  },
+  {
+    "image_id": 27,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/27.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/27.jpg",
+    "bytes": 29489
+  },
+  {
+    "image_id": 28,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/28.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/28.jpg",
+    "bytes": 564325
+  },
+  {
+    "image_id": 29,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/29.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/29.jpg",
+    "bytes": 77101
+  },
+  {
+    "image_id": 30,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/30.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/30.jpg",
+    "bytes": 45537
+  },
+  {
+    "image_id": 31,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/31.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/31.jpg",
+    "bytes": 56238
+  },
+  {
+    "image_id": 32,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/32.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/32.jpg",
+    "bytes": 65957
+  },
+  {
+    "image_id": 33,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/33.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/33.jpg",
+    "bytes": 76781
+  },
+  {
+    "image_id": 34,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/34.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/34.jpg",
+    "bytes": 98803
+  },
+  {
+    "image_id": 35,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/35.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/35.jpg",
+    "bytes": 76745
+  },
+  {
+    "image_id": 36,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/36.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/36.jpg",
+    "bytes": 79740
+  },
+  {
+    "image_id": 37,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/37.jpg",
+    "width": 800,
+    "height": 600,
+    "path": "data/processed/visual_genome/images/37.jpg",
+    "bytes": 92758
+  },
+  {
+    "image_id": 38,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/38.jpg",
+    "width": 782,
+    "height": 800,
+    "path": "data/processed/visual_genome/images/38.jpg",
+    "bytes": 139274
+  },
+  {
+    "image_id": 39,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/39.jpg",
+    "width": 800,
+    "height": 534,
+    "path": "data/processed/visual_genome/images/39.jpg",
+    "bytes": 70272
+  },
+  {
+    "image_id": 40,
+    "url": "https://cs.stanford.edu/people/rak248/VG_100K/40.jpg",
+    "width": 560,
+    "height": 800,
+    "path": "data/processed/visual_genome/images/40.jpg",
+    "bytes": 112008
+  }
+]
