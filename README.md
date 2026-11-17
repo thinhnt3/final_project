@@ -15,9 +15,8 @@ Tập test: 1.500 ảnh, 7.500 câu truy vấn (caption COCO), mỗi câu có đ
 | Phương pháp | R@1 | R@5 | R@10 | MRR |
 |---|---|---|---|---|
 | CLIP ViT-B/32 | 43,89 | 72,19 | 82,64 | 56,76 |
-| CLIP + so khớp từ với đồ thị (không GNN) | 46,41 | 74,80 | 85,41 | 59,29 |
 | **CLIP + GraphSAGE** (mô hình chính) | **48,20 ± 0,05** | 75,87 ± 0,18 | 86,39 ± 0,14 | 60,75 ± 0,10 |
-| CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP | 49,43 ± 0,46 | 77,90 ± 0,47 | 87,52 ± 0,69 | 62,22 ± 0,37 |
+| CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP (lúc khởi tạo) | 49,43 ± 0,46 | 77,90 ± 0,47 | 87,52 ± 0,69 | 62,22 ± 0,37 |
 
 Các dòng GraphSAGE là trung bình ± độ lệch chuẩn qua 3 seed (13, 37, 97). Đơn vị: %.
 
