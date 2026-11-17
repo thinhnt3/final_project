@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duyệt dữ liệu VG ∩ COCO</title>
+<style>
+:root{--bg:#f7f7f5;--surface:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e3e2dd;--accent:#0f8a6a;--accent-soft:#d9f2ea;--warn:#c2410c;--warn-soft:#fde7d9;--bad:#b42318;--bar2:#9aa5b1}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--surface:#1e1e1c;--ink:#ecebe6;--muted:#a3a29b;--line:#34332f;--accent:#3ccf9f;--accent-soft:#163b30;--warn:#fb923c;--warn-soft:#3b2414;--bad:#f87171;--bar2:#5b6570}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:28px;margin:0 0 4px}h2{font-size:20px;margin:0 0 12px}h3{font-size:15px;margin:16px 0 6px}
+.sub{color:var(--muted);margin:0 0 24px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px 0;margin-bottom:24px}
+nav a{white-space:nowrap;color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:6px;font-size:13px}
+nav a:hover{background:var(--surface);color:var(--ink)}
+section{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.kpi b{display:block;font-size:26px;font-variant-numeric:tabular-nums}.kpi span{color:var(--muted);font-size:13px}
+.verdict{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:8px;margin:0}
+iframe{width:100%;height:880px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.open{font-size:13px;color:var(--accent)}
+.bars{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:220px 1fr 90px;gap:12px;align-items:center;font-size:14px}
+.track{height:22px;background:var(--bg);border-radius:6px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);border-radius:6px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.fill.alt{background:var(--bar2)}.fill.warn{background:var(--warn)}
+.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.big{border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
+.big b{font-size:44px;display:block;font-variant-numeric:tabular-nums}.big.good b{color:var(--accent)}.big.base b{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px}
+.chip s{color:var(--bad);text-decoration:none}
+.examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.ex{border:1px solid var(--line);border-radius:10px;overflow:hidden}.ex img{width:100%;height:170px;object-fit:cover;display:block}.ex div{padding:10px;font-size:13px}
+figure{margin:0}.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.figs img{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff}
+.dec{display:grid;gap:10px}.d{display:grid;grid-template-columns:48px 1fr;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px}
+.d b.id{font-size:18px;color:var(--accent)}.d p{margin:2px 0;color:var(--muted);font-size:14px}.d strong{color:var(--ink)}
+label.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+.note{color:var(--muted);font-size:13px}
+@media (max-width:640px){.row{grid-template-columns:110px 1fr 64px}.compare{grid-template-columns:1fr}iframe{height:520px}}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Duyệt dữ liệu VG ∩ COCO</h1>
+<p class="sub">Phase 2 · bước 2.6 · 17/11/2026 · bản 10.000 ảnh · split sha256 <code>c2095127…</code> · tái tạo: <code>python -m scripts.review_vg_coco</code></p>
+
+<nav>
+<a href="#ket-luan">Kết luận</a><a href="#pipeline">Pipeline</a><a href="#split">Chia tập</a><a href="#do-khop">Độ khớp</a><a href="#tu-vung">Từ vựng</a><a href="#thu-cong">Review thủ công</a><a href="#quyet-dinh">Quyết định D1–D6</a>
+</nav>
+
+<div class="kpis">
+<div class="kpi"><b>10.000</b><span>ảnh (train 7.000 · val 1.500 · test 1.500)</span></div>
+<div class="kpi"><b>50.000</b><span>caption truy vấn (test 7.500)</span></div>
+<div class="kpi"><b>40,8% vs 4,2%</b><span>độ khớp caption ↔ đồ thị: đúng ảnh vs ngẫu nhiên</span></div>
+<div class="kpi"><b>≤ 1,6 điểm %</b><span>lệch phân tầng giữa các split</span></div>
+</div>
+
+<section id="ket-luan">
+<h2>1. Kết luận</h2>
+<p class="verdict"><strong>Dữ liệu dùng được cho Task 1–4.</strong> Đồ thị mang thông tin thật về nội dung caption, ba split cân bằng. Trước khi xây đồ thị (bước 2.7) cần chốt 6 quyết định ở mục 7, quan trọng nhất là <strong>chữ dùng cho đỉnh khái niệm (D1)</strong>.</p>
+</section>
+
+<section id="pipeline">
+<h2>2. Pipeline: từ 108.077 ảnh VG xuống 10.000</h2>
+<p class="note">Sơ đồ có hiệu ứng luồng. Bấm <em>Play story</em> để đi qua từng chặng; bấm vào một node để làm nổi đường đi. <a class="open" href="diagrams/vg-coco-pipeline.html" target="_blank">Mở toàn màn hình ↗</a></p>
+<iframe src="diagrams/vg-coco-pipeline.html" title="Pipeline VG ∩ COCO" loading="lazy"></iframe>
+<h3>Funnel (số ảnh còn lại)</h3>
+<div class="bars" data-max="108077">
+<div class="row"><span>Ảnh VG</span><div class="track"><div class="fill alt" data-v="108077"></div></div><span class="num">108.077</span></div>
+<div class="row"><span>Có <code>coco_id</code></span><div class="track"><div class="fill alt" data-v="51498"></div></div><span class="num">51.498</span></div>
+<div class="row"><span><code>coco_id</code> không trùng</span><div class="track"><div class="fill alt" data-v="50918"></div></div><span class="num">50.918</span></div>
+<div class="row"><span>≥ 1 quan hệ sau chuẩn hoá</span><div class="track"><div class="fill alt" data-v="49381"></div></div><span class="num">49.381</span></div>
+<div class="row"><span><strong>Chọn vào split</strong></span><div class="track"><div class="fill" data-v="10000"></div></div><span class="num">10.000</span></div>
+</div>
+<p class="note">290 ảnh bị bỏ vì hai ảnh VG trỏ cùng một <code>coco_id</code> (cùng ảnh Flickr, lưu hai độ phân giải). Mọi ảnh còn lại đều có trong Karpathy và có đủ 5 caption.</p>
+</section>
+
+<section id="split">
+<h2>3. Ba split cân bằng</h2>
+<table>
+<tr><th></th><th>train</th><th>val</th><th>test</th></tr>
+<tr><td>Số ảnh / caption</td><td class="n">7.000 / 35.000</td><td class="n">1.500 / 7.500</td><td class="n">1.500 / 7.500</td></tr>
+<tr><td>Object/ảnh, trung vị (p10–p90)</td><td class="n">32 (14–64)</td><td class="n">31 (13–64)</td><td class="n">33 (13–64)</td></tr>
+<tr><td>Quan hệ/ảnh, trung vị (p10–p90)</td><td class="n">14 (5–26)</td><td class="n">14 (5–26)</td><td class="n">14 (4–27)</td></tr>
+<tr><td>Nguồn ảnh</td><td colspan="2">Karpathy train/restval/val</td><td>Chỉ Karpathy test</td></tr>
+</table>
+<p class="note">Mỗi split được rút có phân tầng theo 4 mức số quan hệ (ranh giới 9 / 14 / 20). Tỉ lệ các tầng lệch nhau tối đa 1,6 điểm %. Test lệch nhẹ hơn vì kho Karpathy test có sẵn phân bố hơi khác.</p>
+<div class="figs">
+<figure><img src="figures/relations_n.png" alt="Phân bố số quan hệ mỗi ảnh theo split"></figure>
+<figure><img src="figures/objects_n.png" alt="Phân bố số object mỗi ảnh theo split"></figure>
+</div>
+</section>
+
+<section id="do-khop">
+<h2>4. Độ khớp caption ↔ đồ thị</h2>
+<p>Câu hỏi: <strong>đồ thị của một ảnh có nói về đúng những thứ mà caption của ảnh đó nhắc tới không?</strong> Nếu không thì dùng đồ thị để xếp hạng lại cũng vô ích.</p>
+<p class="note">Sơ đồ dưới đi qua một ví dụ. <a class="open" href="diagrams/caption-graph-coverage.html" target="_blank">Mở toàn màn hình ↗</a></p>
+<iframe src="diagrams/caption-graph-coverage.html" title="Cách tính độ khớp" loading="lazy" style="height:860px"></iframe>
+<div class="compare">
+<div class="big good"><b>40,8%</b>từ nội dung của caption có trong đồ thị <strong>của chính ảnh đó</strong></div>
+<div class="big base"><b>4,2%</b>có trong đồ thị <strong>của một ảnh ngẫu nhiên</strong> (mốc so sánh)</div>
+</div>
+<div class="bars" data-max="100">
+<div class="row"><span>Caption có ≥ 1 từ khớp · đúng ảnh</span><div class="track"><div class="fill" data-v="94.2"></div></div><span class="num">94,2%</span></div>
+<div class="row"><span>Caption có ≥ 1 từ khớp · ngẫu nhiên</span><div class="track"><div class="fill alt" data-v="18.9"></div></div><span class="num">18,9%</span></div>
+</div>
+<h3>Đọc con số này thế nào</h3>
+<ul>
+<li><strong>Chênh gần 10 lần</strong> giữa đúng ảnh và ngẫu nhiên: đồ thị chứa thông tin riêng của từng ảnh, nên về nguyên tắc có thể giúp phân biệt ảnh đúng với ảnh sai.</li>
+<li><strong>Vì sao chỉ 40%, không phải 100%:</strong> caption có động từ và tính từ (<em>riding</em>, <em>large</em>) mà đồ thị không lưu thành object, và người gán VG không ghi hết mọi thứ.</li>
+<li><strong>Đây không phải recall và không phải cận trên của recall.</strong> Chỉ số này so 1 caption với 1 đồ thị, không xếp hạng. Mô hình dùng embedding còn khớp được những cặp mà so chữ bỏ sót (bike ↔ bicycle). Nó chỉ kiểm <em>điều kiện cần</em>: nếu đúng ảnh và ngẫu nhiên khớp ngang nhau thì đồ thị vô ích. Con số gắn với recall sẽ đến từ baseline B4 ở Phase 4: xếp hạng ảnh theo độ trùng từ caption–đồ thị rồi đo R@K.</li>
+<li>Test cho kết quả tương tự (40,5% so với 4,2%), nên không có split nào bị lệch.</li>
+</ul>
+<h3>60% còn lại là những từ gì</h3>
+<p>Trong 276.795 từ nội dung của 50.000 caption có 167.338 từ không khớp. Gần như tất cả thuộc những loại mà đồ thị object vốn không lưu:</p>
+<table>
+<tr><th>Nhóm</th><th>Ví dụ (số lần trượt)</th><th>Vì sao trượt</th></tr>
+<tr><td>Hành động, tư thế</td><td>sitting 4.236 · standing 3.620 · holding 2.068 · riding 1.713 · walking 1.401</td><td>VG chỉ ghi một phần thành vị từ. Tính cả vị từ thì độ khớp chỉ tăng từ 40,8% lên 44,7% (ngẫu nhiên: 4,2% lên 5,0%)</td></tr>
+<tr><td>Màu, kích thước, tuổi, chất liệu</td><td>white 2.392 · large 2.204 · small 1.609 · black · red · young · wooden</td><td>Nằm trong <code>attributes.json</code> của VG, <strong>chưa tải</strong> (xem D6)</td></tr>
+<tr><td>Từ chỉ cảnh</td><td>street 1.153 · city 1.001 · field 869 · room 825 · area 749</td><td>Người gán VG thường ghi object cụ thể chứ không ghi cả cảnh</td></tr>
+<tr><td>Số nhiều bất quy tắc, từ gần nghĩa</td><td>people 1.927 · group 1.720 · person 1.049 · couple 847 · men 627</td><td>Hàm so khớp chỉ bỏ đuôi <code>s</code>, nên <code>men</code> không khớp <code>man</code>. Gộp từ gần nghĩa để ở D5</td></tr>
+</table>
+<p class="verdict"><strong>Đồ thị khớp tốt ở phần "có những vật gì", gần như không có thông tin về "vật đang làm gì, màu gì, ở bối cảnh nào".</strong> Nó sẽ giúp phân biệt "a man with a dog" với "a man with a car", nhưng không giúp được các truy vấn chỉ khác nhau ở hành động hoặc màu ("a man <em>sitting</em>" và "a man <em>standing</em>", "a <em>red</em> car" và "a <em>white</em> car"). Cần ghi giới hạn này vào phần phân tích thất bại ở Phase 4.</p>
+</section>
+
+<section id="tu-vung">
+<h2>5. Từ vựng</h2>
+<h3>Object: 360.383 trên 10K ảnh</h3>
+<div class="bars" data-max="100">
+<div class="row"><span>Synset gốc VG</span><div class="track"><div class="fill" data-v="79.2"></div></div><span class="num">79,2%</span></div>
+<div class="row"><span>Synset backfill</span><div class="track"><div class="fill alt" data-v="14.7"></div></div><span class="num">14,7%</span></div>
+<div class="row"><span>Không có synset</span><div class="track"><div class="fill warn" data-v="6.1"></div></div><span class="num">6,1%</span></div>
+</div>
+<h3>Đuôi dài: 12.592 nhãn, phần lớn hiếm</h3>
+<table>
+<tr><th>Bỏ nhãn xuất hiện ở ít hơn…</th><th>Số nhãn bị bỏ</th><th>% object bị bỏ</th></tr>
+<tr><td>2 ảnh</td><td class="n">8.170</td><td class="n">2,7%</td></tr>
+<tr><td><strong>5 ảnh (đề xuất D3)</strong></td><td class="n"><strong>10.408 (83%)</strong></td><td class="n"><strong>4,8%</strong></td></tr>
+<tr><td>10 ảnh</td><td class="n">11.158</td><td class="n">6,7%</td></tr>
+</table>
+<h3>Đỉnh hub (tỉ lệ ảnh chứa)</h3>
+<div class="bars" data-max="100">
+<div class="row"><span>vị từ <code>on</code></span><div class="track"><div class="fill warn" data-v="87.3"></div></div><span class="num">87,3%</span></div>
+<div class="row"><span>vị từ <code>in</code></span><div class="track"><div class="fill warn" data-v="59.5"></div></div><span class="num">59,5%</span></div>
+<div class="row"><span><code>man</code></span><div class="track"><div class="fill alt" data-v="30.9"></div></div><span class="num">30,9%</span></div>
+<div class="row"><span><code>tree</code></span><div class="track"><div class="fill alt" data-v="27.0"></div></div><span class="num">27,0%</span></div>
+<div class="row"><span><code>land</code> (= ground)</span><div class="track"><div class="fill alt" data-v="25.8"></div></div><span class="num">25,8%</span></div>
+<div class="row"><span><code>sky</code></span><div class="track"><div class="fill alt" data-v="25.1"></div></div><span class="num">25,1%</span></div>
+</div>
+<h3>Từ gần nghĩa chưa gộp (số ảnh)</h3>
+<div class="chips">
+<span class="chip">man 3.086</span><span class="chip">person 2.191</span><span class="chip">people 1.159</span><span class="chip">guy 220</span>
+<span class="chip">woman 1.555</span><span class="chip">girl 567</span><span class="chip">lady 291</span>
+<span class="chip">road 848</span><span class="chip">street 812</span>
+</div>
+<h3>Caption</h3>
+<p class="note">Dài trung vị 10 từ (p10 8, p90 13). Không có câu dưới 5 từ. 665 câu trùng nguyên văn với câu của ảnh khác, 150 câu trong đó thuộc test (ví dụ "a man riding skis down a snow covered slope."). Mỗi truy vấn vẫn chỉ có 1 ảnh đúng, nên các truy vấn này khó hơn một chút. Chỉ ghi nhận, không xử lý.</p>
+</section>
+
+<section id="thu-cong">
+<h2>6. Review thủ công</h2>
+<p>Đã xem 6 ảnh. Ảnh, caption và đồ thị khớp nhau ở cả 6, không thấy ảnh hỏng hay lệch ánh xạ. Ba phát hiện:</p>
+<h3>① Lemma synset nhiều khi là từ hiếm hoặc sai nghĩa</h3>
+<p>48 trong 300 nhãn phổ biến nhất mang tên khác với tên người gán thường dùng. Phần <em>gộp</em> vẫn đúng (couch + sofa, plane + airplane); chỉ có chữ dùng làm tên nhãn là có vấn đề.</p>
+<div class="chips">
+<span class="chip">pants → <s>trouser</s></span><span class="chip">boy → <s>male child</s></span><span class="chip">ground → <s>land</s></span>
+<span class="chip">bike taxi → <s>jinrikisha</s></span><span class="chip">reflection → <s>contemplation</s> (sai nghĩa)</span>
+<span class="chip">spot → <s>topographic point</s> (sai nghĩa)</span><span class="chip">stripe → <s>band</s></span>
+</div>
+<p class="note">Nếu đưa chữ này vào CLIP text encoder thì truy vấn "pants" sẽ khó khớp với đỉnh <code>trouser</code>. Đây là lý do của D1.</p>
+<h3>② Đồ thị có thể thiếu khái niệm chính; ③ lỗi gõ trong vị từ</h3>
+<div class="examples">
+<div class="ex"><img src="../../data/processed/vg_coco/images/2342774.jpg" alt="Biển STOP bị vẽ graffiti"><div><b>2342774 · train</b><br>Biển STOP bị vẽ graffiti. Có 53 object nhưng chỉ 5 quan hệ, và không có "graffiti" hay "art". Hợp làm ví dụ thất bại ở Phase 4.</div></div>
+<div class="ex"><img src="../../data/processed/vg_coco/images/2406973.jpg" alt="Xích lô chở hàng"><div><b>2406973 · val</b><br>Xích lô chở hàng: <code>bike taxi</code> bị gán lemma <code>jinrikisha</code>.</div></div>
+<div class="ex"><img src="../../data/processed/vg_coco/images/2390208.jpg" alt="Giày cao gót cạnh bình hoa"><div><b>2390208 · test</b><br>Ảnh, caption và đồ thị khớp tốt. Lỗi gõ VG gặp ở ảnh khác: <code>eye if baby</code>, <code>cake in front baby</code>.</div></div>
+</div>
+<h3>Phần của bạn</h3>
+<p>Mở <a class="open" href="sample.html" target="_blank">sample.html ↗</a>: 24 ảnh, 8 ảnh mỗi split, mỗi ảnh kèm 5 caption và 10 bộ ba. Nhãn màu đỏ là nhãn không có synset.</p>
+</section>
+
+<section id="quyet-dinh">
+<h2>7. Sáu quyết định cần chốt trước bước 2.7</h2>
+<div class="dec">
+<div class="d"><b class="id">D1</b><div><strong>Định danh đỉnh = synset; chữ hiển thị và chữ đem nhúng = tên thô phổ biến nhất của synset đó.</strong><p>Ví dụ <code>trouser</code> hiển thị là "pants", <code>land</code> là "ground". Giữ được phần gộp đúng, bỏ được lemma hiếm hoặc sai nghĩa.</p></div></div>
+<div class="d"><b class="id">D2</b><div><strong>Bỏ object có tên rác hoặc chỉ màu, chỉ vị trí</strong> (<code>the</code>, <code>white</code>, <code>front</code>, <code>left</code>…) theo một danh sách cố định trong config. Giữ danh từ ghép (<code>street light</code>, <code>wine glass</code>).<p>Các tên này không chỉ vật thể nào.</p></div></div>
+<div class="d"><b class="id">D3</b><div><strong>Bỏ khái niệm và vị từ xuất hiện ở ít hơn 5 ảnh, đếm trên train.</strong><p>Bỏ 83% số nhãn nhưng chỉ mất 4,8% object (vị từ: mất 5,1% quan hệ). Đếm trên train để không dùng thông tin test.</p></div></div>
+<div class="d"><b class="id">D4</b><div><strong>Giữ hub, hạ trọng số theo IDF</strong> trên cạnh ảnh–khái niệm; chốt cuối ở Phase 1/3 khi có điểm số để so.<p>Hub vẫn có nghĩa với truy vấn ("a man …").</p></div></div>
+<div class="d"><b class="id">D5</b><div><strong>Chưa gộp từ gần nghĩa</strong> (guy/man, road/street). Để sang Phase 7 (ConceptNet/WordNet) và đo bằng ablation.<p>Nhờ vậy tách riêng được đóng góp của tri thức ngoài.</p></div></div>
+<div class="d"><b class="id">D6</b><div><strong>Chưa thêm thuộc tính VG</strong> (màu, kích thước, chất liệu từ <code>attributes.json</code>). Bước 2.7 chỉ dùng object và vị từ. Đo B4 xong mới quyết định có thêm hay không.<p>Thêm thì xử lý được truy vấn về màu và kích thước, nhưng phải tải thêm file, thêm một bước chuẩn hoá và đồ thị to hơn. Nếu thêm sau thì sẽ là một ablation riêng ("+ thuộc tính"), không phải làm lại các bước trước.</p></div></div>
+</div>
+<h3>Xác nhận của bạn</h3>
+<label class="chk"><input type="checkbox"> Đã xem <code>sample.html</code></label>
+<label class="chk"><input type="checkbox"> Chốt D1–D6 (hoặc sửa)</label>
+<label class="chk"><input type="checkbox"> Đồng ý bắt đầu 2.7</label>
+<p class="note">Ô đánh dấu chỉ để bạn tự theo dõi, không được lưu. Hãy trả lời trong chat.</p>
+</section>
+</main>
+<script>
+// Animate bars when they scroll into view.
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const max=+e.target.dataset.max;e.target.querySelectorAll('.fill').forEach(f=>f.style.width=(100*+f.dataset.v/max)+'%');io.unobserve(e.target)}),{threshold:.3});
+document.querySelectorAll('.bars').forEach(b=>io.observe(b));
+</script>
+</body>
+</html>

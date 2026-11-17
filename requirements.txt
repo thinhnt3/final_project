@@ -4,3 +4,7 @@ transformers>=4.40,<5
 Pillow>=10.0
 requests>=2.31
 faiss-cpu>=1.8
+scikit-learn>=1.4
+pyyaml>=6.0
+pytest>=8.0
+matplotlib>=3.8
