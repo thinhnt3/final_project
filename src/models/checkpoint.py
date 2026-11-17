@@ -110,7 +110,18 @@ def changed_settings(saved: Mapping[str, Any], current: Mapping[str, Any]) -> li
     would not reproduce an uninterrupted run.
     """
     top_level = ("graphsage", "clip_model", "inputs_sha256", "seed")
-    changed = [key for key in top_level if saved.get(key) != current.get(key)]
+
+    # Legacy snapshots implicitly used the full graph and topology seed zero.
+    def normalized(
+        key: str,
+        settings: Mapping[str, Any],
+    ) -> Any:
+        value = settings.get(key)
+        if key == "graphsage" and isinstance(value, dict):
+            return {"ablation": "full", "ablation_seed": 0, **value}
+        return value
+
+    changed = [key for key in top_level if normalized(key, saved) != normalized(key, current)]
     saved_training, current_training = saved.get("training", {}), current.get("training", {})
     changed += [
         f"training.{key}"

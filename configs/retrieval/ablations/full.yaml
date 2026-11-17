@@ -1,0 +1,47 @@
+# Public baseline equivalent to the local full run; W&B disabled.
+data_config: configs/data/vg_coco.yaml
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+embeddings_dir: data/processed/vg_coco/embeddings
+benchmark:
+  recall_ks:
+  - 1
+  - 5
+  - 10
+  alpha_step: 0.01
+  top_k_grid:
+  - 10
+  - 20
+  - 50
+  - 100
+  - 200
+  - 500
+  - 1500
+runs_dir: runs
+graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  directed: true
+  image_node: learned
+  ablation: full
+  ablation_seed: 0
+training:
+  seeds:
+  - 13
+  - 37
+  - 97
+  device: cpu
+  batch_size: 256
+  max_epochs: 50
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+wandb:
+  mode: disabled
+  project: vg-coco-graph-retrieval
