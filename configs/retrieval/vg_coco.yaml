@@ -26,3 +26,13 @@ benchmark:
 
 # Benchmark results and trained models are written under this directory.
 runs_dir: runs
+
+# Graph encoder: GraphSAGE over each image's sub-graph (image, object and relation nodes).
+# directed: true keeps subject → relation → object; false is the plain undirected variant.
+# image_node: learned = one trained vector shared by all images, so the graph vector comes
+# from the graph only; clip_image = the image's own CLIP vector.
+graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  directed: true
+  image_node: learned

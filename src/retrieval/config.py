@@ -8,6 +8,7 @@ from typing import Any
 from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.embeddings.device import Device
+from src.models.graphsage import GraphSageConfig, ImageNodeFeature
 
 _ALPHA_STEP_TOLERANCE = 1e-9
 _ALPHA_DECIMALS = 6
@@ -44,6 +45,7 @@ class RetrievalConfig:
     embeddings_dir: Path
     benchmark: BenchmarkConfig
     runs_dir: Path
+    graphsage: GraphSageConfig
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> RetrievalConfig:
@@ -73,6 +75,7 @@ class RetrievalConfig:
             embeddings_dir=Path(require_field(raw, "embeddings_dir", str)),
             benchmark=_benchmark_config(raw),
             runs_dir=Path(require_field(raw, "runs_dir", str)),
+            graphsage=_graphsage_config(raw),
         )
 
     def model_embeddings_dir(self) -> Path:
@@ -107,3 +110,21 @@ def _number_list(raw: dict[str, Any], key: str, kind: type | tuple[type, ...]) -
     if len(set(values)) != len(values):
         raise ConfigError(f"benchmark.{key} has duplicates")
     return values
+
+
+def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
+    graphsage_raw = require_section(raw, "graphsage")
+    image_node = require_field(graphsage_raw, "image_node", str)
+    if image_node not in set(ImageNodeFeature):
+        raise ConfigError(
+            f"graphsage.image_node must be one of {[v.value for v in ImageNodeFeature]}, got {image_node!r}"
+        )
+    directed = graphsage_raw.get("directed")
+    if not isinstance(directed, bool):
+        raise ConfigError(f"graphsage.directed must be true or false, got {directed!r}")
+    return GraphSageConfig(
+        hidden_dim=require_field(graphsage_raw, "hidden_dim", int),
+        num_layers=require_field(graphsage_raw, "num_layers", int),
+        directed=directed,
+        image_node=ImageNodeFeature(image_node),
+    )

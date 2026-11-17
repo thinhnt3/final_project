@@ -20,6 +20,7 @@ def _raw(**clip_overrides):
         "embeddings_dir": "emb",
         "benchmark": {"recall_ks": [1, 5, 10], "alpha_step": 0.5, "top_k_grid": [10, 50]},
         "runs_dir": "runs",
+        "graphsage": {"hidden_dim": 64, "num_layers": 3, "directed": True, "image_node": "learned"},
     }
 
 
@@ -81,3 +82,18 @@ def test_alpha_grid_runs_from_zero_to_one_in_equal_steps():
     grid = RetrievalConfig.from_dict(raw).benchmark.alpha_grid
     assert len(grid) == 101 and grid[0] == 0.0 and grid[-1] == 1.0 and grid[91] == 0.91
     assert RetrievalConfig.from_yaml(REPO_CONFIG).benchmark.alpha_grid == grid
+
+
+def test_graphsage_section_is_parsed_and_validated():
+    config = RetrievalConfig.from_dict(_raw()).graphsage
+    assert (config.hidden_dim, config.num_layers, config.directed, config.image_node.value) == (64, 3, True, "learned")
+    for overrides, message in (
+        ({"image_node": "zeros"}, "image_node"),
+        ({"directed": "yes"}, "directed"),
+        ({"num_layers": 0}, "must be >= 1"),
+        ({"hidden_dim": 1.5}, "hidden_dim"),
+    ):
+        raw = _raw()
+        raw["graphsage"].update(overrides)
+        with pytest.raises(ConfigError, match=message):
+            RetrievalConfig.from_dict(raw)
