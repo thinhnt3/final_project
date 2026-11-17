@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GraphSAGE chạy thế nào</title>
+<style>
+:root{--bg:#f7f7f5;--surface:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#dddcd6;--img:#0f8a6a;--img-soft:#d9f2ea;--obj:#2563eb;--obj-soft:#dbe7fe;--pred:#b45309;--pred-soft:#fdecd2;--dim:#c9c8c2;--good:#0f8a6a;--bad:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--surface:#1e1e1c;--ink:#ecebe6;--muted:#a3a29b;--line:#3a3935;--img:#3ccf9f;--img-soft:#163b30;--obj:#7aa7ff;--obj-soft:#1c2c4d;--pred:#f0a94a;--pred-soft:#40290e;--dim:#4a4944;--good:#3ccf9f;--bad:#f87171}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}.sub{color:var(--muted);margin:0 0 20px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps button{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.steps button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.steps button:focus-visible{outline:2px solid var(--obj);outline-offset:2px}
+.stage{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+svg{width:100%;height:auto;display:block}
+.edge{stroke:var(--dim);stroke-width:2;transition:stroke .4s,stroke-width .4s}
+.edge.on{stroke:var(--ink);stroke-width:3}
+.edge.flow{stroke-dasharray:6 6;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.node rect,.node circle{stroke-width:2;transition:fill .4s,stroke .4s,opacity .4s}
+.node text{font-size:13px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.node.img rect{fill:var(--img-soft);stroke:var(--img)}
+.node.obj rect{fill:var(--obj-soft);stroke:var(--obj)}
+.node.pred rect{fill:var(--pred-soft);stroke:var(--pred)}
+.node.off{opacity:.3}
+.node.focus rect{stroke-width:4}
+.tag{font-size:11px;fill:var(--muted);text-anchor:middle}
+h2{font-size:17px;margin:0 0 8px}
+.card p{margin:0 0 10px}.card ul{margin:0;padding-left:18px}.card li{margin-bottom:6px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:10px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:2px solid;vertical-align:-1px;margin-right:5px}
+table{border-collapse:collapse;font-size:13px;margin:8px 0;width:100%}
+th,td{border:1px solid var(--line);padding:6px;text-align:center}
+th{color:var(--muted);font-weight:600}
+td.hit{background:var(--img-soft);color:var(--good);font-weight:700}
+td.miss{color:var(--bad)}
+.formula{font:14px ui-monospace,Menlo,monospace;background:var(--bg);border-radius:8px;padding:10px;margin:8px 0;overflow-x:auto}
+.note{color:var(--muted);font-size:13px}
+.nav{display:flex;justify-content:space-between;margin-top:12px}
+.nav button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.nav button:disabled{opacity:.4;cursor:default}
+@media (max-width:760px){.stage{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.edge.flow{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>GraphSAGE chạy thế nào trên đồ thị của một ảnh</h1>
+<p class="sub">Ví dụ thật: ảnh 2328300 (tập train). Caption: "Police on bicycles behind a man playing guitar on a street for coins." Đồ thị đã rút gọn còn 4 đối tượng và 3 relation cho dễ nhìn. Bấm từng bước, hoặc dùng phím ← →.</p>
+
+<div class="steps" id="steps" role="group" aria-label="Các bước"></div>
+
+<div class="stage">
+<div class="card">
+<svg viewBox="0 0 640 430" role="img" aria-label="Đồ thị của ảnh 2328300">
+<g id="edges">
+<line class="edge" data-e="c-man" x1="320" y1="50" x2="320" y2="230"/>
+<line class="edge" data-e="c-bike" x1="320" y1="50" x2="90" y2="230"/>
+<line class="edge" data-e="c-guitar" x1="320" y1="50" x2="550" y2="230"/>
+<path class="edge" data-e="c-chair" fill="none" d="M 385 50 Q 615 50 615 250 Q 615 385 365 385"/>
+<line class="edge" data-e="man-riding" x1="320" y1="230" x2="205" y2="230"/>
+<line class="edge" data-e="riding-bike" x1="205" y1="230" x2="90" y2="230"/>
+<line class="edge" data-e="man-playing" x1="320" y1="230" x2="435" y2="230"/>
+<line class="edge" data-e="playing-guitar" x1="435" y1="230" x2="550" y2="230"/>
+<line class="edge" data-e="man-sitting" x1="320" y1="230" x2="320" y2="308"/>
+<line class="edge" data-e="sitting-chair" x1="320" y1="308" x2="320" y2="385"/>
+</g>
+<g class="node img" data-n="img"><rect x="255" y="28" width="130" height="44" rx="10"/><text x="320" y="50">ảnh 2328300</text></g>
+<g class="node obj" data-n="man"><rect x="280" y="210" width="80" height="40" rx="20"/><text x="320" y="230">man</text></g>
+<g class="node obj" data-n="bike"><rect x="45" y="210" width="90" height="40" rx="20"/><text x="90" y="230">bicycle</text></g>
+<g class="node obj" data-n="guitar"><rect x="510" y="210" width="80" height="40" rx="20"/><text x="550" y="230">guitar</text></g>
+<g class="node obj" data-n="chair"><rect x="282" y="365" width="76" height="40" rx="20"/><text x="320" y="385">chair</text></g>
+<g class="node pred" data-n="riding"><rect x="170" y="215" width="70" height="30" rx="6"/><text x="205" y="230">riding</text></g>
+<g class="node pred" data-n="playing"><rect x="397" y="215" width="76" height="30" rx="6"/><text x="435" y="230">playing</text></g>
+<g class="node pred" data-n="sitting"><rect x="280" y="293" width="80" height="30" rx="6"/><text x="320" y="308">sitting in</text></g>
+<text class="tag" x="320" y="18" id="imgtag"></text>
+<text class="tag" x="320" y="424" id="foot"></text>
+</svg>
+<div class="legend">
+<span><i class="sw" style="background:var(--img-soft);border-color:var(--img)"></i>đỉnh ảnh</span>
+<span><i class="sw" style="background:var(--obj-soft);border-color:var(--obj)"></i>đỉnh đối tượng</span>
+<span><i class="sw" style="background:var(--pred-soft);border-color:var(--pred)"></i>đỉnh phụ mang nhãn relation</span>
+</div>
+</div>
+
+<div class="card" aria-live="polite">
+<h2 id="title"></h2>
+<div id="body"></div>
+<div class="nav"><button id="prev">← Trước</button><button id="next">Sau →</button></div>
+</div>
+</div>
+</main>
+<script>
+const CONTAIN=["c-man","c-bike","c-guitar","c-chair"];
+const NEAR=["man-riding","man-playing","man-sitting"];
+const FAR=["riding-bike","playing-guitar","sitting-chair"];
+const OBJ=["man","bike","guitar","chair"], PRED=["riding","playing","sitting"], ALL=["img",...OBJ,...PRED];
+const STEPS=[
+ {label:"1. Đồ thị",title:"Đồ thị của một ảnh",lit:ALL,on:[...CONTAIN,...NEAR,...FAR],flow:[],
+  foot:"1 đỉnh ảnh · 4 đối tượng · 3 relation",
+  body:`<p>Đồ thị lấy từ nhãn Visual Genome, không sinh từ pixel.</p><ul>
+  <li><b>Đỉnh ảnh</b> nối với mọi đối tượng trong ảnh (cạnh "chứa").</li>
+  <li><b>Đỉnh đối tượng</b>: mỗi khái niệm trong ảnh một đỉnh.</li>
+  <li><b>Relation</b> là cạnh giữa hai đối tượng. Để GraphSAGE đọc được chữ <i>riding</i>, cạnh được lưu qua một <b>đỉnh phụ</b> mang nhãn đó.</li></ul>
+  <p class="note">Mỗi ảnh là một đồ thị con riêng. Ảnh trung bình có khoảng 17 đối tượng và 12 relation.</p>`},
+ {label:"2. Vector ban đầu",title:"Mỗi đỉnh bắt đầu bằng một vector",lit:ALL,on:[],flow:[],
+  foot:"vector 512 chiều, CLIP đóng băng",
+  body:`<ul>
+  <li><b>Đối tượng</b> và <b>đỉnh phụ</b>: vector CLIP text của chữ trên đỉnh ("man", "riding"). Tính một lần, lưu sẵn.</li>
+  <li><b>Đỉnh ảnh</b>, bản chính: một vector học được, dùng chung cho mọi ảnh. Nhờ vậy vector cuối của ảnh chỉ đến từ đồ thị.</li>
+  <li><b>Đỉnh ảnh</b>, bản so sánh: vector CLIP của chính ảnh đó.</li></ul>`},
+ {label:"3. Tầng 1",title:"Tầng 1: ảnh nhận từ các đối tượng",lit:["img",...OBJ],focus:"img",on:CONTAIN,flow:CONTAIN,
+  foot:"ảnh biết: man, bicycle, guitar, chair",
+  body:`<p>Mỗi đỉnh trộn vector của nó với trung bình vector các hàng xóm:</p>
+  <div class="formula">h = W·x + W'·trung_bình(hàng xóm)</div>
+  <p>Sau tầng 1, đỉnh ảnh biết ảnh <b>có những vật gì</b>, chưa biết chúng quan hệ thế nào.</p>
+  <p class="note">Mọi đỉnh cùng cập nhật một lúc. Hình chỉ tô phần thông tin chảy về đỉnh ảnh.</p>`},
+ {label:"4. Tầng 2",title:"Tầng 2: thêm nhãn relation",lit:["img",...OBJ,...PRED],focus:"img",on:[...CONTAIN,...NEAR],flow:NEAR,
+  foot:"ảnh biết thêm: man có riding, playing, sitting in",
+  body:`<p>Ở tầng 1, đỉnh <i>man</i> đã nhận từ ba đỉnh phụ cạnh nó. Sang tầng 2, thông tin đó đi tiếp lên đỉnh ảnh.</p>
+  <p>Đỉnh ảnh giờ biết <b>man đang làm gì</b>, nhưng chưa biết làm với vật nào.</p>`},
+ {label:"5. Tầng 3",title:"Tầng 3: trọn một bộ ba",lit:ALL,focus:"img",on:[...CONTAIN,...NEAR,...FAR],flow:FAR,
+  foot:"ảnh biết: man riding bicycle · man playing guitar · man sitting in chair",
+  body:`<p>Thông tin của <i>bicycle</i> đi qua đỉnh phụ <i>riding</i>, qua <i>man</i>, rồi tới đỉnh ảnh. Phải đủ <b>3 tầng</b> thì đỉnh ảnh mới thấy trọn "man riding bicycle".</p>
+  <p>Vector của đỉnh ảnh sau tầng 3, qua một tầng chiếu, là <b>vector đồ thị của ảnh</b>, cùng không gian với CLIP.</p>
+  <p class="note">Một ảnh khác cũng có man và bicycle nhưng không có cạnh riding sẽ cho vector khác.</p>`},
+ {label:"6. Huấn luyện",title:"Huấn luyện: nhiều ảnh trong một batch",lit:ALL,on:[],flow:[],
+  foot:"đồ thị trên là 1 trong 256 đồ thị con của batch",
+  body:`<p>Ghép 256 đồ thị con thành một batch, chạy GraphSAGE một lượt với <b>cùng một bộ trọng số</b>. So vector đồ thị của từng ảnh với vector CLIP của từng caption:</p>
+  <table><tr><th></th><th>caption A</th><th>caption B</th><th>caption C</th></tr>
+  <tr><th>đồ thị ảnh A</th><td class="hit">↑</td><td class="miss">↓</td><td class="miss">↓</td></tr>
+  <tr><th>đồ thị ảnh B</th><td class="miss">↓</td><td class="hit">↑</td><td class="miss">↓</td></tr>
+  <tr><th>đồ thị ảnh C</th><td class="miss">↓</td><td class="miss">↓</td><td class="hit">↑</td></tr></table>
+  <p>InfoNCE đẩy điểm trên đường chéo lên và kéo các ô còn lại xuống. Chỉ GraphSAGE và tầng chiếu được học; CLIP đóng băng.</p>
+  <p class="note">Ảnh test không tham gia huấn luyện vẫn có vector, vì nó dùng chung bộ trọng số.</p>`},
+ {label:"7. Chấm điểm",title:"Lúc chạy: xếp hạng lại",lit:ALL,focus:"img",on:[],flow:[],
+  foot:"vector đồ thị của ảnh đã lưu sẵn",
+  body:`<ol style="padding-left:18px;margin:0 0 10px">
+  <li>Truy vấn → CLIP text → vector truy vấn.</li>
+  <li>Lấy top-k ảnh theo cosine với vector CLIP ảnh.</li>
+  <li>Với mỗi ứng viên: điểm đồ thị = cosine(vector truy vấn, vector đồ thị).</li></ol>
+  <div class="formula">điểm = α·cosine_CLIP + (1−α)·điểm_đồ_thị</div>
+  <p>α chọn trên tập validation. Kết quả trả về kèm các relation của ảnh đóng góp nhiều nhất vào điểm đồ thị.</p>`}
+];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let cur=0;
+const bar=$("#steps");
+STEPS.forEach((s,i)=>{const b=document.createElement("button");b.textContent=s.label;b.onclick=()=>show(i);bar.appendChild(b)});
+function show(i){
+  cur=Math.max(0,Math.min(STEPS.length-1,i));const s=STEPS[cur];
+  $$("#steps button").forEach((b,j)=>b.setAttribute("aria-pressed",j===cur));
+  $$(".node").forEach(n=>{n.classList.toggle("off",!s.lit.includes(n.dataset.n));n.classList.toggle("focus",s.focus===n.dataset.n)});
+  $$(".edge").forEach(e=>{e.classList.toggle("on",s.on.includes(e.dataset.e));e.classList.toggle("flow",s.flow.includes(e.dataset.e))});
+  $("#title").textContent=s.title;$("#body").innerHTML=s.body;$("#foot").textContent=s.foot;
+  $("#prev").disabled=cur===0;$("#next").disabled=cur===STEPS.length-1;
+}
+$("#prev").onclick=()=>show(cur-1);$("#next").onclick=()=>show(cur+1);
+document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1)});
+show(+location.hash.slice(1)||0);
+</script>
+</body>
+</html>
