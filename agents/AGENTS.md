@@ -33,83 +33,70 @@ Xây dựng hệ thống text-to-image có CLIP frozen, graph reranking và gi�
 - Chưa tuyên bố graph cải thiện nếu chưa có CLIP-only, CLIP+Graph và ablation cạnh.
 - Chưa tuyên bố explanation faithful nếu chưa perturb đúng cạnh/đường đi được dùng để tính điểm.
 
-## Verification log (2026-11-10)
+## Nhật ký lịch sử: bản thử ngày 10/11/2026
 
-| Requirement | Evidence | Verification | Status |
-|---|---|---|---|
-| Một dataset cho Cấp độ 1 | `configs/project_scope.yaml`, Visual Genome metadata | Official `scene_graphs.json` và `image_data.json` đã tải; subset tạo được 40 images/40 queries/1322 relations | VERIFIED |
-| Graph scene data load được | `src/data/visual_genome.py` | `scripts/prepare_visual_genome_subset.py` chạy thành công | VERIFIED |
-| CLIP + graph rerank contract | `src/retrieval/pipeline.py`, `src/retrieval/reranker.py` | End-to-end smoke chạy với deterministic fallback | PARTIAL: chưa chạy model weights thật |
-| Recall@1/5/10 và MRR | `src/evaluation/metrics.py` | Smoke xuất đủ 4 metric | VERIFIED trên fixture/subset fallback |
-| Source of truth nằm trong `src/` | `src/models`, `src/retrieval`, `src/evaluation`, `src/data` | `python -m compileall` và smoke pass | VERIFIED |
-| 3 seeds, ablation, xAI fidelity | roadmap P4 | Chưa implement | UNKNOWN |
+Bản thử khi đó có 40 ảnh, 40 truy vấn và 1.322 quan hệ. CLIP, chỉ số truy hồi,
+FAISS, bộ so khớp từ và GraphSAGE thử nghiệm đã chạy. Bộ xếp hạng chính còn dùng
+điểm từ khoá; chưa tích hợp GraphSAGE huấn luyện vào kết quả chính. Các tệp/mô-đun
+của bản thử sau đó đã được xoá và thay thế. Không dùng nhật ký này để mô tả hệ
+thống hiện tại hoặc mặc nhiên quy nguyên nhân cho số liệu cũ.
 
-## Latest run evidence (2026-11-10)
+## Nhật ký triển khai ngày 17/11/2026
 
-- Real CLIP: `runs/clip_visual_genome.json`; 40 JPGs, 10 validation queries, 10 held-out test queries, FAISS index, alpha selected on validation, seeds 13/37/97.
-- Ablation: `runs/ablation_visual_genome.json`; relation removal and predicate shuffle were executed. Results do not yet prove that the current graph scorer improves every metric.
-- GraphSAGE: `runs/graphsage_visual_genome.json`; trainable encoder and margin training smoke ran on the fixed train split.
-- The primary CLIP+Graph result still uses the traceable lexical scorer so explanations correspond exactly to score contributions. Do not describe it as a fully trained GraphSAGE reranker until the two scoring paths are unified.
+Từ nền `49bd52d`, đã thêm `src/models/ablations.py`, các phép biến đổi đồ thị,
+đặt đặc trưng vị từ bằng 0 và bỏ hướng. Các mặc định ngầm của cấu hình cũ được
+giữ là đồ thị đầy đủ/hạt giống hoán vị 0. Mốc đầu có 250 kiểm thử qua, Ruff sạch;
+chưa có mypy và chưa có bộ nhớ đệm CLIP để chạy dữ liệu thật. Đây là giới hạn của
+mốc lịch sử đó, không phải trạng thái hiện tại.
 
-## Ablation verification update (2026-11-17, main 49bd52d base)
+## Bằng chứng chạy thật ngày 18/11/2026
 
-| Requirement | Implementation | Evidence | Status |
-|---|---|---|---|
-| Pure deterministic graph control | src/models/ablations.py | degree/source/seed tests | VERIFIED |
-| Predicate feature mask, direction control | src/models/graphsage.py | mask, reverse-edge, backward tests | VERIFIED |
-| Run identity and resume safety | GraphSageConfig + checkpoint.changed_settings | legacy/default/mismatch + YAML snapshot tests | VERIFIED |
-| Train/checkpoint/export | scripts/train_graphsage.py, existing fit | all-mode synthetic integration test | VERIFIED |
-| Actual VG-COCO metrics | configs/retrieval/ablations/*.yaml | cache meta.json missing; real-data smoke stopped | UNKNOWN |
+Đã khôi phục 10.000 ảnh, tạo lại bộ nhớ đệm và chạy đủ 15 lượt: bản đầy đủ cộng
+bốn biến thể, mỗi loại ba hạt giống 13/37/97. Vector 10.000×512 hữu hạn, chuẩn hoá,
+có điểm lưu và mã băm đầu vào nhất quán. R@1 sau kết hợp (%): đầy đủ
+48,12±0,23; chỉ đối tượng 47,56±0,16; bỏ vị từ 48,06±0,28; ngẫu nhiên
+47,79±0,18; bỏ hướng 47,84±0,15. Không khẳng định bản đầy đủ thắng mọi chỉ số.
 
-Full suite: 250 passed. Targeted Ruff clean; mypy unavailable. No final ablation
-results. Explanation requires matching model config and transforms raw graph with
-the same variant/seed. Read private/ablation-guide.html for the code guide.
+Phân tích theo cặp: lợi thế ròng top-1 của đầy đủ so với chỉ đối tượng là
+53/33/40 truy vấn, so với bỏ vị từ là 14/25/−27. Trung bình gần nhau không có
+nghĩa dự đoán giống nhau. Kiểm tra k=500 sau thực nghiệm, giữ α đã chọn, cho
+R@1/R@10/MRR của đầy đủ là 48,1956/86,3156/60,7960%; bỏ vị từ là
+48,0622/86,2800/60,6742%. Không dùng kết quả này để thay đánh giá chính thức
+hay chọn lại tham số trên tập kiểm thử.
 
-Local experiment update (18/11/2026): cache restoration and actual VG-COCO
-execution are now VERIFIED. All 15 runs (full + four variants × three seeds)
-trained/exported and all five benchmarks completed. Artifact checks confirm
-unit finite 10000×512 vectors and identical input hashes. Full fused R@1
-48.12±0.23%; objects_only 47.56±0.16%; drop_predicates 48.06±0.28%;
-random_edges 47.79±0.18%; undirected 47.84±0.15%. Do not claim full wins on
-all metrics or that these differences are statistically significant. Private
-report and comparison.csv include the complete results and caveats.
+Độ trung thực: 200 truy vấn lấy mẫu trước, có 198/195/196 ca hợp lệ theo mô hình.
+Xoá nhóm giải thích làm mất vị trí đầu 17,81% so với ngẫu nhiên 4,31% ở mức yêu
+cầu 10%; tương ứng 25,45% so với 6,06% ở mức 25%. Phải ghi rõ ảnh mục tiêu là
+prediction ban đầu, số quan hệ xoá thực tế và các ca bị bỏ qua. Cách chọn nhóm
+dựa trên ảnh hưởng của phép xoá từng quan hệ; chưa phải bằng chứng độc lập về
+ngữ nghĩa. Xoá nhóm/đo hạng không tự loại bỏ được sự phụ thuộc vào cách chọn.
 
-Ablation interpretation audit (18/11/2026): private/analyze_ablation.py recomputed
-per-query test ranks from existing vectors, without retraining or tuning. Results
-in private/ablation-execution/analysis.json and query-ranks.npz. Full vs
-objects_only: net top-1 gains 53/33/40 queries for seeds 13/37/97. Full vs
-masked predicates: 14/25/-27. Equal means do not imply equal predictions.
-Post-hoc diagnostic only: k=500 for every method, retaining each original
-validation-selected alpha. Full R@1/R@10/MRR = 48.1956/86.3156/60.7960%;
-masked = 48.0622/86.2800/60.6742%. The official full R@10 weakness is largely
-explained by k=10 selection for seeds 37/97; do not treat this diagnostic as a
-replacement benchmark or choose new hyperparameters using these test results.
-Existing explain.py ranks relations using single-deletion score drops: a fidelity
-test of that same top single deletion is circular; joint deletion or separate
-rank/margin outcomes and random controls are needed, with limitations stated.
+## Kiểm chứng hiện hành
 
-## Commit-readiness verification — 18/11/2026
+| Yêu cầu | Bằng chứng | Kết luận |
+|---|---|---|
+| Phép biến đổi giữ đúng đặc tính đã định nghĩa | Kiểm thử bậc, dữ liệu gốc, hạt giống và 15 lượt thật | Đã xác nhận |
+| Không tin riêng `result.json` khi tiếp tục chạy | `RunDirectory.validate_finished`, kiểm thử hồi quy và 15 lượt kiểm tra thực tế | Đã xác nhận |
+| Chặn lượt chạy/đầu vào cũ hoặc không tương thích | `src/models/run_validation.py`, kiểm thử sai cấu hình, mã băm và tập dữ liệu | Đã xác nhận |
+| Xoá nhóm có đối chứng ngẫu nhiên cùng số lượng | `src/evaluation/fidelity.py`, kiểm thử tính tay và dữ liệu thật | Đã xác nhận trong phạm vi phép đo |
+| Khoảng bất định giữ cụm mô tả của cùng ảnh | `src/evaluation/ablation_analysis.py`, kiểm thử và 1.500 cụm ảnh | Đã xác nhận với ba mô hình cố định |
+| Nhãn vị từ/cạnh thật giúp tổng quát qua lần huấn luyện mới | Khoảng khám phá có chứa 0 | Chưa xác định |
+| Loại mô tả/nhiễu chú giải là nguyên nhân tổng thể | Mới có mười trường hợp minh hoạ | Chưa xác định |
+| Nguyên nhân chính xác của MRR ngược ở bản thử cũ | Chưa tái hiện bản thử đó | Chưa xác định |
 
-| Requirement | Implementation | Verification | Status |
-|---|---|---|---|
-| Core ablations preserve contracts | models/ablations, graphsage | invariants + all 15 real runs | VERIFIED |
-| Resume rejects metadata-only or wrong run | RunDirectory.validate_finished | regression test + 15 actual resume skips | VERIFIED |
-| Consumers reject incompatible/stale artifacts | models/run_validation + CLI consumers | wrong seed/config/cache and stale hash tests | VERIFIED |
-| Joint fidelity with equal random budgets | evaluation/fidelity + evaluate_fidelity CLI | exact toy tests + 200 queries × 3 checkpoints | VERIFIED |
-| Paired uncertainty with image grouping | evaluation/ablation_analysis | clustered toy test + 1,500-image bootstrap | VERIFIED |
-| Labels/true topology improve retrieval generally | analysis/ablation.json | exploratory conditional CIs contain zero | UNKNOWN |
-| Caption-type/annotation noise causes aggregate result | ten cases only | no representative labeled audit | UNKNOWN |
+Bộ mã cuối qua 263 kiểm thử, Ruff và mypy sạch. Hai bài thực hành lỗi có chủ
+đích ở clone riêng trong `private/bug-lab/` có 264 kiểm thử qua sau sửa, không
+được tính thành kiểm thử của nhánh chính. Không coi lỗi mô phỏng là sự cố thật.
 
-262 tests passed, Ruff entire src/scripts/tests clean, mypy src/scripts clean
-(using isolated tooling installed under /tmp; model/runtime dependencies unchanged).
-Docs: docs/graphsage-design-decisions.md. No retrieval tuning after observing test.
-No commit made; keep private/ ignored. Historical baseline outputs replaced during
-restoration should be reviewed separately from code changes when preparing commits.
+## Tài liệu, định dạng và Git
 
-Formatting/artifact policy update (18/11/2026): new Python modules/tests formatted
-fully; existing modules formatted only in changed ranges. Processing steps use
-short English comments and substantial calls/signatures use multiline parameters.
-`/runs/` and `/private/` now ignored for new artifacts; existing tracked run files
-remain tracked and unchanged by this policy. The requirements checklist now
-reflects VG-COCO 10K rather than obsolete 40-image pilot code. No result files
-were regenerated, deleted, restored or untracked during formatting.
+- Tài liệu diễn giải dùng tiếng Việt; giữ nguyên tên hàm, đường dẫn, tham số và tên thư viện. Chú thích trong mã, tên biến và nhật ký chương trình vẫn theo quy ước tiếng Anh đã chốt.
+- Tệp Python mới định dạng toàn bộ, tệp cũ chỉ sửa vùng thay đổi. Chia nhóm thao tác, chú thích ngắn và tách dòng lời gọi nhiều tham số; phần nhập mô-đun theo Ruff.
+- `runs/` và `private/` bỏ qua đầu ra mới; tệp lịch sử đã theo dõi vẫn được theo dõi. Không tự xoá hoặc ngừng theo dõi kết quả của người dùng.
+- Đã chia lịch sử thành tám commit; commit mô phỏng lỗi resume được đánh dấu rõ và sửa ngay sau đó. Nhánh chính cuối cùng đã sửa, không có kiểm thử dự kiến thất bại còn bật.
+- Chỉ cập nhật tài liệu đã có trên main. Tài liệu mới local và mọi nội dung `private/` không được commit.
+- Hướng dẫn hiện hành: `docs/graphsage-design-decisions.md`; trạng thái nghiệm thu: `plan-task/requirements-checklist.md`; report tương tác local: `private/ablation-guide.html`.
+
+Giai đoạn 5 vẫn còn tập thứ hai, thí nghiệm xử lý đỉnh bậc cao và đánh giá ngữ
+nghĩa. Không chỉnh tham số truy hồi sau khi quan sát tập kiểm thử để ép bản đầy
+đủ thắng các biến thể.

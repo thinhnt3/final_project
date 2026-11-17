@@ -21,7 +21,7 @@ Cập nhật: 18/11/2026.
 
 ## Mức 3
 
-- Xây MMKG: crawl dữ liệu, sinh text query thoả tiêu chí ([build_MMKG.md](build_MMKG.md)) - Nghị
+- Xây MMKG: crawl dữ liệu, sinh text query thoả tiêu chí ([build_MMKG.md](docs/build_MMKG.md)) - Nghị
 - Fidelity, validity, sparsity - đang làm - Nghị
 
 ## Mức 4

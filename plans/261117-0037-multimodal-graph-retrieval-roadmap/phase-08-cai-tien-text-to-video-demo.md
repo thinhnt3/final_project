@@ -16,7 +16,7 @@ Cải tiến cuối, thử mở rộng sang truy hồi video, và một demo gõ
 
 ## Todo
 
-- [ ] Chọn cải tiến dựa trên phân tích thất bại ở Phase 4
+- [ ] Chọn cải tiến dựa trên phân tích thất bại ở Giai đoạn 4
 - [ ] Thử nghiệm text-to-video trên tập con
 - [ ] Dựng demo
 - [ ] Hoàn thiện báo cáo
