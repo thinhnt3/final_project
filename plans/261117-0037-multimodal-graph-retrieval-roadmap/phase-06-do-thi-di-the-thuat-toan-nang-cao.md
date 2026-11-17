@@ -12,7 +12,7 @@ Một mô hình nâng cao (R-GCN hoặc HGT) trên đồ thị có nhiều loạ
 ## Requirements
 
 - [ ] Đồ thị dị thể: loại đỉnh ảnh/khái niệm, mỗi quan hệ một loại cạnh
-- [ ] So sánh trên đúng benchmark của Phase 3
+- [ ] So sánh trên đúng benchmark của Giai đoạn 3
 
 ## Todo
 
