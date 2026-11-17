@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="452" viewBox="0 0 1000 452" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Ví dụ minh hoạ xếp hạng lại</title>
+<desc id="fig-desc">Ví dụ với số giả định: ba ảnh ứng viên cho truy vấn a man riding a horse. Theo CLIP, ảnh A đứng đầu. Sau khi cộng điểm đồ thị với alpha bằng 0,8, ảnh B (người cưỡi ngựa, ảnh đúng) lên hạng 1.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-blueT { fill: #22364e; } .s-blueT { stroke: #22364e; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-card { fill: #262624; } .s-card { stroke: #262624; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+}
+</style>
+<defs></defs>
+<rect x="0.5" y="0.5" width="999.0" height="451.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Xếp hạng lại hoạt động thế nào (ví dụ minh hoạ, số giả định)</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Truy vấn: “a man riding a horse”. Với α = 0,8: điểm cuối = 0,8 × điểm CLIP + 0,2 × điểm đồ thị.</text>
+<text x="28.0" y="102.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Thứ tự theo CLIP</text>
+<text x="344.0" y="102.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Tính điểm cuối</text>
+<text x="676.0" y="102.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Sau khi xếp lại</text>
+<rect x="28.0" y="116.0" width="296.0" height="82.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="50.0" y="166.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >1</text>
+<text x="74.0" y="144.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh A · người đứng cạnh ngựa</text>
+<text x="74.0" y="165.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >man → next to → horse</text>
+<text x="74.0" y="185.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm CLIP 0,31</text>
+<rect x="28.0" y="212.0" width="296.0" height="82.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.6"></rect>
+<text x="50.0" y="262.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >2</text>
+<text x="74.0" y="240.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh B · người cưỡi ngựa</text>
+<text x="74.0" y="261.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >man → riding → horse</text>
+<text x="74.0" y="281.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm CLIP 0,30</text>
+<text x="312.0" y="281.0" font-size="12" font-weight="600" text-anchor="end" fill="#0b0b0b" class="f-ink" >ảnh đúng ✓</text>
+<rect x="28.0" y="308.0" width="296.0" height="82.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="50.0" y="358.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >3</text>
+<text x="74.0" y="336.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh C · ngựa trên đồng cỏ</text>
+<text x="74.0" y="357.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >horse → on → grass</text>
+<text x="74.0" y="377.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm CLIP 0,28</text>
+<rect x="676.0" y="116.0" width="296.0" height="82.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.6"></rect>
+<text x="698.0" y="166.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >1</text>
+<text x="722.0" y="144.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh B · người cưỡi ngựa</text>
+<text x="722.0" y="165.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >man → riding → horse</text>
+<text x="722.0" y="185.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm cuối 0,330</text>
+<text x="960.0" y="185.0" font-size="12" font-weight="600" text-anchor="end" fill="#0b0b0b" class="f-ink" >ảnh đúng ✓</text>
+<rect x="676.0" y="212.0" width="296.0" height="82.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="698.0" y="262.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >2</text>
+<text x="722.0" y="240.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh A · người đứng cạnh ngựa</text>
+<text x="722.0" y="261.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >man → next to → horse</text>
+<text x="722.0" y="281.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm cuối 0,308</text>
+<rect x="676.0" y="308.0" width="296.0" height="82.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="698.0" y="358.0" font-size="26" font-weight="700" text-anchor="middle" fill="#0b0b0b" class="f-ink" >3</text>
+<text x="722.0" y="336.0" font-size="14" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh C · ngựa trên đồng cỏ</text>
+<text x="722.0" y="357.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >horse → on → grass</text>
+<text x="722.0" y="377.0" font-size="12.5" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >điểm cuối 0,274</text>
+<rect x="344.0" y="124.0" width="304.0" height="66.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="358.0" y="150.0" font-size="13" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh A</text>
+<text x="634.0" y="150.0" font-size="12.5" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#52514e" class="f-ink2" >đồ thị 0,30</text>
+<text x="358.0" y="174.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,8 × 0,31 + 0,2 × 0,30 = 0,308</text>
+<rect x="344.0" y="220.0" width="304.0" height="66.0" rx="8" fill="#ffffff" stroke="#2a78d6" class="f-card s-blue" stroke-width="1.6"></rect>
+<text x="358.0" y="246.0" font-size="13" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh B</text>
+<text x="634.0" y="246.0" font-size="12.5" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#52514e" class="f-ink2" >đồ thị 0,45</text>
+<text x="358.0" y="270.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,8 × 0,30 + 0,2 × 0,45 = 0,330</text>
+<rect x="344.0" y="316.0" width="304.0" height="66.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="358.0" y="342.0" font-size="13" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ảnh C</text>
+<text x="634.0" y="342.0" font-size="12.5" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#52514e" class="f-ink2" >đồ thị 0,25</text>
+<text x="358.0" y="366.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,8 × 0,28 + 0,2 × 0,25 = 0,274</text>
+<text x="28.0" y="416.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Ảnh B có quan hệ “man riding horse” khớp truy vấn nên điểm đồ thị cao nhất (0,45) và vượt lên ảnh A.</text>
+<text x="28.0" y="436.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Trong ví dụ này CLIP thấy người và ngựa ở cả A lẫn B nên điểm CLIP của hai ảnh gần nhau.</text>
+</svg>

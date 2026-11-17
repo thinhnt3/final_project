@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Giải thích bằng cách bỏ từng relation</title>
+<desc id="fig-desc">Ảnh đúng 2350042: bỏ woman cutting cake giảm 0,0073; bỏ woman wearing shirt giảm 0,0063; bỏ candle on cake giảm 0,0052.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-axis { fill: #4a4a46; } .s-axis { stroke: #4a4a46; }
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-grid { fill: #2c2c2a; } .s-grid { stroke: #2c2c2a; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-white { fill: #ffffff; } .s-white { stroke: #ffffff; }
+}
+</style>
+<defs></defs>
+<rect x="0.5" y="0.5" width="999.0" height="399.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Giải thích: bỏ từng relation rồi xem điểm đồ thị giảm bao nhiêu</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Truy vấn “Woman is just about to cut birthday cake as friends are around.” · ảnh đúng 2350042 · seed 13</text>
+<circle cx="44.0" cy="110.0" r="12" fill="#2a78d6" class="f-blue" stroke-width="1.0"></circle>
+<text x="44.0" y="115.0" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >1</text>
+<text x="66.0" y="115.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Điểm đồ thị với đủ relation: 0,4142</text>
+<circle cx="44.0" cy="152.0" r="12" fill="#2a78d6" class="f-blue" stroke-width="1.0"></circle>
+<text x="44.0" y="157.0" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >2</text>
+<text x="66.0" y="157.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Bỏ một relation (giữ hai đối tượng của nó)</text>
+<circle cx="44.0" cy="194.0" r="12" fill="#2a78d6" class="f-blue" stroke-width="1.0"></circle>
+<text x="44.0" y="199.0" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >3</text>
+<text x="66.0" y="199.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Cho đồ thị mới qua GraphSAGE, tính lại điểm</text>
+<circle cx="44.0" cy="236.0" r="12" fill="#2a78d6" class="f-blue" stroke-width="1.0"></circle>
+<text x="44.0" y="241.0" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >4</text>
+<text x="66.0" y="241.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Mức giảm = điểm đầy đủ − điểm mới</text>
+<circle cx="44.0" cy="278.0" r="12" fill="#2a78d6" class="f-blue" stroke-width="1.0"></circle>
+<text x="44.0" y="283.0" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >5</text>
+<text x="66.0" y="283.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Lặp lại với từng relation, xếp theo mức giảm</text>
+<line x1="484.0" y1="92.0" x2="484.0" y2="300.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="512.0" y="104.0" font-size="13.5" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ba relation làm điểm giảm nhiều nhất</text>
+<text x="512.0" y="143.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >woman → cutting → cake</text>
+<path d="M700,128.0 h205.9 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-205.9 z" fill="#2a78d6" class="f-blue" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>woman → cutting → cake: giảm 0,0073</title></path>
+<text x="917.9" y="143.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,0073</text>
+<text x="512.0" y="195.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >woman → wearing → shirt</text>
+<path d="M700,180.0 h177.1 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-177.1 z" fill="#2a78d6" class="f-blue" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>woman → wearing → shirt: giảm 0,0063</title></path>
+<text x="889.1" y="195.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,0063</text>
+<text x="512.0" y="247.0" font-size="13" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >candle → on → cake</text>
+<path d="M700,232.0 h145.5 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-145.5 z" fill="#2a78d6" class="f-blue" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>candle → on → cake: giảm 0,0052</title></path>
+<text x="857.5" y="247.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,0052</text>
+<line x1="700.0" y1="120.0" x2="700.0" y2="260.0" fill="none" stroke="#c3c2b7" class="s-axis" stroke-width="1.0" stroke-linecap="round" />
+<text x="512.0" y="288.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Các relation còn lại của ảnh làm điểm giảm ít hơn.</text>
+<text x="28.0" y="336.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Relation đứng đầu, woman → cutting → cake, đúng là hành động mà truy vấn mô tả. Nhưng mức giảm rất nhỏ so với điểm 0,4142: gợi ý phần lớn điểm đồ thị đến</text>
+<text x="28.0" y="354.1" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >từ các đối tượng. Relation đóng góp thật đến đâu sẽ được kiểm bằng ablation và fidelity ở Phase 5.</text>
+</svg>

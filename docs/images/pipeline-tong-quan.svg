@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="508" viewBox="0 0 1080 508" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Toàn cảnh pipeline truy hồi</title>
+<desc id="fig-desc">Chuẩn bị trước: ảnh qua CLIP thành vector ảnh, đồ thị cảnh qua GraphSAGE thành vector đồ thị. Khi có truy vấn: CLIP văn bản, chọn top-k theo cosine CLIP, tính điểm đồ thị, trộn điểm theo alpha, trả danh sách ảnh kèm relation giải thích.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-band { fill: #222221; } .s-band { stroke: #222221; }
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-blueT { fill: #22364e; } .s-blueT { stroke: #22364e; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-card { fill: #262624; } .s-card { stroke: #262624; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-muted { fill: #8f8d86; } .s-muted { stroke: #8f8d86; }
+}
+</style>
+<defs><marker id="ah-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6 L9.4,5 L0,9.4 z" fill="#898781" class="f-muted"/></marker></defs>
+<rect x="0.5" y="0.5" width="1079.0" height="507.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Toàn cảnh: từ câu truy vấn đến danh sách ảnh đã xếp lại</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Phần trên làm một lần cho cả 10.000 ảnh rồi lưu ra đĩa. Phần dưới chạy mỗi khi có một câu truy vấn.</text>
+<rect x="20.0" y="86.0" width="1040.0" height="186.0" rx="12" fill="#f3f2ee" class="f-band" stroke-width="1.0"></rect>
+<text x="40.0" y="110.0" font-size="12" font-weight="600" text-anchor="start" fill="#52514e" class="f-ink2" letter-spacing="0.06em">CHUẨN BỊ TRƯỚC · làm một lần</text>
+<rect x="211.0" y="124.0" width="148.0" height="54.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="285.0" y="147.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >Đồ thị cảnh</text>
+<text x="285.0" y="164.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >nhãn Visual Genome</text>
+<rect x="381.0" y="124.0" width="148.0" height="54.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.2"></rect>
+<text x="455.0" y="147.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >GraphSAGE</text>
+<text x="455.0" y="164.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >đã huấn luyện</text>
+<rect x="551.0" y="124.0" width="148.0" height="54.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="625.0" y="147.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >Vector đồ thị</text>
+<text x="625.0" y="164.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >1 vector cho mỗi ảnh</text>
+<rect x="41.0" y="202.0" width="148.0" height="54.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="115.0" y="225.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >10.000 ảnh</text>
+<text x="115.0" y="242.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >VG ∩ COCO</text>
+<rect x="211.0" y="202.0" width="148.0" height="54.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="285.0" y="225.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >CLIP ảnh</text>
+<text x="285.0" y="242.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >đóng băng</text>
+<rect x="381.0" y="202.0" width="148.0" height="54.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="455.0" y="225.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >Vector CLIP ảnh</text>
+<text x="455.0" y="242.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >512 số cho mỗi ảnh</text>
+<line x1="361.0" y1="151.0" x2="378.0" y2="151.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="531.0" y1="151.0" x2="548.0" y2="151.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="191.0" y1="229.0" x2="208.0" y2="229.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="361.0" y1="229.0" x2="378.0" y2="229.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="742.0" y="146.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Chỉ GraphSAGE được huấn luyện,</text>
+<text x="742.0" y="165.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >trên 7.000 ảnh train.</text>
+<text x="742.0" y="184.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >CLIP giữ nguyên, không học thêm.</text>
+<text x="742.0" y="203.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Vector lưu ra đĩa, lúc truy vấn</text>
+<text x="742.0" y="222.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >chỉ việc đọc lại.</text>
+<rect x="724.0" y="132.0" width="4.0" height="88.0" rx="2" fill="#2a78d6" class="f-blue" stroke-width="1.0"></rect>
+<rect x="20.0" y="302.0" width="1040.0" height="134.0" rx="12" fill="#f3f2ee" class="f-band" stroke-width="1.0"></rect>
+<text x="40.0" y="326.0" font-size="12" font-weight="600" text-anchor="start" fill="#52514e" class="f-ink2" letter-spacing="0.06em">KHI CÓ TRUY VẤN · chạy cho từng câu</text>
+<rect x="41.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="115.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >Câu truy vấn</text>
+<text x="115.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >một câu tiếng Anh</text>
+<rect x="211.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="285.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >CLIP văn bản</text>
+<text x="285.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >đóng băng</text>
+<rect x="381.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="455.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >① Chọn top-k</text>
+<text x="455.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >theo cosine CLIP</text>
+<rect x="551.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.2"></rect>
+<text x="625.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >② Điểm đồ thị</text>
+<text x="625.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >cos(truy vấn, đồ thị)</text>
+<rect x="721.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.2"></rect>
+<text x="795.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >③ Trộn điểm</text>
+<text x="795.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >α·CLIP + (1−α)·đồ thị</text>
+<rect x="891.0" y="348.0" width="148.0" height="66.0" rx="10" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="965.0" y="377.8" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >④ Trả kết quả</text>
+<text x="965.0" y="394.4" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >ảnh + relation giải thích</text>
+<line x1="191.0" y1="381.0" x2="208.0" y2="381.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="361.0" y1="381.0" x2="378.0" y2="381.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="531.0" y1="381.0" x2="548.0" y2="381.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="701.0" y1="381.0" x2="718.0" y2="381.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="871.0" y1="381.0" x2="888.0" y2="381.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="455.0" y1="258.0" x2="455.0" y2="345.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<line x1="625.0" y1="180.0" x2="625.0" y2="345.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="463.0" y="290.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >so với vector truy vấn</text>
+<text x="633.0" y="290.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >đọc vector của k ứng viên</text>
+<text x="41.0" y="466.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Ví dụ thật trên tập test: truy vấn “Woman is just about to cut birthday cake as friends are around.”</text>
+<text x="41.0" y="486.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >→ ảnh đúng (2350042) đứng hạng 1; relation giải thích đứng đầu: woman → cutting → cake.</text>
+</svg>

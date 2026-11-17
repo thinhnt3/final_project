@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Đồ thị con của ảnh 2350042</title>
+<desc id="fig-desc">Đỉnh ảnh nối tới các đỉnh đối tượng shirt, woman, cake, candle, knife, girl, chair. Mỗi relation là một đỉnh phụ: woman → wearing → shirt, woman → cutting → cake, candle → on → cake, girl → on → chair.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-aqua { fill: #199e70; } .s-aqua { stroke: #199e70; }
+  .f-aquaT { fill: #1a3c30; } .s-aquaT { stroke: #1a3c30; }
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-blueT { fill: #22364e; } .s-blueT { stroke: #22364e; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-gray { fill: #5f5e59; } .s-gray { stroke: #5f5e59; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-orange { fill: #d95926; } .s-orange { stroke: #d95926; }
+  .f-orangeT { fill: #4c2a1c; } .s-orangeT { stroke: #4c2a1c; }
+}
+</style>
+<defs><marker id="ah-gray" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6 L9.4,5 L0,9.4 z" fill="#b3b1aa" class="f-gray"/></marker><marker id="ah-ink2" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6 L9.4,5 L0,9.4 z" fill="#52514e" class="f-ink2"/></marker></defs>
+<rect x="0.5" y="0.5" width="999.0" height="559.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Đồ thị con của một ảnh thật (ảnh test 2350042)</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Mỗi relation được lưu thành một đỉnh phụ mang nhãn, vì lớp GraphSAGE không đọc được nhãn trên cạnh.</text>
+<rect x="416.0" y="92.0" width="164.0" height="48.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.6"></rect>
+<text x="498.0" y="121.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >ảnh 2350042</text>
+<line x1="449.8" y1="141.0" x2="96.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="465.8" y1="141.0" x2="230.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="481.9" y1="141.0" x2="364.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="498.0" y1="141.0" x2="498.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="514.1" y1="141.0" x2="632.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="531.4" y1="141.0" x2="776.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<line x1="546.7" y1="141.0" x2="904.0" y2="229.0" fill="none" stroke="#b3b1aa" class="s-gray" stroke-width="1.2" stroke-linecap="round" marker-end="url(#ah-gray)"/>
+<text x="575.0" y="184.0" font-size="12" font-weight="400" text-anchor="start" font-style="italic" fill="#52514e" class="f-ink2" >chứa</text>
+<rect x="125.4" y="345.0" width="75.1" height="30.0" rx="7" fill="#e1f3ec" stroke="#1baf7a" class="f-aquaT s-aqua" stroke-width="1.4"></rect>
+<text x="163.0" y="365.0" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >wearing</text>
+<line x1="224.0" y1="269.0" x2="179.5" y2="343.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<line x1="146.5" y1="343.0" x2="102.0" y2="271.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<rect x="263.5" y="345.0" width="67.0" height="30.0" rx="7" fill="#e1f3ec" stroke="#1baf7a" class="f-aquaT s-aqua" stroke-width="1.4"></rect>
+<text x="297.0" y="365.0" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >cutting</text>
+<line x1="236.0" y1="269.0" x2="282.3" y2="343.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<line x1="311.7" y1="343.0" x2="358.0" y2="271.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<rect x="410.9" y="345.0" width="40.2" height="30.0" rx="7" fill="#e1f3ec" stroke="#1baf7a" class="f-aquaT s-aqua" stroke-width="1.4"></rect>
+<text x="431.0" y="365.0" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >on</text>
+<line x1="492.0" y1="269.0" x2="439.9" y2="343.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<line x1="422.1" y1="343.0" x2="370.0" y2="271.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<rect x="819.9" y="345.0" width="40.2" height="30.0" rx="7" fill="#e1f3ec" stroke="#1baf7a" class="f-aquaT s-aqua" stroke-width="1.4"></rect>
+<text x="840.0" y="365.0" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >on</text>
+<line x1="782.0" y1="269.0" x2="831.1" y2="343.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<line x1="848.9" y1="343.0" x2="898.0" y2="271.0" fill="none" stroke="#52514e" class="s-ink2" stroke-width="1.4" stroke-linecap="round" marker-end="url(#ah-ink2)"/>
+<rect x="66.1" y="232.0" width="59.7" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="96.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >shirt</text>
+<rect x="189.7" y="232.0" width="80.7" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="230.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >woman</text>
+<rect x="332.4" y="232.0" width="63.2" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="364.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >cake</text>
+<rect x="459.8" y="232.0" width="76.3" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="498.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >candle</text>
+<rect x="600.4" y="232.0" width="63.2" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="632.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >knife</text>
+<rect x="750.5" y="232.0" width="51.0" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="776.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >girl</text>
+<rect x="872.0" y="232.0" width="64.1" height="36.0" rx="18" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="904.0" y="255.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >chair</text>
+<text x="640.0" y="88.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Một caption của ảnh này, dùng làm truy vấn:</text>
+<text x="640.0" y="108.0" font-size="12.5" font-weight="400" text-anchor="start" font-style="italic" fill="#0b0b0b" class="f-ink" >“Woman is just about to cut birthday cake</text>
+<text x="640.0" y="127.0" font-size="12.5" font-weight="400" text-anchor="start" font-style="italic" fill="#0b0b0b" class="f-ink" >as friends are around.”</text>
+<rect x="28.0" y="420.0" width="34.0" height="22.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.4"></rect>
+<text x="72.0" y="436.0" font-size="13.5" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Đỉnh ảnh</text>
+<text x="28.0" y="464.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Vector ban đầu: một vector học được, dùng chung</text>
+<text x="28.0" y="481.4" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >cho mọi ảnh (mô hình chính), hoặc vector CLIP của</text>
+<text x="28.0" y="498.8" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >chính ảnh (biến thể).</text>
+<rect x="348.0" y="420.0" width="34.0" height="22.0" rx="12" fill="#faeae3" stroke="#eb6834" class="f-orangeT s-orange" stroke-width="1.4"></rect>
+<text x="392.0" y="436.0" font-size="13.5" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Đỉnh đối tượng</text>
+<text x="348.0" y="464.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Vector ban đầu: vector CLIP văn bản của chữ trên</text>
+<text x="348.0" y="481.4" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >đỉnh, ví dụ “woman”. Một khái niệm là một đỉnh.</text>
+<rect x="668.0" y="420.0" width="34.0" height="22.0" rx="7" fill="#e1f3ec" stroke="#1baf7a" class="f-aquaT s-aqua" stroke-width="1.4"></rect>
+<text x="712.0" y="436.0" font-size="13.5" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Đỉnh phụ (relation)</text>
+<text x="668.0" y="464.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Vector ban đầu: vector CLIP văn bản của vị từ, ví</text>
+<text x="668.0" y="481.4" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >dụ “cutting”. Cạnh đi chủ thể → đỉnh phụ → đối</text>
+<text x="668.0" y="498.8" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >tượng.</text>
+<text x="28.0" y="544.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Ảnh thật có 15 đối tượng và 6 relation; hình vẽ 7 đối tượng và 4 relation. Hai người phụ nữ trong ảnh gộp thành một đỉnh “woman”.</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="446" viewBox="0 0 920 446" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Quét alpha trên validation</title>
+<desc id="fig-desc">R@1 trên validation theo alpha, phương pháp so khớp từ, k = 50. Đỉnh tại alpha = 0,91 với R@1 46,39; alpha = 1 là CLIP thuần với 42,64.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-axis { fill: #4a4a46; } .s-axis { stroke: #4a4a46; }
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-gray2 { fill: #a9a79f; } .s-gray2 { stroke: #a9a79f; }
+  .f-grid { fill: #2c2c2a; } .s-grid { stroke: #2c2c2a; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-muted { fill: #8f8d86; } .s-muted { stroke: #8f8d86; }
+}
+</style>
+<defs></defs>
+<rect x="0.5" y="0.5" width="919.0" height="445.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Chọn α trên validation: R@1 theo α (phương pháp so khớp từ, k = 50)</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >α = 1 là CLIP thuần; α = 0 là chỉ dùng điểm đồ thị bên trong k ứng viên. Đơn vị: %.</text>
+<line x1="72.0" y1="340.0" x2="880.0" y2="340.0" fill="none" stroke="#c3c2b7" class="s-axis" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="344.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0</text>
+<line x1="72.0" y1="292.0" x2="880.0" y2="292.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="296.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >10</text>
+<line x1="72.0" y1="244.0" x2="880.0" y2="244.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="248.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >20</text>
+<line x1="72.0" y1="196.0" x2="880.0" y2="196.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="200.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >30</text>
+<line x1="72.0" y1="148.0" x2="880.0" y2="148.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="152.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >40</text>
+<line x1="72.0" y1="100.0" x2="880.0" y2="100.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="104.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >50</text>
+<text x="72.0" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0,0</text>
+<text x="233.6" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0,2</text>
+<text x="395.2" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0,4</text>
+<text x="556.8" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0,6</text>
+<text x="718.4" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0,8</text>
+<text x="880.0" y="360.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >1,0</text>
+<text x="476.0" y="380.0" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >α (trọng số của điểm CLIP)</text>
+<path d="M72.0,263.8 L80.1,204.6 L88.2,204.4 L96.2,204.1 L104.3,204.1 L112.4,203.5 L120.5,203.3 L128.6,203.1 L136.6,202.9 L144.7,202.7 L152.8,202.3 L160.9,201.8 L169.0,201.4 L177.0,201.0 L185.1,200.8 L193.2,200.6 L201.3,200.4 L209.4,199.8 L217.4,199.6 L225.5,199.5 L233.6,198.8 L241.7,198.5 L249.8,198.4 L257.8,198.3 L265.9,197.8 L274.0,197.2 L282.1,196.7 L290.2,196.2 L298.2,195.8 L306.3,195.0 L314.4,194.5 L322.5,194.1 L330.6,193.7 L338.6,193.3 L346.7,193.0 L354.8,192.2 L362.9,191.6 L371.0,190.8 L379.0,190.3 L387.1,189.6 L395.2,189.1 L403.3,188.5 L411.4,187.4 L419.4,186.6 L427.5,186.0 L435.6,185.2 L443.7,184.5 L451.8,183.7 L459.8,182.9 L467.9,182.0 L476.0,181.3 L484.1,180.7 L492.2,179.8 L500.2,178.3 L508.3,177.4 L516.4,176.2 L524.5,174.5 L532.6,173.3 L540.6,172.2 L548.7,170.7 L556.8,169.5 L564.9,168.5 L573.0,167.6 L581.0,166.4 L589.1,164.1 L597.2,162.8 L605.3,161.8 L613.4,160.3 L621.4,159.0 L629.5,157.2 L637.6,155.2 L645.7,153.3 L653.8,151.5 L661.8,150.3 L669.9,148.9 L678.0,146.4 L686.1,145.2 L694.2,143.2 L702.2,140.8 L710.3,139.0 L718.4,137.6 L726.5,135.5 L734.6,133.8 L742.6,132.1 L750.7,129.4 L758.8,126.7 L766.9,125.4 L775.0,123.8 L783.0,121.9 L791.1,120.2 L799.2,119.2 L807.3,117.3 L815.4,117.9 L823.4,117.4 L831.5,118.1 L839.6,120.2 L847.7,122.7 L855.8,125.3 L863.8,128.1 L871.9,131.5 L880.0,135.3" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+<circle cx="807.3" cy="117.3" r="6" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"></circle>
+<circle cx="72.0" cy="263.8" r="5" fill="#6f6d67" stroke="#fcfcfb" class="f-gray2 s-bg" stroke-width="2"></circle>
+<circle cx="880.0" cy="135.3" r="5" fill="#6f6d67" stroke="#fcfcfb" class="f-gray2 s-bg" stroke-width="2"></circle>
+<text x="795.3" y="103.3" font-size="13" font-weight="600" text-anchor="end" fill="#0b0b0b" class="f-ink" >chọn α = 0,91: 46,39</text>
+<text x="876.0" y="161.3" font-size="12.5" font-weight="400" text-anchor="end" fill="#0b0b0b" class="f-ink" >α = 1 (CLIP thuần): 42,64</text>
+<text x="82.0" y="285.8" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >α = 0 (chỉ điểm đồ thị): 15,87</text>
+<text x="28.0" y="406.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Đỉnh hẹp: lệch α đi 0,05 là R@1 giảm khoảng 1–2 điểm, nên α được quét với bước 0,01.</text>
+<text x="28.0" y="426.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Lượt chạy GraphSAGE chỉ lưu α đã chọn cho từng seed, không lưu cả đường quét, nên hình dùng phương pháp so khớp từ làm ví dụ.</text>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="466" viewBox="0 0 1000 466" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Huấn luyện bằng InfoNCE trong batch</title>
+<desc id="fig-desc">Đồ thị của ảnh i đi qua GraphSAGE thành vector g_i; caption của ảnh i đi qua CLIP văn bản đóng băng thành t_i. Bảng điểm g_i với t_j: ô đường chéo là cặp đúng, được kéo lên; các ô khác là cặp sai, bị đẩy xuống.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-blueT { fill: #22364e; } .s-blueT { stroke: #22364e; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-card { fill: #262624; } .s-card { stroke: #262624; }
+  .f-grayT { fill: #30302e; } .s-grayT { stroke: #30302e; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-muted { fill: #8f8d86; } .s-muted { stroke: #8f8d86; }
+  .f-white { fill: #ffffff; } .s-white { stroke: #ffffff; }
+}
+</style>
+<defs><marker id="ah-muted" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6 L9.4,5 L0,9.4 z" fill="#898781" class="f-muted"/></marker></defs>
+<rect x="0.5" y="0.5" width="999.0" height="465.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Huấn luyện: kéo vector đồ thị của ảnh về gần vector caption của chính ảnh đó</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >InfoNCE trong batch. CLIP đóng băng; chỉ GraphSAGE và tầng chiếu được cập nhật (3,41 triệu tham số).</text>
+<rect x="34.0" y="189.0" width="140.0" height="36.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="104.0" y="211.7" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >đồ thị ảnh 1</text>
+<line x1="176.0" y1="207.0" x2="214.0" y2="207.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<rect x="34.0" y="239.0" width="140.0" height="36.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="104.0" y="261.7" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >đồ thị ảnh 2</text>
+<line x1="176.0" y1="257.0" x2="214.0" y2="257.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<rect x="34.0" y="289.0" width="140.0" height="36.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="104.0" y="311.7" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >đồ thị ảnh 3</text>
+<line x1="176.0" y1="307.0" x2="214.0" y2="307.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<rect x="34.0" y="339.0" width="140.0" height="36.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="104.0" y="361.7" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >đồ thị ảnh 4</text>
+<line x1="176.0" y1="357.0" x2="214.0" y2="357.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<rect x="218.0" y="190.0" width="160.0" height="184.0" rx="10" fill="#e3ecf7" stroke="#2a78d6" class="f-blueT s-blue" stroke-width="1.2"></rect>
+<text x="298.0" y="269.7" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >GraphSAGE</text>
+<text x="298.0" y="287.9" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >+ tầng chiếu</text>
+<text x="298.0" y="304.5" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >được học</text>
+<line x1="380.0" y1="207.0" x2="466.0" y2="207.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="488.0" y="212.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >g1</text>
+<line x1="380.0" y1="257.0" x2="466.0" y2="257.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="488.0" y="262.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >g2</text>
+<line x1="380.0" y1="307.0" x2="466.0" y2="307.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="488.0" y="312.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >g3</text>
+<line x1="380.0" y1="357.0" x2="466.0" y2="357.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="488.0" y="362.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >g4</text>
+<rect x="520.0" y="98.0" width="200.0" height="42.0" rx="8" fill="#ffffff" stroke="#d6d5ce" class="f-card s-border" stroke-width="1.2"></rect>
+<text x="620.0" y="115.7" font-size="13" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >CLIP văn bản</text>
+<text x="620.0" y="131.6" font-size="11.5" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >đóng băng</text>
+<text x="620.0" y="90.0" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >caption của ảnh 1, 2, 3, 4</text>
+<line x1="545.0" y1="142.0" x2="545.0" y2="156.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="545.0" y="174.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >t1</text>
+<line x1="595.0" y1="142.0" x2="595.0" y2="156.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="595.0" y="174.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >t2</text>
+<line x1="645.0" y1="142.0" x2="645.0" y2="156.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="645.0" y="174.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >t3</text>
+<line x1="695.0" y1="142.0" x2="695.0" y2="156.0" fill="none" stroke="#898781" class="s-muted" stroke-width="1.5" stroke-linecap="round" marker-end="url(#ah-muted)"/>
+<text x="695.0" y="174.0" font-size="14" font-weight="600" text-anchor="middle" fill="#0b0b0b" class="f-ink" >t4</text>
+<rect x="521.0" y="183.0" width="48.0" height="48.0" rx="4" fill="#2a78d6" class="f-blue" stroke-width="1.0"><title>cặp đúng g1·t1</title></rect>
+<text x="545.0" y="213.0" font-size="17" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >↑</text>
+<rect x="571.0" y="183.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g1·t2</title></rect>
+<text x="595.0" y="212.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="621.0" y="183.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g1·t3</title></rect>
+<text x="645.0" y="212.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="671.0" y="183.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g1·t4</title></rect>
+<text x="695.0" y="212.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="521.0" y="233.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g2·t1</title></rect>
+<text x="545.0" y="262.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="571.0" y="233.0" width="48.0" height="48.0" rx="4" fill="#2a78d6" class="f-blue" stroke-width="1.0"><title>cặp đúng g2·t2</title></rect>
+<text x="595.0" y="263.0" font-size="17" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >↑</text>
+<rect x="621.0" y="233.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g2·t3</title></rect>
+<text x="645.0" y="262.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="671.0" y="233.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g2·t4</title></rect>
+<text x="695.0" y="262.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="521.0" y="283.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g3·t1</title></rect>
+<text x="545.0" y="312.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="571.0" y="283.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g3·t2</title></rect>
+<text x="595.0" y="312.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="621.0" y="283.0" width="48.0" height="48.0" rx="4" fill="#2a78d6" class="f-blue" stroke-width="1.0"><title>cặp đúng g3·t3</title></rect>
+<text x="645.0" y="313.0" font-size="17" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >↑</text>
+<rect x="671.0" y="283.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g3·t4</title></rect>
+<text x="695.0" y="312.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="521.0" y="333.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g4·t1</title></rect>
+<text x="545.0" y="362.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="571.0" y="333.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g4·t2</title></rect>
+<text x="595.0" y="362.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="621.0" y="333.0" width="48.0" height="48.0" rx="4" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"><title>cặp sai g4·t3</title></rect>
+<text x="645.0" y="362.0" font-size="14" font-weight="400" text-anchor="middle" fill="#898781" class="f-muted" >↓</text>
+<rect x="671.0" y="333.0" width="48.0" height="48.0" rx="4" fill="#2a78d6" class="f-blue" stroke-width="1.0"><title>cặp đúng g4·t4</title></rect>
+<text x="695.0" y="363.0" font-size="17" font-weight="700" text-anchor="middle" fill="#ffffff" class="f-white" >↑</text>
+<rect x="752.0" y="181.0" width="14.0" height="14.0" rx="3" fill="#2a78d6" class="f-blue" stroke-width="1.0"></rect>
+<text x="774.0" y="194.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ô đậm: ảnh i với caption của chính</text>
+<text x="774.0" y="212.1" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >nó. Điểm được kéo lên.</text>
+<rect x="752.0" y="229.2" width="14.0" height="14.0" rx="3" fill="#f0f0ef" stroke="#d6d5ce" class="f-grayT s-border" stroke-width="1.0"></rect>
+<text x="774.0" y="242.2" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >Ô nhạt: ảnh với caption của ảnh</text>
+<text x="774.0" y="260.4" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >khác trong cùng batch. Điểm bị đẩy</text>
+<text x="774.0" y="278.5" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >xuống.</text>
+<text x="752.0" y="308.6" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Mất mát tính theo cả hai chiều: theo</text>
+<text x="752.0" y="326.8" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >hàng (ảnh → caption) và theo cột</text>
+<text x="752.0" y="344.9" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >(caption → ảnh).</text>
+<text x="34.0" y="414.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Một batch: 256 ảnh train, mỗi ảnh một lần; mỗi vòng chọn ngẫu nhiên 1 trong 5 caption. Nhiệt độ 0,07, AdamW, tốc độ học 0,001.</text>
+<text x="34.0" y="435.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Sau mỗi vòng đo R@1 của riêng điểm đồ thị trên validation, giữ vòng tốt nhất (best.pt), dừng khi 5 vòng liền không tốt hơn. Khoảng 2 phút mỗi seed trên CPU.</text>
+</svg>

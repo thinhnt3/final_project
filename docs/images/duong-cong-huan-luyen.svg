@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="452" viewBox="0 0 920 452" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Đường cong huấn luyện</title>
+<desc id="fig-desc">R@1 trên validation của riêng điểm đồ thị theo từng vòng, 3 seed cho mỗi biến thể. Mô hình chính dừng quanh 27%, biến thể mang vector CLIP dừng quanh 42%.</desc>
+<style>
+@media (prefers-color-scheme: dark) {
+  .f-axis { fill: #4a4a46; } .s-axis { stroke: #4a4a46; }
+  .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
+  .f-blue { fill: #3987e5; } .s-blue { stroke: #3987e5; }
+  .f-border { fill: #3d3d39; } .s-border { stroke: #3d3d39; }
+  .f-gray2 { fill: #a9a79f; } .s-gray2 { stroke: #a9a79f; }
+  .f-grid { fill: #2c2c2a; } .s-grid { stroke: #2c2c2a; }
+  .f-ink { fill: #f0efec; } .s-ink { stroke: #f0efec; }
+  .f-ink2 { fill: #c3c2b7; } .s-ink2 { stroke: #c3c2b7; }
+  .f-muted { fill: #8f8d86; } .s-muted { stroke: #8f8d86; }
+  .f-orange { fill: #d95926; } .s-orange { stroke: #d95926; }
+}
+</style>
+<defs></defs>
+<rect x="0.5" y="0.5" width="919.0" height="451.0" rx="12" fill="#fcfcfb" stroke="#d6d5ce" class="f-bg s-border" stroke-width="1.0"></rect>
+<text x="28.0" y="38.0" font-size="17" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >Huấn luyện: R@1 của riêng điểm đồ thị trên validation, theo từng vòng</text>
+<text x="28.0" y="61.0" font-size="13" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Mỗi đường là một seed (13, 37, 97). Chấm tròn: vòng tốt nhất, được giữ lại làm mô hình. Đơn vị: %.</text>
+<line x1="72.0" y1="352.0" x2="880.0" y2="352.0" fill="none" stroke="#c3c2b7" class="s-axis" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="356.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >0</text>
+<line x1="72.0" y1="300.0" x2="880.0" y2="300.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="304.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >10</text>
+<line x1="72.0" y1="248.0" x2="880.0" y2="248.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="252.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >20</text>
+<line x1="72.0" y1="196.0" x2="880.0" y2="196.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="200.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >30</text>
+<line x1="72.0" y1="144.0" x2="880.0" y2="144.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="148.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >40</text>
+<line x1="72.0" y1="92.0" x2="880.0" y2="92.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
+<text x="62.0" y="96.0" font-size="12" font-weight="400" text-anchor="end" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >50</text>
+<text x="72.0" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >1</text>
+<text x="164.3" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >5</text>
+<text x="279.8" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >10</text>
+<text x="395.2" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >15</text>
+<text x="510.6" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >20</text>
+<text x="626.1" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >25</text>
+<text x="741.5" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >30</text>
+<text x="856.9" y="372.0" font-size="12" font-weight="400" text-anchor="middle" style="font-variant-numeric: tabular-nums" fill="#898781" class="f-muted" >35</text>
+<text x="476.0" y="392.0" font-size="12" font-weight="400" text-anchor="middle" fill="#52514e" class="f-ink2" >vòng huấn luyện (epoch)</text>
+<line x1="72.0" y1="130.3" x2="880.0" y2="130.3" fill="none" stroke="#6f6d67" class="s-gray2" stroke-width="1.2" stroke-linecap="round" />
+<text x="880.0" y="123.3" font-size="11.5" font-weight="400" text-anchor="end" fill="#52514e" class="f-ink2" >CLIP thuần trên validation: 42,64</text>
+<line x1="72.0" y1="283.4" x2="880.0" y2="283.4" fill="none" stroke="#6f6d67" class="s-gray2" stroke-width="1.2" stroke-linecap="round" />
+<text x="880.0" y="276.4" font-size="11.5" font-weight="400" text-anchor="end" fill="#52514e" class="f-ink2" >so khớp từ, chỉ đồ thị: 13,20</text>
+<path d="M72.0,342.6 L95.1,328.5 L118.2,308.7 L141.3,287.3 L164.3,258.8 L187.4,244.9 L210.5,236.4 L233.6,231.2 L256.7,227.1 L279.8,221.2 L302.9,218.2 L325.9,216.2 L349.0,219.0 L372.1,216.4 L395.2,214.2 L418.3,212.1 L441.4,211.9 L464.5,215.3 L487.5,209.1 L510.6,209.7 L533.7,210.9 L556.8,207.6 L579.9,209.0 L603.0,210.4 L626.1,212.8 L649.1,210.9 L672.2,208.8" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>main, seed 13</title></path>
+<path d="M72.0,347.4 L95.1,332.9 L118.2,309.8 L141.3,281.6 L164.3,260.0 L187.4,249.4 L210.5,235.2 L233.6,231.2 L256.7,227.8 L279.8,225.5 L302.9,218.9 L325.9,221.2 L349.0,219.6 L372.1,218.4 L395.2,215.3 L418.3,219.3 L441.4,213.9 L464.5,214.6 L487.5,214.7 L510.6,214.1 L533.7,212.4 L556.8,211.9 L579.9,213.3 L603.0,211.9 L626.1,211.7 L649.1,214.7 L672.2,212.7 L695.3,214.9 L718.4,213.7 L741.5,211.6 L764.6,217.1 L787.7,217.8 L810.7,217.9 L833.8,216.0 L856.9,217.8" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>main, seed 37</title></path>
+<path d="M72.0,344.4 L95.1,329.8 L118.2,314.1 L141.3,287.2 L164.3,267.5 L187.4,250.8 L210.5,240.2 L233.6,236.0 L256.7,232.7 L279.8,225.0 L302.9,221.7 L325.9,218.9 L349.0,215.7 L372.1,216.2 L395.2,218.1 L418.3,211.9 L441.4,211.9 L464.5,215.0 L487.5,211.6 L510.6,208.8 L533.7,210.7 L556.8,215.1 L579.9,211.3 L603.0,213.7 L626.1,211.7" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>main, seed 97</title></path>
+<circle cx="556.8" cy="207.6" r="5" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"><title>seed 13: vòng tốt nhất 22, R@1 27,76</title></circle>
+<circle cx="741.5" cy="211.6" r="5" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"><title>seed 37: vòng tốt nhất 30, R@1 27,00</title></circle>
+<circle cx="510.6" cy="208.8" r="5" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"><title>seed 97: vòng tốt nhất 20, R@1 27,53</title></circle>
+<path d="M72.0,225.3 L95.1,169.0 L118.2,152.4 L141.3,142.5 L164.3,142.3 L187.4,135.6 L210.5,140.3 L233.6,136.2 L256.7,135.1 L279.8,135.3 L302.9,130.8 L325.9,134.6 L349.0,138.5 L372.1,138.9 L395.2,130.3 L418.3,134.8 L441.4,135.7 L464.5,137.2 L487.5,137.7 L510.6,134.3" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>variant, seed 13</title></path>
+<path d="M72.0,218.9 L95.1,177.6 L118.2,155.1 L141.3,149.9 L164.3,146.8 L187.4,141.4 L210.5,138.7 L233.6,137.6 L256.7,135.8 L279.8,131.9 L302.9,132.4 L325.9,135.6 L349.0,136.8 L372.1,135.0 L395.2,134.6" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>variant, seed 37</title></path>
+<path d="M72.0,216.2 L95.1,172.3 L118.2,157.7 L141.3,147.8 L164.3,144.2 L187.4,139.3 L210.5,139.2 L233.6,137.3 L256.7,135.7 L279.8,137.6 L302.9,138.0 L325.9,137.6 L349.0,136.0 L372.1,141.9" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><title>variant, seed 97</title></path>
+<circle cx="395.2" cy="130.3" r="5" fill="#eb6834" stroke="#fcfcfb" class="f-orange s-bg" stroke-width="2"><title>seed 13: vòng tốt nhất 15, R@1 42,64</title></circle>
+<circle cx="279.8" cy="131.9" r="5" fill="#eb6834" stroke="#fcfcfb" class="f-orange s-bg" stroke-width="2"><title>seed 37: vòng tốt nhất 10, R@1 42,33</title></circle>
+<circle cx="256.7" cy="135.7" r="5" fill="#eb6834" stroke="#fcfcfb" class="f-orange s-bg" stroke-width="2"><title>seed 97: vòng tốt nhất 9, R@1 41,59</title></circle>
+<line x1="72.0" y1="426.0" x2="100.0" y2="426.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2.5" stroke-linecap="round" />
+<text x="108.0" y="430.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >GraphSAGE, đỉnh ảnh học được (mô hình chính)</text>
+<line x1="421.2" y1="426.0" x2="449.2" y2="426.0" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2.5" stroke-linecap="round" />
+<text x="457.2" y="430.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#0b0b0b" class="f-ink" >GraphSAGE, đỉnh ảnh mang vector CLIP (biến thể)</text>
+<text x="678.2" y="230.8" font-size="12.5" font-weight="600" text-anchor="start" fill="#0b0b0b" class="f-ink" >≈ 27%</text>
+</svg>
