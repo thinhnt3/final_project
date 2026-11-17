@@ -65,7 +65,13 @@ Mỗi ảnh là một đồ thị con. Khi huấn luyện, nhiều đồ thị c
 
 ### G4. Ba tầng
 
-Đỉnh ảnh cần 3 bước để thấy trọn một bộ ba: tầng 1 nhận từ các đối tượng, tầng 2 nhận nhãn relation qua đối tượng, tầng 3 nhận đối tượng ở đầu kia của relation. Công thức mỗi tầng là của paper GraphSAGE (biến thể trung bình):
+Mỗi tầng đưa thông tin đi thêm một bước trên đồ thị:
+
+- **Tầng 1:** ảnh biết có những đối tượng nào.
+- **Tầng 2:** ảnh biết vai của từng đối tượng trong relation: `man` là chủ thể của `riding`, `bicycle` là đối tượng của `riding`. Với ảnh chỉ có một relation `riding`, từng đó đã đủ để nhận ra "man riding bicycle".
+- **Tầng 3:** ảnh biết hai đầu của cùng một relation đi với nhau. Tầng này cần khi ảnh có nhiều relation cùng vị từ: "man riding bicycle, woman riding horse" khác "man riding horse, woman riding bicycle". Với 2 tầng, hai ảnh đó cho cùng vector (có test).
+
+Công thức mỗi tầng là của paper GraphSAGE (biến thể trung bình):
 
 ```
 h = W·x + W'·trung_bình(hàng xóm)

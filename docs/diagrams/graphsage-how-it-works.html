@@ -121,12 +121,13 @@ const STEPS=[
   <p>Sau tầng 1, đỉnh ảnh biết ảnh <b>có những vật gì</b>, chưa biết chúng quan hệ thế nào.</p>
   <p class="note">Mọi đỉnh cùng cập nhật một lúc. Hình chỉ tô phần thông tin chảy về đỉnh ảnh.</p>`},
  {label:"4. Tầng 2",title:"Tầng 2: thêm nhãn relation",lit:["img",...OBJ,...PRED],focus:"img",on:[...CONTAIN,...NEAR],flow:NEAR,
-  foot:"ảnh biết thêm: man có riding, playing, sitting in",
-  body:`<p>Ở tầng 1, đỉnh <i>man</i> đã nhận từ ba đỉnh phụ cạnh nó. Sang tầng 2, thông tin đó đi tiếp lên đỉnh ảnh.</p>
-  <p>Đỉnh ảnh giờ biết <b>man đang làm gì</b>, nhưng chưa biết làm với vật nào.</p>`},
- {label:"5. Tầng 3",title:"Tầng 3: trọn một bộ ba",lit:ALL,focus:"img",on:[...CONTAIN,...NEAR,...FAR],flow:FAR,
+  foot:"ảnh biết thêm: man là chủ thể của riding, bicycle là đối tượng của riding",
+  body:`<p>Ở tầng 1, mỗi đối tượng đã nhận từ đỉnh phụ cạnh nó. Sang tầng 2, thông tin đó đi tiếp lên đỉnh ảnh.</p>
+  <p>Đỉnh ảnh giờ biết <b>vai của từng đối tượng</b>: <i>man</i> là chủ thể của <i>riding</i>, <i>bicycle</i> là đối tượng của <i>riding</i>. Nó chưa biết chắc hai đầu đó thuộc cùng một relation.</p>`},
+ {label:"5. Tầng 3",title:"Tầng 3: nối hai đầu của relation",lit:ALL,focus:"img",on:[...CONTAIN,...NEAR,...FAR],flow:FAR,
   foot:"ảnh biết: man riding bicycle · man playing guitar · man sitting in chair",
-  body:`<p>Thông tin của <i>bicycle</i> đi qua đỉnh phụ <i>riding</i>, qua <i>man</i>, rồi tới đỉnh ảnh. Phải đủ <b>3 tầng</b> thì đỉnh ảnh mới thấy trọn "man riding bicycle".</p>
+  body:`<p>Thông tin của <i>bicycle</i> đi qua đỉnh phụ <i>riding</i>, qua <i>man</i>, rồi tới đỉnh ảnh. Giờ đỉnh ảnh biết hai đầu của cùng một relation đi với nhau.</p>
+  <p>Tầng này cần khi ảnh có nhiều relation cùng vị từ: "man riding bicycle, woman riding horse" khác "man riding horse, woman riding bicycle". Với 2 tầng, hai ảnh đó cho cùng vector.</p>
   <p>Vector của đỉnh ảnh sau tầng 3, qua một tầng chiếu, là <b>vector đồ thị của ảnh</b>, cùng không gian với CLIP.</p>
   <p class="note">Một ảnh khác cũng có man và bicycle nhưng không có cạnh riding sẽ cho vector khác.</p>`},
  {label:"6. Huấn luyện",title:"Huấn luyện: nhiều ảnh trong một batch",lit:ALL,on:[],flow:[],

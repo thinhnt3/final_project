@@ -69,11 +69,31 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 
 ### 1.4 Huấn luyện
 
-- **Mục tiêu:** học GraphSAGE bằng InfoNCE trong batch (G7).
-- **Input:** đồ thị con của ảnh train, embedding caption train.
-- **Output:** `runs/graphsage/<tên>/`: checkpoint tốt nhất theo validation, `history.json` (loss và R@K validation từng vòng), `config.yaml` đã dùng, vector đồ thị của 10.000 ảnh.
-- **Quy tắc:** mỗi ảnh một lần trong batch; mỗi vòng chọn ngẫu nhiên 1 trong 5 caption của ảnh; dừng sớm theo R@K trên validation; seed cố định; ảnh validation và test không bao giờ vào batch huấn luyện.
-- **Xong khi:** loss giảm; trên một tập nhỏ 64 ảnh mô hình học thuộc được (R@1 train gần 100%); chạy lại cùng seed cho cùng kết quả validation; R@K validation của riêng điểm đồ thị cao hơn mức ngẫu nhiên rõ rệt.
+- **Mục tiêu:** học GraphSAGE bằng InfoNCE trong batch (G7), chạy an toàn: theo dõi được, dừng giữa chừng không mất việc, tái lập được.
+- **Input:** đồ thị con của ảnh train và validation, embedding caption train và validation.
+- **Output:** `runs/graphsage/<tên lượt chạy>/`:
+  - `config.yaml`: bản chụp toàn bộ config đã dùng, kèm commit git và sha256 của dữ liệu đầu vào
+  - `history.json`: mỗi vòng một dòng, ghi ngay sau mỗi vòng
+  - `train.log`: mọi dòng log
+  - `last.pt`: checkpoint sau mỗi vòng, đủ để chạy tiếp
+  - `best.pt`: checkpoint tốt nhất theo validation
+  - `graph_vectors.npy` + ids: vector đồ thị của 10.000 ảnh, tính từ `best.pt` khi huấn luyện xong
+- **Quy tắc dữ liệu:** mỗi ảnh một lần trong batch; mỗi vòng chọn ngẫu nhiên 1 trong 5 caption của ảnh; ảnh validation chỉ dùng để đánh giá; script huấn luyện không đọc tập test.
+
+**Yêu cầu an toàn**
+
+| Nhóm | Yêu cầu |
+|---|---|
+| Tham số | Mọi siêu tham số nằm trong mục `training` của `configs/retrieval/vg_coco.yaml`; không có giá trị nào viết trong code |
+| Kiểm tra trước khi chạy | Embedding không cũ hơn dữ liệu; bảng khái niệm và vị từ khớp id; dựng được mọi đồ thị con; chạy thử một batch xuôi + ngược; thư mục lượt chạy đã có thì từ chối, trừ khi chạy tiếp hoặc được cho phép ghi đè |
+| Theo dõi | Thanh tiến độ tqdm theo batch; sau mỗi vòng một dòng log gồm loss train, loss validation, R@1/5/10 và MRR validation của riêng điểm đồ thị, tốc độ học, thời gian vòng; log ghi cả ra màn hình và `train.log` |
+| Checkpoint | `last.pt` sau mỗi vòng (trọng số, optimizer, số vòng, trạng thái sinh số ngẫu nhiên, metric tốt nhất); `best.pt` khi validation tốt hơn; ghi qua file tạm rồi đổi tên để không hỏng khi bị ngắt |
+| Chạy tiếp | `--resume` đọc `last.pt` và tiếp tục đúng vòng kế; kết quả phải trùng với lượt chạy không bị ngắt |
+| Khi lỗi | Loss thành NaN hoặc vô hạn thì dừng, báo lỗi, giữ nguyên checkpoint tốt trước đó; Ctrl-C thì lưu `last.pt` rồi thoát; cắt gradient theo ngưỡng trong config |
+| Dừng sớm | Dừng khi metric validation không cải thiện sau số vòng `patience`; ghi lý do dừng |
+| Tái lập | Seed trong config, gieo cho Python, NumPy, PyTorch; chạy lại cùng seed cho cùng `history.json` |
+
+- **Xong khi:** (a) loss giảm; (b) trên tập nhỏ 64 ảnh mô hình học thuộc được (R@1 train gần 100%); (c) chạy lại cùng seed cho cùng kết quả validation; (d) ngắt giữa chừng rồi `--resume` cho cùng kết quả với lượt chạy liền mạch; (e) loss NaN làm dừng và không ghi đè `best.pt` (test); (f) R@K validation của riêng điểm đồ thị cao hơn mức ngẫu nhiên rõ rệt.
 
 ### 1.5 Xếp hạng lại
 
@@ -101,8 +121,11 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 | 1.0 | Xong 17/11 | Nhánh feat gộp vào `main` (`a795fd1`); code, script, config và dữ liệu của tập 40 ảnh đã xoá; PyG 2.8.1; `configs/retrieval/vg_coco.yaml` |
 | 1.1 | Xong 17/11 | `data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/` (122 MB, không commit) + `meta.json` |
 | 1.2 | Xong 17/11 | `src/models/graph_data.py` + `tests/models/test_graph_data.py` |
-| 1.3–1.6 | Chưa làm | |
+| 1.3 | Xong 17/11 | `src/models/graphsage.py`, mục `graphsage` trong config, `tests/models/test_graphsage.py` |
+| 1.4–1.6 | Chưa làm | |
 
 Kết quả 1.1: ảnh 10.000 × 512, caption 50.000 × 512, khái niệm 1.778 × 512, vị từ 493 × 512; float32, lệch độ dài tối đa 1,8e-7, không NaN. (b) Cosine caption với đúng ảnh 0,304, với ảnh ngẫu nhiên 0,152. (c) Mã hoá lại 4 caption và 3 ảnh: lệch tối đa 3,9e-7. (d) Test dùng dữ liệu dựng tay, không tải model. Chữ khái niệm đưa vào CLIP nguyên dạng ("pants"), không thêm câu mẫu; láng giềng gần nhất hợp lý (`couch` → loveseat, armchair). Chạy trên MPS khoảng 3 phút.
 
 Kết quả 1.2: dựng 10.000 đồ thị con trong 0,2 giây. Đối chiếu với `graph_stats.json` của bước 2.7: 174.743 đỉnh đối tượng, 127.812 đỉnh phụ (mỗi bộ ba một đỉnh), 430.367 cạnh = 174.743 cạnh "chứa" + 2 × 127.812, khớp cả ba. Trung bình 31,3 đỉnh mỗi ảnh. Lỗi bắt được bằng test: PyG tự cộng dồn mọi trường có chữ "index" trong tên khi ghép batch, làm lệch chỉ số tra vector của các đồ thị con từ thứ hai trở đi; trường đổi tên thành `feature_row`.
+
+Kết quả 1.3: `GraphImageEncoder` gồm 3 tầng có hướng (mỗi tầng 2 `SAGEConv`), tầng chiếu tuyến tính, chuẩn hoá; 3,41 triệu tham số học được với chiều ẩn 512. Bảng vector khái niệm, vị từ, ảnh là buffer đóng băng, không lưu trong checkpoint. Chạy thử trên dữ liệu thật: đầu ra (256, 512), dài 1, không NaN; xuôi + ngược cho 1.024 đồ thị mất 0,65 giây trên CPU và 1,15 giây trên MPS, nên huấn luyện trên CPU là đủ. Test bắt 10/10 lỗi gài. Hai điều test làm rõ: (1) 2 tầng đã cho ảnh biết vai của từng đối tượng trong relation; tầng 3 chỉ cần để ghép đúng hai đầu khi có nhiều relation cùng vị từ, tài liệu thiết kế đã sửa theo; (2) ở tầng cuối, lớp gộp chiều xuôi không nhận gradient qua hàng xóm vì đỉnh ảnh chỉ có cạnh đi ra, đây là tính chất kiến trúc.
