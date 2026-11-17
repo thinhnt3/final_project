@@ -8,6 +8,8 @@ Cho một câu mô tả, hệ thống tìm ảnh khớp nhất. CLIP chọn ra c
 
 Điểm đồ thị lấy từ GraphSAGE: mạng này mã hoá đồ thị của mỗi ảnh thành một vector trong không gian CLIP.
 
+Tài liệu giải thích đầy đủ, có hình minh hoạ và phụ lục công thức kèm ví dụ: [`docs/README.md`](docs/README.md).
+
 ## Kết quả
 
 Tập test: 1.500 ảnh, 7.500 câu truy vấn (caption COCO), mỗi câu có đúng một ảnh đúng. α và số ứng viên k được chọn trên tập validation; tập test chỉ được chấm sau khi đã chốt tham số.

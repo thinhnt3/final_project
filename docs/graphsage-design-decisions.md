@@ -1,6 +1,6 @@
 # Quyết định kỹ thuật: GraphSAGE trong pipeline truy hồi
 
-Cập nhật: 17/11/2026. Trạng thái: thiết kế đã phỏng vấn xong, **chưa code**. Tài liệu này là nơi ghi quyết định hiện hành cho Phase 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
+Cập nhật: 17/11/2026. Trạng thái: thiết kế đã phỏng vấn xong, **chưa code**. *(Ghi chú 18/11/2026: thiết kế này đã được cài đặt, huấn luyện 3 seed và chấm trên test; xem kết quả ở `docs/04-ket-qua.md`.)* Tài liệu này là nơi ghi quyết định hiện hành cho Phase 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
 
 Minh hoạ:
 
@@ -178,5 +178,5 @@ Chưa có giá trị nào được chốt. Các tham số sẽ quét: số chi�
 
 ## 7. Còn mở
 
-- Nhánh `feat/vg-coco-graph-build` (code pipeline và dữ liệu đồ thị) chưa gộp vào `main`; Phase 1 cần nó.
-- Định dạng `image_graphs.json` của bước 2.7 đã đủ để dựng đồ thị con theo G2 (khái niệm và bộ ba theo id); không cần chạy lại bước 2.7.
+- Nhánh `feat/vg-coco-graph-build` (code pipeline và dữ liệu đồ thị) chưa gộp vào `main`; Phase 1 cần nó. *(Đã xong: gộp vào `main` ở commit `a795fd1`.)*
+- Định dạng `image_graphs.json` của bước 2.7 đã đủ để dựng đồ thị con theo G2 (khái niệm và bộ ba theo id); không cần chạy lại bước 2.7. *(Đã xác nhận ở bước 1.2.)*
