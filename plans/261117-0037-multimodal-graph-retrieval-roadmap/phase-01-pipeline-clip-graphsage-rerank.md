@@ -123,7 +123,8 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 | 1.2 | Xong 17/11 | `src/models/graph_data.py` + `tests/models/test_graph_data.py` |
 | 1.3 | Xong 17/11 | `src/models/graphsage.py`, mục `graphsage` trong config, `tests/models/test_graphsage.py` |
 | 1.4 | Xong 17/11 (code, test, code-review, 3 seed) | `src/models/{train,train_data,checkpoint}.py`, `src/connectors/wandb_tracker.py`, `scripts/train_graphsage.py`, `runs/graphsage/directed-learned-l3-h512/seed{13,37,97}/` |
-| 1.5–1.6 | Chưa làm | |
+| 1.5 | Xong 17/11 (mô hình chính; biến thể đỉnh ảnh mang CLIP chưa chạy; chưa code-review) | `scripts/run_benchmark.py --method graphsage`, `runs/benchmark/graphsage-directed-learned-l3-h512.json` |
+| 1.6 | Chưa làm | |
 
 Kết quả 1.1: ảnh 10.000 × 512, caption 50.000 × 512, khái niệm 1.778 × 512, vị từ 493 × 512; float32, lệch độ dài tối đa 1,8e-7, không NaN. (b) Cosine caption với đúng ảnh 0,304, với ảnh ngẫu nhiên 0,152. (c) Mã hoá lại 4 caption và 3 ảnh: lệch tối đa 3,9e-7. (d) Test dùng dữ liệu dựng tay, không tải model. Chữ khái niệm đưa vào CLIP nguyên dạng ("pants"), không thêm câu mẫu; láng giềng gần nhất hợp lý (`couch` → loveseat, armchair). Chạy trên MPS khoảng 3 phút.
 
@@ -154,3 +155,14 @@ Code-review 1.4 (agent độc lập, 17/11): phần lõi đúng (hàm mất mát
 7. Thêm test cho các chỗ review chỉ ra chưa có: ghép caption với đúng ảnh khi đánh giá, loss validation, khôi phục vòng tốt nhất khi chạy tiếp, xoá khi ghi đè. Đã chạy thử cả 6 tình huống vòng đời lượt chạy bằng script thật. 246 test.
 
 Ghi nhận, không sửa: 233 câu caption train trùng nhau giữa các ảnh và 25 ảnh có đồ thị con giống hệt nhau là ảnh sai giả trong batch (ảnh hưởng nhỏ); loss validation phụ thuộc cỡ batch nên không so được giữa các cấu hình cỡ batch khác nhau; Ctrl-C bỏ vòng đang chạy, không lưu giữa vòng; script chưa có test tự động riêng.
+
+Kết quả 1.5 (mô hình chính: đỉnh ảnh là vector học được; α và k chọn trên validation cho từng seed; test chấm một lần sau khi chốt):
+
+| Phương pháp | R@1 test | R@5 | R@10 | MRR |
+|---|---|---|---|---|
+| CLIP | 43,89 | 72,19 | 82,64 | 56,76 |
+| B4: CLIP + so khớp từ | 46,41 | 74,80 | 85,41 | 59,29 |
+| Chỉ GraphSAGE | 27,78 ± 0,63 | 57,40 ± 0,45 | 72,20 ± 0,36 | 41,71 ± 0,49 |
+| **CLIP + GraphSAGE** | **48,20 ± 0,05** | 75,87 ± 0,18 | 86,36 ± 0,13 | 60,74 ± 0,10 |
+
+Trung bình ± độ lệch chuẩn mẫu qua 3 seed (13, 37, 97). α chọn được: 0,81 / 0,83 / 0,78; k = 100 ở cả ba seed. Trên validation: CLIP 42,64, CLIP + GraphSAGE 46,64 ± 0,34. Tính lại độc lập seed 13 bằng numpy thuần khớp cả validation và test. α = 1 cho đúng thứ hạng CLIP (test). Lưu ý: k = 100 là giá trị lớn nhất của lưới ở cả ba seed, nên lưới k có thể đang chặn; cần thử k lớn hơn, chọn trên validation.

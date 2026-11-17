@@ -73,3 +73,7 @@ Nhận xét:
 - Lưới α (user duyệt 17/11): bước 0,01 trên [0, 1], giữ nguyên công thức đề bài, không chuẩn hoá thang điểm. Đo trên validation với điểm B4: lưới bước 0,1 cho R@1 46,04; lưới bước 0,01 cho 46,39 (đỉnh hẹp quanh α = 0,91–0,93); chuẩn hoá z-score cho 45,6–45,7, kém hơn. Độ phân tán điểm trong một truy vấn: CLIP 0,036, B4 0,058, chỉ lệch 1,6 lần. Bảng trên là số sau khi đổi lưới.
 
 Review B4 (agent độc lập, 17/11): không có lỗi phải sửa; tính lại độc lập R@1 "chỉ đồ thị" trên test = 0,1263, khớp; IDF chỉ từ train, α và k chỉ chọn trên validation. Theo góp ý: phần ghép dữ liệu chuyển từ script vào `src/retrieval/lexical.py` và có test cho thứ tự hàng/cột, cờ vị từ và IDF chỉ từ train; thiếu đồ thị hoặc thiếu chữ truy vấn báo `DataError`. Kết quả không đổi sau khi sửa. Giới hạn đã biết: hàm bỏ đuôi số nhiều thô (`glasses` không khớp `glass`, `men` không khớp `man`), nên B4 hơi bị đánh giá thấp. Lint (ruff) và kiểu (mypy) sạch; 189 test.
+
+## Kết quả Ours trên backbone CLIP (17/11)
+
+CLIP + GraphSAGE (3 tầng có hướng, đỉnh ảnh là vector học được) trên test: R@1 48,20 ± 0,05, R@5 75,87 ± 0,18, R@10 86,36 ± 0,13, MRR 60,74 ± 0,10 (3 seed). Hơn CLIP 4,3 điểm R@1 và hơn B4 1,7–1,8 điểm. Chi tiết ở Phase 1, bước 1.5. Chưa làm: biến thể đỉnh ảnh mang CLIP, backbone OpenCLIP (B2), 10 phân tích truy vấn.

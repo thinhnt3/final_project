@@ -31,6 +31,10 @@
       "mrr": 0.5676
     }
   },
+  "selected_on_validation": {
+    "alpha": 0.91,
+    "top_k": 50
+  },
   "graph_only": {
     "val": {
       "recall@1": 0.132,
@@ -44,10 +48,6 @@
       "recall@10": 0.3993,
       "mrr": 0.2159
     }
-  },
-  "selected_on_validation": {
-    "alpha": 0.91,
-    "top_k": 50
   },
   "reranked": {
     "val": {
