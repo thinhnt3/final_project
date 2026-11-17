@@ -122,10 +122,35 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 | 1.1 | Xong 17/11 | `data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/` (122 MB, không commit) + `meta.json` |
 | 1.2 | Xong 17/11 | `src/models/graph_data.py` + `tests/models/test_graph_data.py` |
 | 1.3 | Xong 17/11 | `src/models/graphsage.py`, mục `graphsage` trong config, `tests/models/test_graphsage.py` |
-| 1.4–1.6 | Chưa làm | |
+| 1.4 | Xong 17/11 (code, test, code-review, 3 seed) | `src/models/{train,train_data,checkpoint}.py`, `src/connectors/wandb_tracker.py`, `scripts/train_graphsage.py`, `runs/graphsage/directed-learned-l3-h512/seed{13,37,97}/` |
+| 1.5–1.6 | Chưa làm | |
 
 Kết quả 1.1: ảnh 10.000 × 512, caption 50.000 × 512, khái niệm 1.778 × 512, vị từ 493 × 512; float32, lệch độ dài tối đa 1,8e-7, không NaN. (b) Cosine caption với đúng ảnh 0,304, với ảnh ngẫu nhiên 0,152. (c) Mã hoá lại 4 caption và 3 ảnh: lệch tối đa 3,9e-7. (d) Test dùng dữ liệu dựng tay, không tải model. Chữ khái niệm đưa vào CLIP nguyên dạng ("pants"), không thêm câu mẫu; láng giềng gần nhất hợp lý (`couch` → loveseat, armchair). Chạy trên MPS khoảng 3 phút.
 
 Kết quả 1.2: dựng 10.000 đồ thị con trong 0,2 giây. Đối chiếu với `graph_stats.json` của bước 2.7: 174.743 đỉnh đối tượng, 127.812 đỉnh phụ (mỗi bộ ba một đỉnh), 430.367 cạnh = 174.743 cạnh "chứa" + 2 × 127.812, khớp cả ba. Trung bình 31,3 đỉnh mỗi ảnh. Lỗi bắt được bằng test: PyG tự cộng dồn mọi trường có chữ "index" trong tên khi ghép batch, làm lệch chỉ số tra vector của các đồ thị con từ thứ hai trở đi; trường đổi tên thành `feature_row`.
 
 Kết quả 1.3: `GraphImageEncoder` gồm 3 tầng có hướng (mỗi tầng 2 `SAGEConv`), tầng chiếu tuyến tính, chuẩn hoá; 3,41 triệu tham số học được với chiều ẩn 512. Bảng vector khái niệm, vị từ, ảnh là buffer đóng băng, không lưu trong checkpoint. Chạy thử trên dữ liệu thật: đầu ra (256, 512), dài 1, không NaN; xuôi + ngược cho 1.024 đồ thị mất 0,65 giây trên CPU và 1,15 giây trên MPS, nên huấn luyện trên CPU là đủ. Test bắt 10/10 lỗi gài. Hai điều test làm rõ: (1) 2 tầng đã cho ảnh biết vai của từng đối tượng trong relation; tầng 3 chỉ cần để ghép đúng hai đầu khi có nhiều relation cùng vị từ, tài liệu thiết kế đã sửa theo; (2) ở tầng cuối, lớp gộp chiều xuôi không nhận gradient qua hàng xóm vì đỉnh ảnh chỉ có cạnh đi ra, đây là tính chất kiến trúc.
+
+Kết quả 1.4 (seed 13, cấu hình khởi đầu: 3 tầng có hướng, chiều ẩn 512, batch 256, lr 0,001, nhiệt độ 0,07): dừng sớm ở vòng 27, tốt nhất ở vòng 22; 126 giây trên CPU (khoảng 4,7 giây mỗi vòng). Validation, riêng điểm đồ thị: R@1 27,8 / R@5 57,2 / R@10 71,0 / MRR 41,7. Để so: so khớp từ (B4) riêng đồ thị trên validation đạt R@1 13,2; CLIP đạt 42,6. Loss train giảm đều 5,06 → 1,53; loss validation chạm đáy quanh vòng 20 (1,99) rồi nhích lên, tức bắt đầu quá khớp nhẹ. Chưa ghép với CLIP (bước 1.5) và chưa chấm trên test.
+
+Kiểm tra an toàn đã làm: tham số nằm hết trong mục `training` và `wandb` của YAML; kiểm tra trước khi chạy (embedding không cũ, bảng khớp id, một batch chạy thử); tqdm theo batch; mỗi vòng ghi loss và R@K validation ra màn hình, `train.log`, `history.json` và W&B; `last.pt` mỗi vòng, `best.pt` khi tốt hơn, ghi qua file tạm; `--resume` cho kết quả trùng lượt chạy liền mạch (test); loss NaN dừng trước khi cập nhật trọng số và giữ checkpoint cũ (test); thư mục lượt chạy đã có thì từ chối trừ khi `--resume` hoặc `--overwrite`; cùng seed cho cùng `history.json` (test); mô hình học thuộc được 16 ảnh (test). Test bắt 17/17 lỗi gài. Ctrl-C: vòng đang chạy bị bỏ, các vòng đã xong nằm trong `last.pt`, chạy tiếp bằng `--resume`. W&B: theo yêu cầu user, chế độ online, project `vg-coco-graph-retrieval`.
+
+Kết quả 1.4, ba seed (validation, riêng điểm đồ thị):
+
+| Seed | Vòng tốt nhất / số vòng | R@1 | R@5 | R@10 | MRR |
+|---|---|---|---|---|---|
+| 13 | 22 / 27 | 27,8 | 57,2 | 71,0 | 41,7 |
+| 37 | 30 / 35 | 27,0 | 56,8 | 70,9 | 41,0 |
+| 97 | 20 / 25 | 27,5 | 56,8 | 70,3 | 41,5 |
+
+Code-review 1.4 (agent độc lập, 17/11): phần lõi đúng (hàm mất mát, chia batch, dừng sớm, xử lý NaN, không rò rỉ validation/test). Đã sửa:
+
+1. `--overwrite` không xoá file của lượt cũ, nên `--resume` sau đó có thể chạy tiếp nhầm lượt cũ → giờ xoá mọi file lượt chạy đã ghi; `--resume` và `--overwrite` loại trừ nhau.
+2. `--resume` không kiểm tra config và ghi đè bản chụp config → giờ so kiến trúc, model CLIP, sha256 dữ liệu và mọi tham số huấn luyện (trừ `max_epochs`, `patience`, `seeds`); khác thì từ chối; bản chụp gốc giữ nguyên.
+3. Lỗi giữa chừng không vào `train.log`, lượt bị ngắt hiện "thành công" trên W&B → lỗi được ghi một lần ra cả màn hình và `train.log`; lượt hỏng đánh dấu thất bại trên W&B.
+4. `--resume` với nhiều seed: seed đã xong thì bỏ qua, seed bị ngắt thì chạy tiếp, seed chưa chạy thì bắt đầu mới; chạy tiếp dùng lại cùng run W&B.
+5. Thêm kiểm tra `best.pt` và `last.pt` khớp nhau khi chạy tiếp; gradient không hữu hạn báo `TrainingError` trước khi cập nhật trọng số; trạng thái sinh số ngẫu nhiên lưu trong `last.pt`; batch cuối chỉ có 1 ảnh được gộp vào batch trước; log và `history.json` ghi tốc độ học thật của optimizer.
+6. Quyền riêng tư W&B: mặc định W&B gửi tên máy, email tài khoản, thông tin phần cứng và log màn hình. Giờ đã tắt, chỉ gửi config lượt chạy và metric. **Ba lượt chạy seed 13, 37, 97 đã tải lên trước khi tắt nên có chứa tên máy và email.**
+7. Thêm test cho các chỗ review chỉ ra chưa có: ghép caption với đúng ảnh khi đánh giá, loss validation, khôi phục vòng tốt nhất khi chạy tiếp, xoá khi ghi đè. Đã chạy thử cả 6 tình huống vòng đời lượt chạy bằng script thật. 246 test.
+
+Ghi nhận, không sửa: 233 câu caption train trùng nhau giữa các ảnh và 25 ảnh có đồ thị con giống hệt nhau là ảnh sai giả trong batch (ảnh hưởng nhỏ); loss validation phụ thuộc cỡ batch nên không so được giữa các cấu hình cỡ batch khác nhau; Ctrl-C bỏ vòng đang chạy, không lưu giữa vòng; script chưa có test tự động riêng.
