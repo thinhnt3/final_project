@@ -62,13 +62,6 @@ INTERRUPTED_EXIT_CODE = 130
 _METRIC_DECIMALS = 4
 
 
-def default_run_name(config: RetrievalConfig) -> str:
-    """Run name that spells out the architecture, e.g. `directed-learned-l3-h512`."""
-    model = config.graphsage
-    direction = "directed" if model.directed else "undirected"
-    return f"{direction}-{model.image_node.value}-l{model.num_layers}-h{model.hidden_dim}"
-
-
 def _git_state() -> dict[str, Any]:
     """Current commit and whether the working tree differs from it; unknown without git."""
 
@@ -289,7 +282,7 @@ def main() -> int:
     try:
         config = RetrievalConfig.from_yaml(args.config)
         seeds = args.seed or list(config.training.seeds)
-        name = args.name or default_run_name(config)
+        name = args.name or config.graphsage.run_name()
         run(config, args.config, name, seeds, handlers, resume=args.resume, overwrite=args.overwrite)
     except AppError:
         log.exception("training failed")

@@ -33,6 +33,11 @@ class GraphSageConfig:
         if self.hidden_dim < 1 or self.num_layers < 1:
             raise ConfigError("graphsage.hidden_dim and graphsage.num_layers must be >= 1")
 
+    def run_name(self) -> str:
+        """Name of training runs with this architecture, e.g. `directed-learned-l3-h512`."""
+        direction = "directed" if self.directed else "undirected"
+        return f"{direction}-{self.image_node.value}-l{self.num_layers}-h{self.hidden_dim}"
+
 
 class DirectedSAGELayer(nn.Module):
     """GraphSAGE layer that keeps edge direction: one SAGEConv per direction, summed."""

@@ -130,3 +130,10 @@ def test_invalid_configuration_is_rejected():
         GraphImageEncoder(config, concepts, predicates, None)
     with pytest.raises(DataError, match="differ in size"):
         GraphImageEncoder(config, concepts, predicates[:, :8], None)
+
+
+def test_run_name_spells_out_the_architecture():
+    config = GraphSageConfig(hidden_dim=512, num_layers=3, directed=True, image_node=ImageNodeFeature.LEARNED)
+    assert config.run_name() == "directed-learned-l3-h512"
+    other = GraphSageConfig(hidden_dim=64, num_layers=2, directed=False, image_node=ImageNodeFeature.CLIP_IMAGE)
+    assert other.run_name() == "undirected-clip_image-l2-h64"

@@ -72,3 +72,24 @@ def score_method(scores: np.ndarray, data: SplitData, ks: Sequence[int] = DEFAUL
     if scores.shape != expected:
         raise DataError(f"score matrix has shape {scores.shape}, expected {expected}")
     return retrieval_metrics(ranks_of_relevant(scores, data.relevant_columns), ks)
+
+
+def graph_vector_scores(data: SplitData, graph_table: EmbeddingTable) -> np.ndarray:
+    """Cosine of every query with the graph vector of every gallery image (rows are unit length)."""
+    return data.query_vectors @ graph_table.select(data.image_ids).T
+
+
+def aggregate_runs(runs: Sequence[Mapping[str, float]]) -> dict[str, dict[str, float]]:
+    """Mean and sample standard deviation of each metric over runs (std is 0 for a single run)."""
+    if not runs:
+        raise DataError("no runs to aggregate")
+    names = set(runs[0])
+    if any(set(run) != names for run in runs):
+        raise DataError("runs report different metrics")
+    return {
+        name: {
+            "mean": float(np.mean([run[name] for run in runs])),
+            "std": float(np.std([run[name] for run in runs], ddof=1)) if len(runs) > 1 else 0.0,
+        }
+        for name in sorted(names)
+    }
