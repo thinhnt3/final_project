@@ -260,6 +260,16 @@ def run(
     for seed in seeds:
         run_dir = RunDirectory(config.runs_dir / RUNS_SUBDIR / name / f"seed{seed}")
         if resume and run_dir.is_finished():
+            # A result marker alone does not guarantee reusable local artifacts.
+            run_dir.validate_finished(
+                _settings(
+                    config,
+                    config_path,
+                    name,
+                    seed,
+                    data,
+                )
+            )
             log.info("seed %d already finished in %s; skipped", seed, run_dir.path)
             continue
         resume_seed = resume and run_dir.has_progress()

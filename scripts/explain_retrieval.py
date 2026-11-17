@@ -32,6 +32,7 @@ from src.models.ablations import ablate_graph
 from src.models.checkpoint import GRAPH_VECTORS, RunDirectory
 from src.models.explain import explain_graph_score
 from src.models.graphsage import GraphImageEncoder
+from src.models.run_validation import validate_artifact_inputs, validate_run
 from src.retrieval.config import RetrievalConfig
 from src.retrieval.rerank import rerank_scores
 
@@ -73,11 +74,19 @@ def run(
 
     run_dir = RunDirectory(config.runs_dir / TRAINING_RUNS_SUBDIR / name / f"seed{seed}")
 
+    # Explain only artifacts compatible with this config and current inputs.
+    validate_run(
+        run_dir.path,
+        config,
+        seed,
+    )
     benchmark_file = config.runs_dir / BENCHMARK_SUBDIR / f"graphsage-{name}.json"
     if not benchmark_file.is_file():
         raise DataError(f"{benchmark_file} not found; run the benchmark for this training run first")
     benchmark = read_json(benchmark_file)
 
+    # Keep alpha/k tied to the benchmark inputs that selected them.
+    validate_artifact_inputs(benchmark, str(benchmark_file))
     selected = benchmark["seeds"][str(seed)]["selected_on_validation"]
     alpha, top_k = float(selected["alpha"]), int(selected["top_k"])
 
