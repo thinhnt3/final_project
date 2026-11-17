@@ -52,7 +52,7 @@ label.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 <p class="sub">Phase 2 · bước 2.6 · 17/11/2026 · bản 10.000 ảnh · split sha256 <code>c2095127…</code> · tái tạo: <code>python -m scripts.review_vg_coco</code></p>
 
 <nav>
-<a href="#ket-luan">Kết luận</a><a href="#pipeline">Pipeline</a><a href="#split">Chia tập</a><a href="#do-khop">Độ khớp</a><a href="#tu-vung">Từ vựng</a><a href="#thu-cong">Review thủ công</a><a href="#quyet-dinh">Quyết định D1–D6</a>
+<a href="#ket-luan">Kết luận</a><a href="#pipeline">Pipeline</a><a href="#split">Chia tập</a><a href="#do-khop">Độ khớp</a><a href="#tu-vung">Từ vựng</a><a href="#thu-cong">Review thủ công</a><a href="#quyet-dinh">Quyết định D1–D7</a><a href="#do-thi">Đồ thị (2.7)</a>
 </nav>
 
 <div class="kpis">
@@ -64,7 +64,7 @@ label.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 
 <section id="ket-luan">
 <h2>1. Kết luận</h2>
-<p class="verdict"><strong>Dữ liệu dùng được cho Task 1–4.</strong> Đồ thị mang thông tin thật về nội dung caption, ba split cân bằng. Trước khi xây đồ thị (bước 2.7) cần chốt 6 quyết định ở mục 7, quan trọng nhất là <strong>chữ dùng cho đỉnh khái niệm (D1)</strong>.</p>
+<p class="verdict"><strong>Dữ liệu dùng được cho Task 1–4.</strong> Đồ thị mang thông tin thật về nội dung caption, ba split cân bằng. Bảy quyết định ở mục 7 đã chốt và đồ thị đã xây xong; kết quả ở mục 8.</p>
 </section>
 
 <section id="pipeline">
@@ -186,7 +186,7 @@ label.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 </section>
 
 <section id="quyet-dinh">
-<h2>7. Sáu quyết định cần chốt trước bước 2.7</h2>
+<h2>7. Bảy quyết định đã chốt (17/11)</h2>
 <div class="dec">
 <div class="d"><b class="id">D1</b><div><strong>Định danh đỉnh = synset; chữ hiển thị và chữ đem nhúng = tên thô phổ biến nhất của synset đó.</strong><p>Ví dụ <code>trouser</code> hiển thị là "pants", <code>land</code> là "ground". Giữ được phần gộp đúng, bỏ được lemma hiếm hoặc sai nghĩa.</p></div></div>
 <div class="d"><b class="id">D2</b><div><strong>Bỏ object có tên rác hoặc chỉ màu, chỉ vị trí</strong> (<code>the</code>, <code>white</code>, <code>front</code>, <code>left</code>…) theo một danh sách cố định trong config. Giữ danh từ ghép (<code>street light</code>, <code>wine glass</code>).<p>Các tên này không chỉ vật thể nào.</p></div></div>
@@ -195,11 +195,70 @@ label.chk{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 <div class="d"><b class="id">D5</b><div><strong>Chưa gộp từ gần nghĩa</strong> (guy/man, road/street). Để sang Phase 7 (ConceptNet/WordNet) và đo bằng ablation.<p>Nhờ vậy tách riêng được đóng góp của tri thức ngoài.</p></div></div>
 <div class="d"><b class="id">D6</b><div><strong>Chưa thêm thuộc tính VG</strong> (màu, kích thước, chất liệu từ <code>attributes.json</code>). Bước 2.7 chỉ dùng object và vị từ. Đo B4 xong mới quyết định có thêm hay không.<p>Thêm thì xử lý được truy vấn về màu và kích thước, nhưng phải tải thêm file, thêm một bước chuẩn hoá và đồ thị to hơn. Nếu thêm sau thì sẽ là một ablation riêng ("+ thuộc tính"), không phải làm lại các bước trước.</p></div></div>
 </div>
-<h3>Xác nhận của bạn</h3>
-<label class="chk"><input type="checkbox"> Đã xem <code>sample.html</code></label>
-<label class="chk"><input type="checkbox"> Chốt D1–D6 (hoặc sửa)</label>
-<label class="chk"><input type="checkbox"> Đồng ý bắt đầu 2.7</label>
-<p class="note">Ô đánh dấu chỉ để bạn tự theo dõi, không được lưu. Hãy trả lời trong chat.</p>
+<p class="note">Đã chốt theo đề xuất ngày 17/11, sau khi xem <code>sample.html</code>. Danh sách tên rác của D2 giữ nguyên, kể cả các từ vừa chỉ vị trí vừa là vật thật (<code>back</code>, <code>side</code>, <code>top</code>).</p>
+</section>
+
+<section id="do-thi">
+<h2>8. Kết quả bước 2.7: xây đồ thị</h2>
+<p class="verdict"><strong>Đồ thị đã xây xong trên 10.000 ảnh.</strong> Từ vựng gồm 1.778 khái niệm và 493 vị từ, tính chỉ từ 7.000 ảnh train. Mỗi ảnh có trung vị 17–18 khái niệm và 12 bộ ba. Kết quả đã được một lượt review độc lập đếm lại từ dữ liệu gốc và khớp hoàn toàn.</p>
+<p class="note">Sơ đồ cấu trúc. <a class="open" href="diagrams/graph-build-structure.html" target="_blank">Mở toàn màn hình ↗</a></p>
+<iframe src="diagrams/graph-build-structure.html" title="Cấu trúc bước 2.7" loading="lazy"></iframe>
+<h3>Thông số đồ thị</h3>
+<table>
+<tr><th></th><th>train</th><th>val</th><th>test</th></tr>
+<tr><td>Ảnh</td><td class="n">7.000</td><td class="n">1.500</td><td class="n">1.500</td></tr>
+<tr><td>Object giữ lại</td><td class="n">93,3%</td><td class="n">92,7%</td><td class="n">92,5%</td></tr>
+<tr><td>Quan hệ giữ lại</td><td class="n">84,8%</td><td class="n">83,8%</td><td class="n">82,5%</td></tr>
+<tr><td>Đỉnh khái niệm</td><td class="n">122.839</td><td class="n">26.098</td><td class="n">25.806</td></tr>
+<tr><td>Bộ ba</td><td class="n">90.002</td><td class="n">19.028</td><td class="n">18.782</td></tr>
+<tr><td>Khái niệm / bộ ba mỗi ảnh (trung vị)</td><td class="n">18 / 12</td><td class="n">17 / 12</td><td class="n">17 / 12</td></tr>
+<tr><td>Ảnh không còn bộ ba nào</td><td class="n">46</td><td class="n">7</td><td class="n">10</td></tr>
+</table>
+<p class="note">Các thông số này nằm trong <code>data/splits/vg_coco_graph.yaml</code>, do stage <code>graph</code> tự sinh, kèm sha256 của file đầu vào và đầu ra. Mỗi khái niệm có mặt ở trung vị 15 ảnh train (lớn nhất: <code>man</code>, 2.218 ảnh).</p>
+<h3>Object bị bỏ vì đâu (train)</h3>
+<div class="bars" data-max="253539">
+<div class="row"><span>Giữ lại</span><div class="track"><div class="fill" data-v="236567"></div></div><span class="num">236.567</span></div>
+<div class="row"><span>Khái niệm hiếm (D3)</span><div class="track"><div class="fill alt" data-v="14142"></div></div><span class="num">14.142</span></div>
+<div class="row"><span>Tên rác (D2)</span><div class="track"><div class="fill warn" data-v="2706"></div></div><span class="num">2.706</span></div>
+<div class="row"><span>Khái niệm rác (D2)</span><div class="track"><div class="fill warn" data-v="124"></div></div><span class="num">124</span></div>
+</div>
+<h3>Chữ hiển thị sau D1</h3>
+<div class="chips">
+<span class="chip">trouser.n.01 → pants</span><span class="chip">land.n.04 → ground</span><span class="chip">male_child.n.01 → boy</span>
+<span class="chip">sofa.n.01 → couch</span><span class="chip">airplane.n.01 → plane</span><span class="chip">jinrikisha.n.01 → <s>bị bỏ</s> (dưới 5 ảnh train)</span>
+</div>
+<p class="note">Chữ hiển thị có khi ở dạng số nhiều (<code>boots</code>, <code>flowers</code>), vì đó là tên thô phổ biến nhất.</p>
+<h3>Tiêu chí hoàn thành</h3>
+<table>
+<tr><th>Tiêu chí</th><th>Kết quả</th></tr>
+<tr><td>Chạy 2 lần ra cùng sha256</td><td>Đạt</td></tr>
+<tr><td>Ảnh val/test không ảnh hưởng từ vựng (test chống rò rỉ)</td><td>Đạt</td></tr>
+<tr><td>Xem tay 3 ảnh ví dụ, trước và sau</td><td>Đạt</td></tr>
+<tr><td>Test</td><td>Đạt: 108 test; bắt được 11/11 lỗi cố ý gài vào code</td></tr>
+<tr><td>Độ khớp caption ↔ đồ thị không giảm quá 2 điểm</td><td><strong>Không đạt, đã chấp nhận:</strong> 37,4% (ngẫu nhiên 3,6%), giảm 3,4 điểm so với 40,8%</td></tr>
+</table>
+<h3>Vì sao độ khớp giảm 3,4 điểm</h3>
+<div class="bars" data-max="1.6">
+<div class="row"><span>Mỗi khái niệm còn một chữ hiển thị (D1)</span><div class="track"><div class="fill warn" data-v="1.6"></div></div><span class="num">1,6 điểm</span></div>
+<div class="row"><span>Bỏ khái niệm hiếm (D3)</span><div class="track"><div class="fill alt" data-v="1.2"></div></div><span class="num">1,2 điểm</span></div>
+<div class="row"><span>Không còn tính nhãn lemma</span><div class="track"><div class="fill alt" data-v="0.5"></div></div><span class="num">0,5 điểm</span></div>
+<div class="row"><span>Bỏ tên rác (D2)</span><div class="track"><div class="fill alt" data-v="0.1"></div></div><span class="num">0,1 điểm</span></div>
+</div>
+<ul>
+<li>Phần của D1 gồm từ đồng nghĩa trong cùng synset (caption viết "sofa", đỉnh hiển thị "couch") và tính từ lẫn trong tên thô (<code>white shirt</code>). Loại thứ hai là thông tin thuộc tính mà D6 để sau.</li>
+<li>Mốc ngẫu nhiên giảm theo (4,2% xuống 3,6%), nên tỉ lệ đúng ảnh trên ngẫu nhiên vẫn khoảng 10 lần.</li>
+<li>Đã thử lưu thêm các tên gọi khác cho mỗi khái niệm rồi bỏ: độ khớp lên 44,3% nhưng mốc ngẫu nhiên tăng gấp đôi (8,3%), vì từ <code>white</code> trong <code>white shirt</code> lan sang mọi ảnh có áo.</li>
+</ul>
+<h3>Lượt review độc lập đã tìm ra gì</h3>
+<ul>
+<li><strong>Test yếu:</strong> 5 lỗi gài vào code đều lọt qua bộ test ban đầu. Đã viết lại test.</li>
+<li><strong>Lỗi lọc tên rác:</strong> lọc theo tên thô để sót khái niệm với chữ hiển thị thừa ("yellow center", "backs", "right side"). Giờ khái niệm có tên phổ biến nhất là tên rác bị bỏ nguyên cả khái niệm: 49 khái niệm, 167 object.</li>
+<li>Chưa chạy lint và typecheck, vì môi trường chưa cài ruff và mypy.</li>
+</ul>
+<h3>Quyết định D7</h3>
+<div class="dec">
+<div class="d"><b class="id">D7</b><div><strong>Caption là truy vấn, không trộn vào đồ thị ảnh.</strong><p>Nếu trộn thì ảnh test mang sẵn đáp án của truy vấn. Phân tích caption thành đồ thị truy vấn bằng SceneGraphParser là một lựa chọn phía truy vấn ở Phase 4; đồ thị ảnh không phụ thuộc vào lựa chọn đó.</p></div></div>
+</div>
 </section>
 </main>
 <script>

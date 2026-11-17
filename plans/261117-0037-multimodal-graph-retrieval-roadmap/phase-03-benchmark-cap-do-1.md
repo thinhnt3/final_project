@@ -61,7 +61,7 @@ Kết quả 3.3, CLIP ViT-B/32, gallery 1.500 ảnh, 7.500 truy vấn mỗi spli
 
 Đã tính lại độc lập bằng numpy thuần, khớp cả 4 số của test. Mức ngẫu nhiên R@1 = 0,07%. Số đã công bố của CLIP ViT-B/32 zero-shot trên COCO 5K (text → image): R@1 30,4 / R@5 54,8 / R@10 66,1 (bảng 9 của paper LAION-5B, arXiv 2210.08402). Gallery ở đây nhỏ hơn 3,3 lần nên số cao hơn là hợp lý; không so trực tiếp được.
 
-Quy ước 3.4: điểm cuối dùng cosine thô theo đúng công thức đề bài, chưa chuẩn hoá thang điểm giữa CLIP và đồ thị. Nếu thang điểm lệch nhiều khi có GraphSAGE thì xem lại ở bước 1.5.
+Quy ước 3.4 (user duyệt 17/11): điểm cuối dùng cosine thô theo đúng công thức đề bài, không chuẩn hoá thang điểm; α quét với bước 0,01 trên [0, 1] (`benchmark.alpha_step`). Số đo dẫn tới lựa chọn này ghi ở Phase 4.
 
 Code-review 1.1 và Phase 3 (agent độc lập, 17/11): tính lại độc lập khớp cả validation và test; metric, cách chọn gallery và truy vấn đúng. Đã sửa 4 lỗi ở phần xếp hạng lại, chưa lỗi nào ảnh hưởng tới số đã ghi:
 

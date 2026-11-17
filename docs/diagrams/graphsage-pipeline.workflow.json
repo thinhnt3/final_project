@@ -1,0 +1,50 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "GraphSAGE trong pipeline truy hồi",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "offline-graph", "label": "Chuẩn bị: đồ thị → vector", "focus": ["vg-graph", "node-features", "graphsage", "graph-vectors"], "note": "GraphSAGE đọc đồ thị có sẵn và sinh một vector cho mỗi ảnh. Chạy một lần, không cần truy vấn." },
+      { "id": "online-query", "label": "Lúc chạy: truy vấn → kết quả", "focus": ["query", "clip-text", "topk", "graph-score", "rerank", "result"], "note": "Đúng quy trình đề bài: CLIP → top-k → điểm đồ thị → xếp hạng lại → giải thích." },
+      { "id": "where-they-meet", "label": "Chỗ hai nhánh gặp nhau", "focus": ["graph-vectors", "clip-image", "topk", "graph-score"], "note": "Vector CLIP ảnh chọn ứng viên; vector đồ thị chấm điểm lại từng ứng viên." }
+    ]
+  },
+  "lanes": [
+    { "id": "graph", "label": "Đồ thị · chuẩn bị trước" },
+    { "id": "query", "label": "Truy vấn · lúc chạy" },
+    { "id": "image", "label": "Ảnh · chuẩn bị trước" }
+  ],
+  "mainPath": ["query", "clip-text", "topk", "graph-score", "rerank", "result"],
+  "nodes": [
+    { "id": "vg-graph", "lane": "graph", "col": 0, "type": "database", "label": "Đồ thị từ nhãn VG", "sublabel": "ảnh, đối tượng, relation", "tag": "không có SGG", "width": 156 },
+    { "id": "node-features", "lane": "graph", "col": 1, "type": "backend", "label": "Vector ban đầu", "sublabel": "CLIP text của nhãn", "width": 148 },
+    { "id": "graphsage", "lane": "graph", "col": 2, "type": "messagebus", "label": "GraphSAGE", "sublabel": "đồ thị → vector", "tag": "phần được học", "width": 148 },
+    { "id": "graph-vectors", "lane": "graph", "col": 3, "type": "database", "label": "Vector đồ thị", "sublabel": "1 vector mỗi ảnh", "width": 148 },
+    { "id": "query", "lane": "query", "col": 0, "type": "frontend", "label": "Truy vấn", "sublabel": "a man riding a bike", "width": 156 },
+    { "id": "clip-text", "lane": "query", "col": 1, "type": "backend", "label": "CLIP text", "sublabel": "đóng băng", "width": 148 },
+    { "id": "topk", "lane": "query", "col": 2, "type": "backend", "label": "Top-k cosine", "sublabel": "chọn ứng viên", "width": 148 },
+    { "id": "graph-score", "lane": "query", "col": 3, "type": "backend", "label": "Điểm đồ thị", "sublabel": "cos(truy vấn, đồ thị)", "width": 148 },
+    { "id": "rerank", "lane": "query", "col": 4, "type": "security", "label": "Xếp hạng lại", "sublabel": "α·CLIP + (1−α)·đồ thị", "tag": "α chọn trên val", "width": 160 },
+    { "id": "result", "lane": "query", "col": 5, "type": "frontend", "label": "Kết quả", "sublabel": "ảnh + relation giải thích", "width": 160 },
+    { "id": "clip-image", "lane": "image", "col": 2, "type": "database", "label": "Vector CLIP ảnh", "sublabel": "đóng băng, lưu sẵn", "width": 148 }
+  ],
+  "edges": [
+    { "id": "graph-to-features", "from": "vg-graph", "to": "node-features", "variant": "default" },
+    { "id": "features-to-sage", "from": "node-features", "to": "graphsage", "variant": "default" },
+    { "id": "sage-to-vectors", "from": "graphsage", "to": "graph-vectors", "label": "2 tầng", "variant": "default" },
+    { "id": "query-to-clip", "from": "query", "to": "clip-text", "variant": "emphasis" },
+    { "id": "clip-to-topk", "from": "clip-text", "to": "topk", "label": "vector truy vấn", "variant": "emphasis" },
+    { "id": "image-to-topk", "from": "clip-image", "to": "topk", "label": "10.000 ảnh", "variant": "default" },
+    { "id": "topk-to-score", "from": "topk", "to": "graph-score", "label": "k ứng viên", "variant": "emphasis" },
+    { "id": "vectors-to-score", "from": "graph-vectors", "to": "graph-score", "label": "tra theo ảnh", "variant": "default" },
+    { "id": "score-to-rerank", "from": "graph-score", "to": "rerank", "variant": "emphasis" },
+    { "id": "rerank-to-result", "from": "rerank", "to": "result", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "GraphSAGE làm gì", "items": ["Mã hoá đồ thị thành vector (graph-to-vec)", "Mỗi đỉnh trộn vector của nó với các đỉnh lân cận, 2 tầng", "Đầu ra: vector đồ thị của ảnh, cùng không gian với CLIP"] },
+    { "dot": "rose", "title": "Không phải SGG", "items": ["SGG sinh đồ thị từ pixel; dự án không làm bước này", "Đồ thị lấy từ nhãn người gán của Visual Genome", "Giới hạn: ảnh mới ngoài VG không có đồ thị"] },
+    { "dot": "amber", "title": "Huấn luyện", "items": ["Chỉ GraphSAGE được học, CLIP đóng băng", "InfoNCE: vector đồ thị gần caption của đúng ảnh", "35.000 caption train; α và siêu tham số chọn trên val"] }
+  ]
+}

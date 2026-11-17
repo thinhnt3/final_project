@@ -100,6 +100,9 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 |---|---|---|
 | 1.0 | Xong 17/11 | Nhánh feat gộp vào `main` (`a795fd1`); code, script, config và dữ liệu của tập 40 ảnh đã xoá; PyG 2.8.1; `configs/retrieval/vg_coco.yaml` |
 | 1.1 | Xong 17/11 | `data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/` (122 MB, không commit) + `meta.json` |
-| 1.2–1.6 | Chưa làm | |
+| 1.2 | Xong 17/11 | `src/models/graph_data.py` + `tests/models/test_graph_data.py` |
+| 1.3–1.6 | Chưa làm | |
 
 Kết quả 1.1: ảnh 10.000 × 512, caption 50.000 × 512, khái niệm 1.778 × 512, vị từ 493 × 512; float32, lệch độ dài tối đa 1,8e-7, không NaN. (b) Cosine caption với đúng ảnh 0,304, với ảnh ngẫu nhiên 0,152. (c) Mã hoá lại 4 caption và 3 ảnh: lệch tối đa 3,9e-7. (d) Test dùng dữ liệu dựng tay, không tải model. Chữ khái niệm đưa vào CLIP nguyên dạng ("pants"), không thêm câu mẫu; láng giềng gần nhất hợp lý (`couch` → loveseat, armchair). Chạy trên MPS khoảng 3 phút.
+
+Kết quả 1.2: dựng 10.000 đồ thị con trong 0,2 giây. Đối chiếu với `graph_stats.json` của bước 2.7: 174.743 đỉnh đối tượng, 127.812 đỉnh phụ (mỗi bộ ba một đỉnh), 430.367 cạnh = 174.743 cạnh "chứa" + 2 × 127.812, khớp cả ba. Trung bình 31,3 đỉnh mỗi ảnh. Lỗi bắt được bằng test: PyG tự cộng dồn mọi trường có chữ "index" trong tên khi ghép batch, làm lệch chỉ số tra vector của các đồ thị con từ thứ hai trở đi; trường đổi tên thành `feature_row`.
