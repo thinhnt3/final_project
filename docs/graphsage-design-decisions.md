@@ -1,6 +1,6 @@
 # Quyết định kỹ thuật: GraphSAGE trong pipeline truy hồi
 
-Cập nhật: 17/11/2026. Trạng thái: thiết kế đã phỏng vấn xong, **chưa code**. Tài liệu này là nơi ghi quyết định hiện hành cho Phase 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
+Cập nhật: 18/11/2026. Trạng thái: pipeline và ablation đã triển khai; fidelity perturbation đã chạy. Tài liệu này là nơi ghi quyết định hiện hành cho Phase 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
 
 Minh hoạ:
 
@@ -180,3 +180,136 @@ Chưa có giá trị nào được chốt. Các tham số sẽ quét: số chi�
 
 - Nhánh `feat/vg-coco-graph-build` (code pipeline và dữ liệu đồ thị) chưa gộp vào `main`; Phase 1 cần nó.
 - Định dạng `image_graphs.json` của bước 2.7 đã đủ để dựng đồ thị con theo G2 (khái niệm và bộ ba theo id); không cần chạy lại bước 2.7.
+
+
+## Ablation và fidelity
+
+Run from the repository root with Python 3.12 and the requirements installed.
+CLIP embeddings and all VG-COCO images are local inputs, not Git artifacts.
+
+## Reproduce
+
+```bash
+python -m scripts.embed_vg_coco  # only if the embedding cache is missing
+for variant in full objects_only drop_predicates random_edges undirected; do
+  python -m scripts.train_graphsage --config "configs/retrieval/ablations/${variant}.yaml" --resume || break
+  python -m scripts.run_benchmark --method graphsage --config "configs/retrieval/ablations/${variant}.yaml" || break
+done
+python -m scripts.analyze_ablation
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+```
+
+Training configs contain seeds 13, 37 and 97. W&B is disabled. Default names
+separate each variant and topology seed; do not override `--name` to reuse a
+baseline directory for a different intervention. `--resume` rejects incomplete
+finished artifacts or incompatible settings. An exported run is reusable only
+with its original embedding cache, graph and split hashes. Benchmark/explanation
+consumers reject mismatched or stale inputs.
+
+The full training snapshots from the 18/11 restoration record
+`private/ablation-execution/full.yaml`, the historical path actually used.
+`configs/retrieval/ablations/full.yaml` provides the same model/training settings
+publicly; replay does not require the private file. Snapshots are records, not
+input configs to edit. The original 17/11 baseline remains in Git history;
+current full run artifacts are the 18/11 restoration, not a byte-identical rerun.
+
+## Intervention contract
+
+- `objects_only`: remove triples before PyG construction; concept nodes and
+  image→object edges remain. This is still a GNN, not the lexical baseline.
+- `drop_predicates`: zero initial relation features; retain relation nodes,
+  connectivity, direction and message passing. This does not remove all relation information.
+- `random_edges`: independently permute subjects and objects using a private RNG
+  keyed by image ID and ablation_seed. Preserve directed degrees, relation count
+  and predicate histogram. Duplicate triples/self-relations are permitted.
+- `undirected`: use the existing undirected layer; fewer parameters than full,
+  so this is not a parameter-matched direction experiment.
+
+Annotation files are never overwritten. Each intervention is used consistently
+for training, validation, vector export and explanation. Alpha/k are selected
+independently on validation; test is not used for tuning.
+
+## Analysis and interpretation
+
+`runs/analysis/ablation.json` includes official per-seed metrics, paired top-1
+wins/losses, ten deterministic case studies, and an exploratory 95% image-cluster
+bootstrap interval (2,000 draws, seed 310). Captions of the same true image remain
+together; training checkpoints are fixed. Intervals are conditional on these
+three models, not uncertainty over all possible training seeds, and are not
+adjusted for multiple comparisons.
+
+The fixed-k=500 diagnostic retains each original alpha; it is post-hoc and does
+not replace the official benchmark or define a new tuned system. Two full seeds
+selected k=10, which explains their unchanged R@10 versus CLIP. Do not infer that
+full necessarily has a worse graph encoder from that fused R@10 alone.
+
+## Fidelity protocol
+
+`configs/evaluation/fidelity.yaml` fixes 200 test queries sampled with seed 2026,
+all three trained seeds, removal fractions 0.10/0.25, and 20 random controls.
+There is no retraining or parameter search. The target is each query's original
+predicted top-1 image, whether correct or wrong. Query, alpha/k, CLIP scores,
+candidate pool and all rival graph scores are frozen. Only the target graph changes.
+
+Relations are ordered by single-deletion graph score drop, then the selected
+group is deleted jointly and compared with equal-size random groups. At least
+two relations are removed and one remains: requested budget fractions can
+therefore differ from actual fractions for small graphs. Graphs with fewer than
+three relations are explicitly skipped; the same sampled queries remain in the
+output, including skip reasons. Negative score drops are retained.
+
+`runs/fidelity/full-joint-test.json` stores per-query indices, random groups,
+graph score changes, target rank changes, top-1 losses, hashes and summaries.
+Joint deletion and downstream rank are additional diagnostics, but selection
+still used deletion scores. This is selection-dependent perturbation evidence,
+not independent proof of semantic faithfulness or causal superiority of relations.
+Deleting relation nodes also changes topology and message normalization.
+
+## Observed evidence, 18/11/2026
+
+Full vs objects-only top-1 gain is 0.56 pp; exploratory conditional image-cluster
+95% CI [0.05, 1.06] pp. Full vs masked predicates is about 0.053 pp, CI
+[-0.35, 0.45]; full vs random edges 0.329 pp, CI [-0.09, 0.74]. These do not
+establish a clear label/connectivity advantage across arbitrary retraining runs.
+
+Fidelity evaluated 198/195/196 of the 200 sampled queries for seeds 13/37/97.
+Across seed means, selected-group top-1 loss was 17.81% vs random 4.31% for the
+10% requested budget, and 25.45% vs 6.06% for 25%. Actual integer budgets and
+skipped queries are recorded. Graph score decreases were 0.02200 vs 0.00142 and
+0.03040 vs 0.00216 respectively. Do not count the three measurements of one query
+as three independent queries.
+
+Examples expose potentially noisy or irrelevant graph annotations (e.g.
+`skateboard has arm`, `person with platform`), but ten selected cases do not prove
+the prevalence of annotation noise or that it caused aggregate performance.
+Caption-type prevalence and CLIP's sensitivity to subject/object roles remain
+hypotheses requiring a separately defined evaluation. Fidelity does not resolve them.
+
+## Validation and remaining scope
+
+Run `pytest`, `ruff check src scripts tests`, and `mypy src scripts` with the
+requirements installed. Tests cover transformations, batching, backward,
+checkpoint/export, resume integrity, stale provenance, joint perturbation budgets,
+negative drops, conservative ranks and clustered paired analysis.
+
+The analysis and fidelity commands were run on real local artifacts, without
+changing retrieval hyperparameters after seeing test results. Phase 5 still
+requires the second dataset and hub-policy ablation; an independent explanation
+sanity check and parameter-matched direction control remain useful extensions.
+
+## Source formatting and local artifacts
+
+New ablation/analysis/fidelity files use grouped processing steps, short English
+operation comments and multiline parameters for substantial calls. Existing
+modules are formatted only in changed regions; unrelated legacy code keeps its
+original formatting. Imports follow Ruff's import-order rules.
+
+`/runs/` and `/private/` are ignored for newly generated artifacts. Historical
+files already tracked under `runs/` remain tracked: `.gitignore` does not hide
+or remove their modifications. No tracked result, checkpoint or local output is
+deleted or untracked by this policy. Review tracked experiment changes separately
+from source changes; regenerate local outputs using the commands above.
+
+The current requirements checklist is `plan-task/requirements-checklist.md`.
+It replaces the obsolete 40-image pilot status and explicitly separates measured
+perturbation fidelity from unverified semantic validity and final deliverables.
