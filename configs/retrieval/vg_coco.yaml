@@ -1,0 +1,28 @@
+# Retrieval experiments on the VG ∩ COCO subset.
+# All paths are relative to the repository root; run commands from there.
+
+# Dataset build config: gives the processed data directory and the split seed.
+data_config: configs/data/vg_coco.yaml
+
+# Frozen CLIP used for images, captions and graph node texts.
+# device: auto picks cuda, then mps, then cpu.
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+
+# One sub-directory per CLIP model is created under this directory.
+embeddings_dir: data/processed/vg_coco/embeddings
+
+# Evaluation. alpha and top_k are searched on validation only:
+# final score = alpha * CLIP cosine + (1 - alpha) * graph score, over the top-k CLIP candidates.
+# alpha_step: alpha runs over 0, step, 2*step, ..., 1. The best alpha sits in a narrow peak
+# (a 0.1 step missed it), so the step is fine.
+benchmark:
+  recall_ks: [1, 5, 10]
+  alpha_step: 0.01
+  top_k_grid: [10, 20, 50, 100]
+
+# Benchmark results and trained models are written under this directory.
+runs_dir: runs

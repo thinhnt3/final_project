@@ -5,7 +5,7 @@ import random
 import re
 import statistics
 from collections import Counter
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -58,7 +58,7 @@ class CoverageStats:
 
 
 def coverage_vs_random(
-    captions_by_image: dict[int, Sequence[str]], vocab_by_image: dict[int, set[str]], seed: int
+    captions_by_image: Mapping[int, Sequence[str]], vocab_by_image: Mapping[int, set[str]], seed: int
 ) -> CoverageStats:
     """Compare each caption against its own graph and against one random other graph."""
     rng = random.Random(seed)

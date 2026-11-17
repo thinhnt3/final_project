@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
-
+from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.data.schemas import Split
 from src.data.synsets import normalize_text
@@ -102,34 +101,28 @@ class DataConfig:
     @classmethod
     def from_yaml(cls, path: str | Path) -> DataConfig:
         """Load and validate the YAML file; raise ConfigError on any problem."""
-        config_path = Path(path)
-        if not config_path.is_file():
-            raise ConfigError(f"config file not found: {config_path}")
-        raw = yaml.safe_load(config_path.read_text())
-        if not isinstance(raw, dict):
-            raise ConfigError(f"{config_path}: top level must be a mapping")
-        return cls.from_dict(raw)
+        return cls.from_dict(read_mapping(path))
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> DataConfig:
         """Build from an already-parsed mapping (used by tests)."""
-        paths_raw = _section(raw, "paths")
+        paths_raw = require_section(raw, "paths")
         paths = PathsConfig(
-            raw_dir=Path(_field(paths_raw, "raw_dir", str)),
-            interim_dir=Path(_field(paths_raw, "interim_dir", str)),
-            manifest_file=Path(_field(paths_raw, "manifest_file", str)),
-            split_file=Path(_field(paths_raw, "split_file", str)),
-            processed_dir=Path(_field(paths_raw, "processed_dir", str)),
-            graph_card_file=Path(_field(paths_raw, "graph_card_file", str)),
+            raw_dir=Path(require_field(paths_raw, "raw_dir", str)),
+            interim_dir=Path(require_field(paths_raw, "interim_dir", str)),
+            manifest_file=Path(require_field(paths_raw, "manifest_file", str)),
+            split_file=Path(require_field(paths_raw, "split_file", str)),
+            processed_dir=Path(require_field(paths_raw, "processed_dir", str)),
+            graph_card_file=Path(require_field(paths_raw, "graph_card_file", str)),
         )
         sources_raw = raw.get("sources")
         if not isinstance(sources_raw, list) or not sources_raw:
             raise ConfigError("'sources' must be a non-empty list")
         sources = tuple(
             SourceSpec(
-                name=_field(item, "name", str),
-                url=_field(item, "url", str),
-                target=_field(item, "target", str),
+                name=require_field(item, "name", str),
+                url=require_field(item, "url", str),
+                target=require_field(item, "target", str),
                 archive_member=item.get("archive_member"),
             )
             for item in sources_raw
@@ -137,24 +130,24 @@ class DataConfig:
         names = [s.name for s in sources]
         if len(set(names)) != len(names):
             raise ConfigError(f"duplicate source names: {names}")
-        join_raw = _section(raw, "join")
-        join = JoinConfig(captions_per_image=_field(join_raw, "captions_per_image", int))
+        join_raw = require_section(raw, "join")
+        join = JoinConfig(captions_per_image=require_field(join_raw, "captions_per_image", int))
         if join.captions_per_image < 1:
             raise ConfigError("join.captions_per_image must be >= 1")
-        normalize_raw = _section(raw, "normalize")
+        normalize_raw = require_section(raw, "normalize")
         normalize = NormalizeConfig(
-            backfill_min_count=_field(normalize_raw, "backfill_min_count", int),
-            backfill_min_share=float(_field(normalize_raw, "backfill_min_share", (int, float))),
+            backfill_min_count=require_field(normalize_raw, "backfill_min_count", int),
+            backfill_min_share=float(require_field(normalize_raw, "backfill_min_share", (int, float))),
         )
         if normalize.backfill_min_count < 1:
             raise ConfigError("normalize.backfill_min_count must be >= 1")
         if not 0.5 < normalize.backfill_min_share <= 1.0:
             raise ConfigError("normalize.backfill_min_share must be in (0.5, 1.0]")
-        download_raw = _section(raw, "download")
+        download_raw = require_section(raw, "download")
         download = DownloadConfig(
-            workers=_field(download_raw, "workers", int),
-            retries=_field(download_raw, "retries", int),
-            timeout_s=float(_field(download_raw, "timeout_s", (int, float))),
+            workers=require_field(download_raw, "workers", int),
+            retries=require_field(download_raw, "retries", int),
+            timeout_s=float(require_field(download_raw, "timeout_s", (int, float))),
         )
         if download.workers < 1 or download.retries < 1 or download.timeout_s <= 0:
             raise ConfigError("download.workers and download.retries must be >= 1, timeout_s > 0")
@@ -181,21 +174,21 @@ class DataConfig:
 
 
 def _split_config(raw: dict[str, Any]) -> SplitConfig:
-    split_raw = _section(raw, "split")
-    sizes_raw = _section(split_raw, "sizes")
+    split_raw = require_section(raw, "split")
+    sizes_raw = require_section(split_raw, "sizes")
     if set(sizes_raw) != {s.value for s in Split}:
         raise ConfigError(f"split.sizes must have exactly {[s.value for s in Split]}, got {list(sizes_raw)}")
-    sizes = {s: _field(sizes_raw, s.value, int) for s in Split}
+    sizes = {s: require_field(sizes_raw, s.value, int) for s in Split}
     if any(n < 1 for n in sizes.values()):
         raise ConfigError(f"split.sizes must all be >= 1, got {sizes_raw}")
     exclude_raw = split_raw.get("exclude_ids")
     if not isinstance(exclude_raw, list) or not all(isinstance(i, int) and not isinstance(i, bool) for i in exclude_raw):
         raise ConfigError("split.exclude_ids must be a list of integers")
     config = SplitConfig(
-        seed=_field(split_raw, "seed", int),
+        seed=require_field(split_raw, "seed", int),
         sizes=sizes,
-        min_relations=_field(split_raw, "min_relations", int),
-        n_strata=_field(split_raw, "n_strata", int),
+        min_relations=require_field(split_raw, "min_relations", int),
+        n_strata=require_field(split_raw, "n_strata", int),
         exclude_ids=tuple(sorted(set(exclude_raw))),
     )
     if config.min_relations < 0 or config.n_strata < 1:
@@ -204,8 +197,8 @@ def _split_config(raw: dict[str, Any]) -> SplitConfig:
 
 
 def _graph_config(raw: dict[str, Any]) -> GraphConfig:
-    graph_raw = _section(raw, "graph")
-    min_train_images = _field(graph_raw, "min_train_images", int)
+    graph_raw = require_section(raw, "graph")
+    min_train_images = require_field(graph_raw, "min_train_images", int)
     if min_train_images < 1:
         raise ConfigError("graph.min_train_images must be >= 1")
     names = graph_raw.get("junk_names")
@@ -218,18 +211,3 @@ def _graph_config(raw: dict[str, Any]) -> GraphConfig:
     if len(set(names)) != len(names):
         raise ConfigError("graph.junk_names has duplicates")
     return GraphConfig(min_train_images=min_train_images, junk_names=frozenset(names))
-
-
-def _section(raw: dict[str, Any], key: str) -> dict[str, Any]:
-    value = raw.get(key)
-    if not isinstance(value, dict):
-        raise ConfigError(f"'{key}' must be a mapping")
-    return value
-
-
-def _field(raw: dict[str, Any], key: str, kind: type | tuple[type, ...]) -> Any:
-    value = raw.get(key)
-    # bool is a subclass of int; reject it so `captions_per_image: true` fails.
-    if not isinstance(value, kind) or isinstance(value, bool):
-        raise ConfigError(f"field '{key}' must be {kind}, got {value!r}")
-    return value
