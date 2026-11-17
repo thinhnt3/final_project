@@ -1,4 +1,4 @@
-# Visual Genome ∩ COCO dataset build (Phase 2).
+# Visual Genome ∩ COCO dataset build.
 # All paths are relative to the repository root; run commands from there.
 
 paths:
@@ -7,6 +7,8 @@ paths:
   manifest_file: data/raw/MANIFEST.json
   split_file: data/splits/vg_coco.json
   processed_dir: data/processed/vg_coco
+  # Written by `--stage graph`: graph sizes and keep rates, committed next to the split file.
+  graph_card_file: data/splits/vg_coco_graph.yaml
 
 # Raw files. `target` is relative to raw_dir. When the URL is a zip archive,
 # `archive_member` names the single file to extract from it.
@@ -52,3 +54,67 @@ download:
   workers: 8
   retries: 3
   timeout_s: 60
+
+# Graph vocabulary (built from train images only, so val/test never shape it).
+# min_train_images: a concept or predicate must appear in at least this many train images.
+# junk_names: objects whose raw name is one of these are dropped even when VG gave them a
+# synset (VG maps `he` to helium, `it` to information technology). Function words, bare
+# colors, bare positions. Ambiguous nouns such as `orange`, `rose`, `light` are kept.
+# A concept whose most common train name is in this list is dropped as a whole, including
+# its other names (`right side`, `backs`).
+graph:
+  min_train_images: 5
+  junk_names:
+    - the
+    - a
+    - an
+    - this
+    - that
+    - these
+    - those
+    - it
+    - its
+    - they
+    - them
+    - she
+    - he
+    - her
+    - his
+    - is
+    - are
+    - was
+    - "on"
+    - in
+    - of
+    - up
+    - down
+    - something
+    - thing
+    - stuff
+    - bad sentence
+    - white
+    - black
+    - green
+    - blue
+    - red
+    - brown
+    - yellow
+    - pink
+    - purple
+    - grey
+    - gray
+    - silver
+    - gold
+    - tan
+    - beige
+    - dark
+    - wooden
+    - top
+    - front
+    - left
+    - right
+    - side
+    - back
+    - bottom
+    - middle
+    - center
