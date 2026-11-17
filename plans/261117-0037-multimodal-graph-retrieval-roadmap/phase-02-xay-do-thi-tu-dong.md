@@ -66,7 +66,7 @@ data/processed/vg_coco/          # 10K ảnh đã chọn: images, queries, scene
 data/splits/vg_coco.json
 ```
 
-`data/interim/` và ảnh trong `data/processed/vg_coco/images/` thêm vào `.gitignore`. Dữ liệu 40 ảnh cũ (`data/processed/visual_genome/`, `prepare_visual_genome_subset.py`) giữ nguyên tới khi Phase 1 chuyển sang `vg_coco`.
+`data/interim/` và ảnh trong `data/processed/vg_coco/images/` thêm vào `.gitignore`. Dữ liệu và script của tập 40 ảnh cũ đã xoá ngày 17/11 khi Phase 1 chuyển sang `vg_coco` (còn trong lịch sử git).
 
 Thư viện thêm vào `requirements.txt`: `scikit-learn`, `pyyaml`, `pytest`, `matplotlib` (`.venv` hiện chưa có `sklearn`).
 
