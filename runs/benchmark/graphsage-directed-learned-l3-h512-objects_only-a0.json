@@ -1,0 +1,222 @@
+{
+  "method": "graphsage",
+  "clip_model": "openai/clip-vit-base-patch32",
+  "deterministic": false,
+  "recall_ks": [
+    1,
+    5,
+    10
+  ],
+  "splits": {
+    "val": {
+      "gallery_images": 1500,
+      "queries": 7500
+    },
+    "test": {
+      "gallery_images": 1500,
+      "queries": 7500
+    }
+  },
+  "clip": {
+    "val": {
+      "recall@1": 0.4264,
+      "recall@5": 0.7079,
+      "recall@10": 0.8212,
+      "mrr": 0.5566
+    },
+    "test": {
+      "recall@1": 0.4388,
+      "recall@5": 0.7219,
+      "recall@10": 0.8264,
+      "mrr": 0.5676
+    }
+  },
+  "run_name": "directed-learned-l3-h512-objects_only-a0",
+  "seeds": {
+    "13": {
+      "selected_on_validation": {
+        "alpha": 0.84,
+        "top_k": 500
+      },
+      "graph_only": {
+        "val": {
+          "recall@1": 0.262,
+          "recall@5": 0.5515,
+          "recall@10": 0.6968,
+          "mrr": 0.4007
+        },
+        "test": {
+          "recall@1": 0.2628,
+          "recall@5": 0.5592,
+          "recall@10": 0.7044,
+          "mrr": 0.4027
+        }
+      },
+      "reranked": {
+        "val": {
+          "recall@1": 0.4633,
+          "recall@5": 0.7541,
+          "recall@10": 0.8501,
+          "mrr": 0.5935
+        },
+        "test": {
+          "recall@1": 0.4765,
+          "recall@5": 0.7579,
+          "recall@10": 0.8573,
+          "mrr": 0.6037
+        }
+      }
+    },
+    "37": {
+      "selected_on_validation": {
+        "alpha": 0.87,
+        "top_k": 1500
+      },
+      "graph_only": {
+        "val": {
+          "recall@1": 0.2656,
+          "recall@5": 0.556,
+          "recall@10": 0.6943,
+          "mrr": 0.402
+        },
+        "test": {
+          "recall@1": 0.2653,
+          "recall@5": 0.5588,
+          "recall@10": 0.7028,
+          "mrr": 0.4043
+        }
+      },
+      "reranked": {
+        "val": {
+          "recall@1": 0.4567,
+          "recall@5": 0.75,
+          "recall@10": 0.8504,
+          "mrr": 0.5885
+        },
+        "test": {
+          "recall@1": 0.4764,
+          "recall@5": 0.7561,
+          "recall@10": 0.856,
+          "mrr": 0.603
+        }
+      }
+    },
+    "97": {
+      "selected_on_validation": {
+        "alpha": 0.8,
+        "top_k": 500
+      },
+      "graph_only": {
+        "val": {
+          "recall@1": 0.2613,
+          "recall@5": 0.5521,
+          "recall@10": 0.6965,
+          "mrr": 0.4009
+        },
+        "test": {
+          "recall@1": 0.2565,
+          "recall@5": 0.5588,
+          "recall@10": 0.6941,
+          "mrr": 0.3969
+        }
+      },
+      "reranked": {
+        "val": {
+          "recall@1": 0.4629,
+          "recall@5": 0.7512,
+          "recall@10": 0.8503,
+          "mrr": 0.5934
+        },
+        "test": {
+          "recall@1": 0.4737,
+          "recall@5": 0.7556,
+          "recall@10": 0.8563,
+          "mrr": 0.6008
+        }
+      }
+    }
+  },
+  "graph_only": {
+    "val": {
+      "mrr": {
+        "mean": 0.4012,
+        "std": 0.0007
+      },
+      "recall@1": {
+        "mean": 0.263,
+        "std": 0.0023
+      },
+      "recall@10": {
+        "mean": 0.6959,
+        "std": 0.0014
+      },
+      "recall@5": {
+        "mean": 0.5532,
+        "std": 0.0024
+      }
+    },
+    "test": {
+      "mrr": {
+        "mean": 0.4013,
+        "std": 0.0039
+      },
+      "recall@1": {
+        "mean": 0.2616,
+        "std": 0.0045
+      },
+      "recall@10": {
+        "mean": 0.7004,
+        "std": 0.0055
+      },
+      "recall@5": {
+        "mean": 0.5589,
+        "std": 0.0002
+      }
+    }
+  },
+  "reranked": {
+    "val": {
+      "mrr": {
+        "mean": 0.5918,
+        "std": 0.0029
+      },
+      "recall@1": {
+        "mean": 0.461,
+        "std": 0.0037
+      },
+      "recall@10": {
+        "mean": 0.8503,
+        "std": 0.0001
+      },
+      "recall@5": {
+        "mean": 0.7518,
+        "std": 0.0021
+      }
+    },
+    "test": {
+      "mrr": {
+        "mean": 0.6025,
+        "std": 0.0015
+      },
+      "recall@1": {
+        "mean": 0.4756,
+        "std": 0.0016
+      },
+      "recall@10": {
+        "mean": 0.8565,
+        "std": 0.0007
+      },
+      "recall@5": {
+        "mean": 0.7565,
+        "std": 0.0012
+      }
+    }
+  },
+  "inputs_sha256": {
+    "data/splits/vg_coco.json": "c20951270f42b7451af64618e3d5bd8a065292b79f9b194edd5ac617c27cbc57",
+    "data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json": "554779907a7879b94a2f3c8c8c7d91426908570b49359cd6bff44a09c5ebc894",
+    "runs/graphsage/directed-learned-l3-h512-objects_only-a0/seed13/result.json": "dd69bd1d66200cb256b85e7a877aa216b6197ad8d2acb186ebb3121367eeb09b",
+    "runs/graphsage/directed-learned-l3-h512-objects_only-a0/seed37/result.json": "f8288ebc1767efe4ae32664536ccc3385a199fd668a350d61f7cc3c416e746ce",
+    "runs/graphsage/directed-learned-l3-h512-objects_only-a0/seed97/result.json": "53ac366f68ab92fe46ebdb631d22d5fae14ec8a63c7de2bad13f9a95e55a5187"
+  }
+}

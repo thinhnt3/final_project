@@ -1,9 +1,9 @@
 # Settings of this training run. Written by train_graphsage.
 run_name: directed-learned-l3-h512
 seed: 37
-config_file: configs/retrieval/vg_coco.yaml
+config_file: private/ablation-execution/full.yaml
 git:
-  commit: 6da7ee692785dd17b3112b3248dd58560d0f8a0d
+  commit: 49bd52dae454cec45876bcad8e2f1395fdc4dab3
   dirty: true
 clip_model: openai/clip-vit-base-patch32
 graphsage:
@@ -11,6 +11,8 @@ graphsage:
   num_layers: 3
   directed: true
   image_node: learned
+  ablation: full
+  ablation_seed: 0
 training:
   seeds:
   - 13
@@ -31,8 +33,7 @@ recall_ks:
 - 10
 train_images: 7000
 val_images: 1500
-trainable_parameters: 3411968
 inputs_sha256:
-  data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json: ce3df1bd96e999ac052ecf715a40bc97c86ed5c93537566d5764da0b90d42902
+  data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json: 554779907a7879b94a2f3c8c8c7d91426908570b49359cd6bff44a09c5ebc894
   data/processed/vg_coco/graph/image_graphs.json: 3102673586f0b97632142ee70638ccc0d9899c3883df2d74702a6e970359c836
   data/splits/vg_coco.json: c20951270f42b7451af64618e3d5bd8a065292b79f9b194edd5ac617c27cbc57
