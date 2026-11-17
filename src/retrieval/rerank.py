@@ -34,7 +34,7 @@ def _checked_scores(clip_scores: np.ndarray, graph_scores: np.ndarray) -> tuple[
     return clip_scores.astype(np.float64, copy=False), graph_scores.astype(np.float64, copy=False)
 
 
-def _candidate_mask(clip_scores: np.ndarray, top_k: int) -> np.ndarray:
+def clip_candidate_mask(clip_scores: np.ndarray, top_k: int) -> np.ndarray:
     """True for each query's top-k CLIP images; ties at the cut all count as candidates."""
     n_items = clip_scores.shape[1]
     if not 1 <= top_k <= n_items:
@@ -57,7 +57,7 @@ def rerank_scores(clip_scores: np.ndarray, graph_scores: np.ndarray, alpha: floa
     in [-1, 1]. With `alpha = 1` every item keeps exactly its CLIP rank.
     """
     clip, graph = _checked_scores(clip_scores, graph_scores)
-    return _fuse(clip, graph, _candidate_mask(clip, top_k), alpha)
+    return _fuse(clip, graph, clip_candidate_mask(clip, top_k), alpha)
 
 
 @dataclass(frozen=True)
@@ -100,7 +100,7 @@ def sweep_alpha_and_k(
     metric_ks = sorted({*ks, 1})  # Recall@1 is always needed for selection
     points = []
     for top_k in top_ks:
-        is_candidate = _candidate_mask(clip, top_k)
+        is_candidate = clip_candidate_mask(clip, top_k)
         for alpha in alphas:
             ranks = ranks_of_relevant(_fuse(clip, graph, is_candidate, alpha), data.relevant_columns)
             points.append(SweepPoint(alpha=alpha, top_k=top_k, metrics=retrieval_metrics(ranks, metric_ks)))
