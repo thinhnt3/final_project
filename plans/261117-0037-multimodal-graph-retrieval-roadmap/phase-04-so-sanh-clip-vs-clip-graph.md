@@ -77,3 +77,5 @@ Review B4 (agent độc lập, 17/11): không có lỗi phải sửa; tính lạ
 ## Kết quả Ours trên backbone CLIP (17/11)
 
 CLIP + GraphSAGE (3 tầng có hướng, đỉnh ảnh là vector học được) trên test: R@1 48,20 ± 0,05, R@5 75,87 ± 0,18, R@10 86,36 ± 0,13, MRR 60,74 ± 0,10 (3 seed). Hơn CLIP 4,3 điểm R@1 và hơn B4 1,7–1,8 điểm. Chi tiết ở Phase 1, bước 1.5. Chưa làm: biến thể đỉnh ảnh mang CLIP, backbone OpenCLIP (B2), 10 phân tích truy vấn.
+
+Bổ sung 17/11: biến thể đỉnh ảnh mang CLIP đạt R@1 49,43 ± 0,46 trên test; lưới k mở rộng tới cả gallery không đổi kết quả. Bảng đầy đủ ở Phase 1, mục "Bổ sung 1.5".

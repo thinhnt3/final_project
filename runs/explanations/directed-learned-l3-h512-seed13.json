@@ -1,0 +1,384 @@
+{
+  "run_name": "directed-learned-l3-h512",
+  "seed": 13,
+  "alpha": 0.81,
+  "top_k": 1500,
+  "queries": [
+    {
+      "query_id": "coco-313076",
+      "text": "Motorcycles parked curbside in front of a run down repair shop.",
+      "split": "test",
+      "relevant_image_id": 2330103,
+      "clip_rank": 1,
+      "reranked_rank": 1,
+      "results": [
+        {
+          "rank": 1,
+          "image_id": 2330103,
+          "is_relevant": true,
+          "clip_score": 0.3348,
+          "graph_score": 0.5247,
+          "final_score": 0.3709,
+          "relations": [
+            {
+              "subject": "motorcycle",
+              "predicate": "in",
+              "object": "row",
+              "score_drop": 0.0216
+            },
+            {
+              "subject": "steps",
+              "predicate": "in front of",
+              "object": "building",
+              "score_drop": 0.008
+            },
+            {
+              "subject": "steps",
+              "predicate": "to",
+              "object": "store",
+              "score_drop": 0.0001
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "image_id": 2410777,
+          "is_relevant": false,
+          "clip_score": 0.3056,
+          "graph_score": 0.4085,
+          "final_score": 0.3252,
+          "relations": [
+            {
+              "subject": "store",
+              "predicate": "has",
+              "object": "roof",
+              "score_drop": 0.0106
+            },
+            {
+              "subject": "minivan",
+              "predicate": "parked by",
+              "object": "sidewalk",
+              "score_drop": 0.0087
+            },
+            {
+              "subject": "fire escape",
+              "predicate": "above",
+              "object": "store",
+              "score_drop": 0.0072
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "image_id": 2320486,
+          "is_relevant": false,
+          "clip_score": 0.2788,
+          "graph_score": 0.4915,
+          "final_score": 0.3192,
+          "relations": [
+            {
+              "subject": "bike",
+              "predicate": "parked on",
+              "object": "gravel",
+              "score_drop": 0.0451
+            },
+            {
+              "subject": "tire",
+              "predicate": "on",
+              "object": "bike",
+              "score_drop": -0.0062
+            },
+            {
+              "subject": "stripe",
+              "predicate": "on",
+              "object": "motorcycle",
+              "score_drop": -0.0094
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "coco-333851",
+      "text": "A group of people on baseball field with trees in the background.",
+      "split": "test",
+      "relevant_image_id": 2411817,
+      "clip_rank": 1,
+      "reranked_rank": 1,
+      "results": [
+        {
+          "rank": 1,
+          "image_id": 2411817,
+          "is_relevant": true,
+          "clip_score": 0.3252,
+          "graph_score": 0.3567,
+          "final_score": 0.3312,
+          "relations": [
+            {
+              "subject": "building",
+              "predicate": "behind",
+              "object": "baseball field",
+              "score_drop": 0.0076
+            },
+            {
+              "subject": "child",
+              "predicate": "wearing",
+              "object": "t-shirt",
+              "score_drop": 0.0045
+            },
+            {
+              "subject": "pitcher",
+              "predicate": "wearing",
+              "object": "t-shirt",
+              "score_drop": 0.0021
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "image_id": 2347856,
+          "is_relevant": false,
+          "clip_score": 0.3058,
+          "graph_score": 0.3406,
+          "final_score": 0.3124,
+          "relations": [
+            {
+              "subject": "sign",
+              "predicate": "hanging on",
+              "object": "fence",
+              "score_drop": 0.0098
+            },
+            {
+              "subject": "mound",
+              "predicate": "on",
+              "object": "field",
+              "score_drop": 0.0064
+            },
+            {
+              "subject": "man",
+              "predicate": "wearing",
+              "object": "shirt",
+              "score_drop": 0.0049
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "image_id": 2386744,
+          "is_relevant": false,
+          "clip_score": 0.3008,
+          "graph_score": 0.3265,
+          "final_score": 0.3056,
+          "relations": [
+            {
+              "subject": "baseball player",
+              "predicate": "wearing",
+              "object": "shirt",
+              "score_drop": 0.0061
+            },
+            {
+              "subject": "fence",
+              "predicate": "in",
+              "object": "background",
+              "score_drop": 0.0017
+            },
+            {
+              "subject": "pillar",
+              "predicate": "next to",
+              "object": "dirt",
+              "score_drop": 0.0017
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "coco-659101",
+      "text": "Woman is just about to cut birthday cake as friends are around.",
+      "split": "test",
+      "relevant_image_id": 2350042,
+      "clip_rank": 1,
+      "reranked_rank": 1,
+      "results": [
+        {
+          "rank": 1,
+          "image_id": 2350042,
+          "is_relevant": true,
+          "clip_score": 0.3242,
+          "graph_score": 0.4142,
+          "final_score": 0.3413,
+          "relations": [
+            {
+              "subject": "woman",
+              "predicate": "cutting",
+              "object": "cake",
+              "score_drop": 0.0073
+            },
+            {
+              "subject": "woman",
+              "predicate": "wearing",
+              "object": "shirt",
+              "score_drop": 0.0063
+            },
+            {
+              "subject": "candle",
+              "predicate": "on",
+              "object": "cake",
+              "score_drop": 0.0052
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "image_id": 2363149,
+          "is_relevant": false,
+          "clip_score": 0.3154,
+          "graph_score": 0.4329,
+          "final_score": 0.3378,
+          "relations": [
+            {
+              "subject": "woman",
+              "predicate": "with",
+              "object": "hair",
+              "score_drop": 0.005
+            },
+            {
+              "subject": "woman",
+              "predicate": "wearing",
+              "object": "glasses",
+              "score_drop": 0.0027
+            },
+            {
+              "subject": "person",
+              "predicate": "at",
+              "object": "table",
+              "score_drop": 0.002
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "image_id": 2354907,
+          "is_relevant": false,
+          "clip_score": 0.3074,
+          "graph_score": 0.4013,
+          "final_score": 0.3253,
+          "relations": [
+            {
+              "subject": "lady",
+              "predicate": "has",
+              "object": "hair",
+              "score_drop": 0.0055
+            },
+            {
+              "subject": "slice",
+              "predicate": "part of",
+              "object": "cake",
+              "score_drop": 0.0037
+            },
+            {
+              "subject": "candle",
+              "predicate": "behind",
+              "object": "cake",
+              "score_drop": 0.0026
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "coco-9575",
+      "text": "A bicycle chained to a rail near a flooded area.",
+      "split": "test",
+      "relevant_image_id": 2398799,
+      "clip_rank": 1,
+      "reranked_rank": 1,
+      "results": [
+        {
+          "rank": 1,
+          "image_id": 2398799,
+          "is_relevant": true,
+          "clip_score": 0.3594,
+          "graph_score": 0.421,
+          "final_score": 0.3711,
+          "relations": [
+            {
+              "subject": "wheel",
+              "predicate": "of",
+              "object": "bike",
+              "score_drop": 0.0096
+            },
+            {
+              "subject": "bike",
+              "predicate": "leaning on",
+              "object": "gate",
+              "score_drop": 0.0044
+            },
+            {
+              "subject": "handlebar",
+              "predicate": "on",
+              "object": "bike",
+              "score_drop": 0.0024
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "image_id": 2414285,
+          "is_relevant": false,
+          "clip_score": 0.3055,
+          "graph_score": 0.3044,
+          "final_score": 0.3053,
+          "relations": [
+            {
+              "subject": "wheel",
+              "predicate": "has",
+              "object": "spokes",
+              "score_drop": 0.0233
+            },
+            {
+              "subject": "bike",
+              "predicate": "has",
+              "object": "pedal",
+              "score_drop": 0.0046
+            },
+            {
+              "subject": "bike",
+              "predicate": "has",
+              "object": "lock",
+              "score_drop": 0.0045
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "image_id": 2411629,
+          "is_relevant": false,
+          "clip_score": 0.2849,
+          "graph_score": 0.3602,
+          "final_score": 0.2992,
+          "relations": [
+            {
+              "subject": "seat",
+              "predicate": "on",
+              "object": "bike",
+              "score_drop": 0.0209
+            },
+            {
+              "subject": "bottle",
+              "predicate": "on",
+              "object": "bike",
+              "score_drop": 0.0157
+            },
+            {
+              "subject": "bike",
+              "predicate": "has",
+              "object": "handlebar",
+              "score_drop": 0.0102
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -36,7 +36,7 @@
     "13": {
       "selected_on_validation": {
         "alpha": 0.81,
-        "top_k": 100
+        "top_k": 1500
       },
       "graph_only": {
         "val": {
@@ -55,22 +55,22 @@
       "reranked": {
         "val": {
           "recall@1": 0.4695,
-          "recall@5": 0.7547,
+          "recall@5": 0.7545,
           "recall@10": 0.8548,
-          "mrr": 0.5984
+          "mrr": 0.5985
         },
         "test": {
           "recall@1": 0.4824,
           "recall@5": 0.7596,
-          "recall@10": 0.8625,
-          "mrr": 0.6084
+          "recall@10": 0.8628,
+          "mrr": 0.6086
         }
       }
     },
     "37": {
       "selected_on_validation": {
         "alpha": 0.83,
-        "top_k": 100
+        "top_k": 1500
       },
       "graph_only": {
         "val": {
@@ -91,20 +91,20 @@
           "recall@1": 0.4628,
           "recall@5": 0.7585,
           "recall@10": 0.8573,
-          "mrr": 0.5946
+          "mrr": 0.5947
         },
         "test": {
           "recall@1": 0.482,
           "recall@5": 0.7599,
-          "recall@10": 0.8632,
-          "mrr": 0.6071
+          "recall@10": 0.8633,
+          "mrr": 0.6072
         }
       }
     },
     "97": {
       "selected_on_validation": {
         "alpha": 0.78,
-        "top_k": 100
+        "top_k": 500
       },
       "graph_only": {
         "val": {
@@ -125,13 +125,13 @@
           "recall@1": 0.4668,
           "recall@5": 0.7555,
           "recall@10": 0.8541,
-          "mrr": 0.5962
+          "mrr": 0.5963
         },
         "test": {
           "recall@1": 0.4815,
           "recall@5": 0.7567,
-          "recall@10": 0.8651,
-          "mrr": 0.6066
+          "recall@10": 0.8655,
+          "mrr": 0.6067
         }
       }
     }
@@ -177,7 +177,7 @@
   "reranked": {
     "val": {
       "mrr": {
-        "mean": 0.5964,
+        "mean": 0.5965,
         "std": 0.0019
       },
       "recall@1": {
@@ -190,12 +190,12 @@
       },
       "recall@5": {
         "mean": 0.7562,
-        "std": 0.002
+        "std": 0.0021
       }
     },
     "test": {
       "mrr": {
-        "mean": 0.6074,
+        "mean": 0.6075,
         "std": 0.001
       },
       "recall@1": {
@@ -203,8 +203,8 @@
         "std": 0.0005
       },
       "recall@10": {
-        "mean": 0.8636,
-        "std": 0.0013
+        "mean": 0.8639,
+        "std": 0.0014
       },
       "recall@5": {
         "mean": 0.7587,

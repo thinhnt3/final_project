@@ -123,8 +123,8 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 | 1.2 | Xong 17/11 | `src/models/graph_data.py` + `tests/models/test_graph_data.py` |
 | 1.3 | Xong 17/11 | `src/models/graphsage.py`, mục `graphsage` trong config, `tests/models/test_graphsage.py` |
 | 1.4 | Xong 17/11 (code, test, code-review, 3 seed) | `src/models/{train,train_data,checkpoint}.py`, `src/connectors/wandb_tracker.py`, `scripts/train_graphsage.py`, `runs/graphsage/directed-learned-l3-h512/seed{13,37,97}/` |
-| 1.5 | Xong 17/11 (mô hình chính; biến thể đỉnh ảnh mang CLIP chưa chạy; chưa code-review) | `scripts/run_benchmark.py --method graphsage`, `runs/benchmark/graphsage-directed-learned-l3-h512.json` |
-| 1.6 | Chưa làm | |
+| 1.5 | Xong 17/11 (cả hai biến thể đỉnh ảnh, 3 seed mỗi biến thể; phần chấm điểm chưa code-review) | `scripts/run_benchmark.py --method graphsage`, `runs/benchmark/graphsage-*.json` |
+| 1.6 | Code + test xong 17/11; chưa code-review | `src/models/explain.py`, `scripts/explain_retrieval.py`, `runs/explanations/` |
 
 Kết quả 1.1: ảnh 10.000 × 512, caption 50.000 × 512, khái niệm 1.778 × 512, vị từ 493 × 512; float32, lệch độ dài tối đa 1,8e-7, không NaN. (b) Cosine caption với đúng ảnh 0,304, với ảnh ngẫu nhiên 0,152. (c) Mã hoá lại 4 caption và 3 ảnh: lệch tối đa 3,9e-7. (d) Test dùng dữ liệu dựng tay, không tải model. Chữ khái niệm đưa vào CLIP nguyên dạng ("pants"), không thêm câu mẫu; láng giềng gần nhất hợp lý (`couch` → loveseat, armchair). Chạy trên MPS khoảng 3 phút.
 
@@ -166,3 +166,21 @@ Kết quả 1.5 (mô hình chính: đỉnh ảnh là vector học được; α v
 | **CLIP + GraphSAGE** | **48,20 ± 0,05** | 75,87 ± 0,18 | 86,36 ± 0,13 | 60,74 ± 0,10 |
 
 Trung bình ± độ lệch chuẩn mẫu qua 3 seed (13, 37, 97). α chọn được: 0,81 / 0,83 / 0,78; k = 100 ở cả ba seed. Trên validation: CLIP 42,64, CLIP + GraphSAGE 46,64 ± 0,34. Tính lại độc lập seed 13 bằng numpy thuần khớp cả validation và test. α = 1 cho đúng thứ hạng CLIP (test). Lưu ý: k = 100 là giá trị lớn nhất của lưới ở cả ba seed, nên lưới k có thể đang chặn; cần thử k lớn hơn, chọn trên validation.
+
+Bổ sung 1.5 (17/11):
+
+- Lưới k mở rộng thành 10, 20, 50, 100, 200, 500, 1.500 (cả gallery). Kết quả không đổi: CLIP + GraphSAGE vẫn R@1 48,20 ± 0,05 trên test, B4 giữ nguyên. k = 100 không chặn kết quả.
+- Biến thể đỉnh ảnh mang vector CLIP của ảnh (`--image-node clip_image`), 3 seed:
+
+| Phương pháp (test) | R@1 | R@5 | R@10 | MRR |
+|---|---|---|---|---|
+| CLIP | 43,89 | 72,19 | 82,64 | 56,76 |
+| B4: CLIP + so khớp từ | 46,41 | 74,80 | 85,41 | 59,29 |
+| CLIP + GraphSAGE, đỉnh ảnh học được (chính) | 48,20 ± 0,05 | 75,87 ± 0,18 | 86,39 ± 0,14 | 60,75 ± 0,10 |
+| CLIP + GraphSAGE, đỉnh ảnh mang CLIP | 49,43 ± 0,46 | 77,90 ± 0,47 | 87,52 ± 0,69 | 62,22 ± 0,37 |
+| Chỉ GraphSAGE, đỉnh ảnh học được | 27,78 ± 0,63 | 57,40 ± 0,45 | 72,20 ± 0,36 | 41,71 ± 0,49 |
+| Chỉ GraphSAGE, đỉnh ảnh mang CLIP | 42,25 ± 0,48 | 73,79 ± 0,16 | 84,73 ± 0,24 | 56,39 ± 0,31 |
+
+Biến thể mang CLIP hơn mô hình chính 1,2 điểm R@1 nhưng dao động giữa các seed lớn hơn (0,46 so với 0,05), và điểm đồ thị của nó đã chứa thông tin CLIP của ảnh (riêng nó đạt 42,25, gần bằng CLIP thuần 43,89), nên không tách được phần đóng góp của cấu trúc. α chọn được: 0,66 / 0,63 / 0,68.
+
+Kết quả 1.6: với mỗi kết quả trả về, lần lượt bỏ từng relation của ảnh (giữ hai đối tượng), tính lại điểm đồ thị, xếp relation theo mức giảm. Chạy thử trên 4 truy vấn test: relation liên quan đứng đầu (`woman cutting cake` cho truy vấn "about to cut birthday cake"). Mức giảm nhỏ, khoảng 0,005–0,045 trên điểm đồ thị 0,3–0,5: gợi ý phần lớn điểm đồ thị đến từ đối tượng, chưa phải từ quan hệ; cần ablation ở Phase 5 để kết luận. Test dùng bộ mã hoá giả có kết quả tính tay được.
