@@ -1,0 +1,412 @@
+{
+  "config": {
+    "min_train_images": 5,
+    "junk_names": [
+      "a",
+      "an",
+      "are",
+      "back",
+      "bad sentence",
+      "beige",
+      "black",
+      "blue",
+      "bottom",
+      "brown",
+      "center",
+      "dark",
+      "down",
+      "front",
+      "gold",
+      "gray",
+      "green",
+      "grey",
+      "he",
+      "her",
+      "his",
+      "in",
+      "is",
+      "it",
+      "its",
+      "left",
+      "middle",
+      "of",
+      "on",
+      "pink",
+      "purple",
+      "red",
+      "right",
+      "she",
+      "side",
+      "silver",
+      "something",
+      "stuff",
+      "tan",
+      "that",
+      "the",
+      "them",
+      "these",
+      "they",
+      "thing",
+      "this",
+      "those",
+      "top",
+      "up",
+      "was",
+      "white",
+      "wooden",
+      "yellow"
+    ]
+  },
+  "inputs_sha256": {
+    "data/processed/vg_coco/images.json": "a087ca39ae7c785cd971d9cd567f94c5a27f4e76e331b3b5f8fdc53708b89826",
+    "data/processed/vg_coco/scene_graphs.json": "372d5adc0ec4dc392006f75649f6bcb8e9d4491a25d34b938205b873d9a112da",
+    "data/splits/vg_coco.json": "c20951270f42b7451af64618e3d5bd8a065292b79f9b194edd5ac617c27cbc57"
+  },
+  "train_images": 7000,
+  "concepts": 1778,
+  "concepts_with_synset": 1529,
+  "predicates": 493,
+  "junk_concepts": [
+    "are.n.01",
+    "associate_in_nursing.n.01",
+    "back.n.01",
+    "bottom.n.01",
+    "center.n.01",
+    "down.n.01",
+    "gray.n.01",
+    "helium.n.01",
+    "inch.n.01",
+    "information_technology.n.01",
+    "material.n.01",
+    "name:a",
+    "name:bad sentence",
+    "name:beige",
+    "name:black",
+    "name:blue",
+    "name:brown",
+    "name:dark",
+    "name:front",
+    "name:gold",
+    "name:green",
+    "name:grey",
+    "name:his",
+    "name:is",
+    "name:left",
+    "name:of",
+    "name:on",
+    "name:pink",
+    "name:purple",
+    "name:red",
+    "name:right",
+    "name:she",
+    "name:silver",
+    "name:something",
+    "name:tan",
+    "name:that",
+    "name:the",
+    "name:these",
+    "name:they",
+    "name:this",
+    "name:top",
+    "name:up",
+    "name:white",
+    "name:wooden",
+    "name:yellow",
+    "side.n.01",
+    "thing.n.01",
+    "truck_stop.n.01",
+    "washington.n.02"
+  ],
+  "train_images_per_concept": {
+    "mean": 69.0883,
+    "p10": 5.0,
+    "median": 15.0,
+    "p90": 154.1,
+    "max": 2218
+  },
+  "concept_texts_shared": 0,
+  "shared_text_examples": [],
+  "top_concepts_by_train_image_pct": [
+    [
+      "man",
+      31.69
+    ],
+    [
+      "tree",
+      27.16
+    ],
+    [
+      "ground",
+      25.47
+    ],
+    [
+      "shirt",
+      25.4
+    ],
+    [
+      "sky",
+      25.17
+    ],
+    [
+      "wall",
+      23.41
+    ],
+    [
+      "person",
+      22.07
+    ],
+    [
+      "window",
+      21.39
+    ],
+    [
+      "head",
+      19.34
+    ],
+    [
+      "building",
+      19.26
+    ],
+    [
+      "hand",
+      18.39
+    ],
+    [
+      "grass",
+      17.36
+    ],
+    [
+      "hair",
+      17.09
+    ],
+    [
+      "pole",
+      16.39
+    ],
+    [
+      "sign",
+      15.91
+    ],
+    [
+      "woman",
+      15.87
+    ],
+    [
+      "leg",
+      14.31
+    ],
+    [
+      "table",
+      13.3
+    ],
+    [
+      "light",
+      12.69
+    ],
+    [
+      "ear",
+      12.46
+    ]
+  ],
+  "top_predicates_by_train_image_pct": [
+    [
+      "on",
+      85.87
+    ],
+    [
+      "in",
+      56.79
+    ],
+    [
+      "has",
+      50.16
+    ],
+    [
+      "of",
+      35.44
+    ],
+    [
+      "wearing",
+      31.41
+    ],
+    [
+      "with",
+      25.14
+    ],
+    [
+      "behind",
+      20.81
+    ],
+    [
+      "holding",
+      17.09
+    ],
+    [
+      "near",
+      12.84
+    ],
+    [
+      "next to",
+      11.77
+    ],
+    [
+      "under",
+      10.69
+    ],
+    [
+      "on top of",
+      9.94
+    ],
+    [
+      "by",
+      8.43
+    ],
+    [
+      "in front of",
+      7.64
+    ],
+    [
+      "above",
+      7.59
+    ],
+    [
+      "sitting on",
+      6.57
+    ],
+    [
+      "over",
+      5.6
+    ],
+    [
+      "wears",
+      5.44
+    ],
+    [
+      "on side of",
+      5.09
+    ],
+    [
+      "at",
+      4.7
+    ]
+  ],
+  "by_split": {
+    "train": {
+      "images": 7000,
+      "objects": 253539,
+      "objects_kept": 236567,
+      "objects_kept_pct": 93.31,
+      "relations": 106117,
+      "triplets_kept": 90002,
+      "relations_kept_pct": 84.81,
+      "self_loop_triplets": 571,
+      "images_without_concepts": 1,
+      "images_without_triplets": 46,
+      "dropped": {
+        "object_junk_name": 2706,
+        "object_junk_concept": 124,
+        "object_out_of_vocabulary": 14142,
+        "relation_endpoint_dropped": 11461,
+        "relation_predicate_out_of_vocabulary": 4654,
+        "relation_duplicate": 0
+      },
+      "concept_nodes": 122839,
+      "concepts_per_image": {
+        "mean": 17.5484,
+        "p10": 9.0,
+        "median": 18.0,
+        "p90": 26.0,
+        "max": 47
+      },
+      "triplets_per_image": {
+        "mean": 12.8574,
+        "p10": 4.0,
+        "median": 12.0,
+        "p90": 22.0,
+        "max": 46
+      }
+    },
+    "val": {
+      "images": 1500,
+      "objects": 52735,
+      "objects_kept": 48905,
+      "objects_kept_pct": 92.74,
+      "relations": 22692,
+      "triplets_kept": 19028,
+      "relations_kept_pct": 83.85,
+      "self_loop_triplets": 123,
+      "images_without_concepts": 0,
+      "images_without_triplets": 7,
+      "dropped": {
+        "object_junk_name": 561,
+        "object_junk_concept": 19,
+        "object_out_of_vocabulary": 3250,
+        "relation_endpoint_dropped": 2605,
+        "relation_predicate_out_of_vocabulary": 1059,
+        "relation_duplicate": 0
+      },
+      "concept_nodes": 26098,
+      "concepts_per_image": {
+        "mean": 17.3987,
+        "p10": 9.0,
+        "median": 17.0,
+        "p90": 26.0,
+        "max": 44
+      },
+      "triplets_per_image": {
+        "mean": 12.6853,
+        "p10": 4.0,
+        "median": 12.0,
+        "p90": 21.0,
+        "max": 38
+      }
+    },
+    "test": {
+      "images": 1500,
+      "objects": 54109,
+      "objects_kept": 50077,
+      "objects_kept_pct": 92.55,
+      "relations": 22762,
+      "triplets_kept": 18782,
+      "relations_kept_pct": 82.51,
+      "self_loop_triplets": 160,
+      "images_without_concepts": 0,
+      "images_without_triplets": 10,
+      "dropped": {
+        "object_junk_name": 654,
+        "object_junk_concept": 24,
+        "object_out_of_vocabulary": 3354,
+        "relation_endpoint_dropped": 2875,
+        "relation_predicate_out_of_vocabulary": 1105,
+        "relation_duplicate": 0
+      },
+      "concept_nodes": 25806,
+      "concepts_per_image": {
+        "mean": 17.204,
+        "p10": 9.0,
+        "median": 17.0,
+        "p90": 26.0,
+        "max": 46
+      },
+      "triplets_per_image": {
+        "mean": 12.5213,
+        "p10": 4.0,
+        "median": 12.0,
+        "p90": 22.0,
+        "max": 41
+      }
+    }
+  },
+  "caption_coverage": {
+    "captions": 50000,
+    "own_mean": 0.3735,
+    "random_mean": 0.0363,
+    "own_any_match_pct": 92.576,
+    "random_any_match_pct": 16.59
+  },
+  "outputs_sha256": {
+    "concepts.json": "e036a3ae132245c62c0a2373da6f7994aef435f91784f5a3b8148287fd8a4c51",
+    "predicates.json": "3494fb032a205f7de1c461b47269c19208b4d54cb8b4f2a9ae51b3fedae25d5d",
+    "image_graphs.json": "3102673586f0b97632142ee70638ccc0d9899c3883df2d74702a6e970359c836"
+  }
+}
