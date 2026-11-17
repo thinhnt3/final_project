@@ -1,0 +1,26 @@
+[
+  {
+    "name": "karpathy_coco",
+    "path": "data/raw/coco/dataset_coco.json",
+    "url": "https://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip",
+    "bytes": 144186139,
+    "sha256": "2fd999220673258012acfb411a4e7e66af7d488050b2519b0badcc49b7600b8d",
+    "recorded_at": "2026-11-16T20:31:42+00:00"
+  },
+  {
+    "name": "vg_image_data",
+    "path": "data/raw/visual_genome/image_data.json",
+    "url": "https://homes.cs.washington.edu/~ranjay/visualgenome/data/dataset/image_data.json.zip",
+    "bytes": 17612822,
+    "sha256": "93d0053d7e8f451497646fa513e8fb9b1a889df6e757010b88e51e2e21803487",
+    "recorded_at": "2026-11-16T20:30:55+00:00"
+  },
+  {
+    "name": "vg_scene_graphs",
+    "path": "data/raw/visual_genome/scene_graphs.json",
+    "url": "https://homes.cs.washington.edu/~ranjay/visualgenome/data/dataset/scene_graphs.json.zip",
+    "bytes": 739377199,
+    "sha256": "f643b279b68b6bb2ba7476343d81d2055474bb1cb67ecaf71c166256810a5190",
+    "recorded_at": "2026-11-16T20:30:56+00:00"
+  }
+]

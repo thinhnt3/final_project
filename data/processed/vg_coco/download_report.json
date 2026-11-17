@@ -1,0 +1,7 @@
+{
+  "requested": 10000,
+  "downloaded": 5000,
+  "already_present": 5000,
+  "failed_count": 0,
+  "failed": []
+}

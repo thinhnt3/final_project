@@ -6,5 +6,32 @@ __pycache__/
 .env
 .env.*
 
-# Large raw Visual Genome downloads; re-fetch via the URLs in configs/project_scope.yaml
-data/raw/
+# Large raw downloads; re-fetch with `python -m scripts.build_vg_coco --stage sources`.
+# MANIFEST.json (sha256 of each raw file) is committed so a rebuild can be verified.
+data/raw/*
+!data/raw/MANIFEST.json
+
+# Intermediate build outputs; regenerate with scripts/build_vg_coco.py
+data/interim/
+
+# Final dataset (10k images) JSON is committed; the 1.4G image files are not (re-download via scripts).
+data/processed/vg_coco/images/
+
+# EDA review byproducts (regenerate with scripts/review_vg_coco.py + archify).
+# Only files referenced by reports/data-review/{index,sample}.html are committed.
+reports/data-review/stats.json
+reports/data-review/diagrams/*.visual-check.*
+reports/data-review/diagrams/*.workflow.json
+reports/data-review/diagrams/*.dataflow.json
+reports/data-review/figures/*
+!reports/data-review/figures/objects_n.png
+!reports/data-review/figures/relations_n.png
+
+# Local explainer page (not part of the deliverable).
+docs/explainer/
+
+# Local build/EDA scripts and diagram pages (not shipped).
+scripts/build_vg_coco.py
+scripts/build_vn_heritage.py
+scripts/review_vg_coco.py
+reports/data-review/diagrams/
