@@ -1,17 +1,13 @@
 """Train/val/test splits by image.
 
-`make_vg_coco_split` is the Phase 2 split (scikit-learn, stratified by graph density, test
-drawn only from the Karpathy test split). `make_split` / `save_split` serve the legacy
-40-image subset and go away when Phase 1 moves to `vg_coco`.
+`make_vg_coco_split` uses scikit-learn, stratifies by graph density and draws test only
+from the Karpathy test split.
 """
 from __future__ import annotations
 
-import json
-import random
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -151,19 +147,3 @@ def validate_no_overlap(split: dict[str, list[int]]) -> None:
         for right in sets:
             if left < right and sets[left] & sets[right]:
                 raise DataError(f"split overlap: {left}/{right}")
-
-
-def make_split(image_ids: list[int], seed: int = 13, train_ratio: float = 0.5, val_ratio: float = 0.25) -> dict[str, list[int]]:
-    """Legacy random split for the 40-image subset."""
-    ids = list(dict.fromkeys(map(int, image_ids)))
-    random.Random(seed).shuffle(ids)
-    n_train = max(1, int(len(ids) * train_ratio))
-    n_val = max(1, int(len(ids) * val_ratio))
-    return {"train": sorted(ids[:n_train]), "val": sorted(ids[n_train:n_train + n_val]), "test": sorted(ids[n_train + n_val:])}
-
-
-def save_split(split: dict[str, list[int]], path: str | Path, seed: int) -> None:
-    """Legacy writer for the 40-image subset."""
-    payload = {"seed": seed, **split}
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(json.dumps(payload, indent=2))
