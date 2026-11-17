@@ -5,6 +5,7 @@ Run from the repository root after `embed_vg_coco`:
     python -m scripts.train_graphsage                 # every seed in the config
     python -m scripts.train_graphsage --seed 13       # one seed
     python -m scripts.train_graphsage --resume        # finish what is unfinished
+    python -m scripts.train_graphsage --image-node clip_image   # variant; overrides the config
 
 Each run writes to <runs_dir>/graphsage/<name>/seed<seed>/: config.yaml, train.log,
 history.json, last.pt, best.pt, result.json and the graph vectors of every image.
@@ -19,7 +20,7 @@ import argparse
 import logging
 import subprocess
 import sys
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from typing import Any
 
 import torch
@@ -44,7 +45,7 @@ from src.models.checkpoint import (
     changed_settings,
 )
 from src.models.graph_data import image_graph_to_data
-from src.models.graphsage import GraphImageEncoder
+from src.models.graphsage import GraphImageEncoder, ImageNodeFeature
 from src.models.train import RetrievalSet, encode_graphs, fit, info_nce, seed_everything
 from src.models.train_data import build_retrieval_set
 from src.retrieval.config import RetrievalConfig
@@ -273,6 +274,11 @@ def main() -> int:
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--name", help="run name; default is derived from the architecture")
     parser.add_argument("--seed", type=int, action="append", help="seed to train; repeatable; default: all in config")
+    parser.add_argument(
+        "--image-node",
+        choices=[v.value for v in ImageNodeFeature],
+        help="initial feature of the image node; overrides graphsage.image_node of the config",
+    )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--resume", action="store_true", help="skip finished seeds, continue interrupted ones")
     mode.add_argument("--overwrite", action="store_true", help="delete an existing run of a seed and start again")
@@ -281,6 +287,9 @@ def main() -> int:
     handlers: list[logging.Handler] = []
     try:
         config = RetrievalConfig.from_yaml(args.config)
+        if args.image_node:
+            model_config = replace(config.graphsage, image_node=ImageNodeFeature(args.image_node))
+            config = replace(config, graphsage=model_config)
         seeds = args.seed or list(config.training.seeds)
         name = args.name or config.graphsage.run_name()
         run(config, args.config, name, seeds, handlers, resume=args.resume, overwrite=args.overwrite)
