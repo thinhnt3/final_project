@@ -5,149 +5,134 @@ status: in-progress
 
 # Phase 5: Tập công khai thứ hai, ablation, fidelity
 
-## Current verified scope — 18/11/2026
+## Trạng thái hiện tại — 18/11/2026
 
-Core ablation on VG-COCO and the frozen joint-deletion diagnostic are implemented
-and executed; Phase 5 is still in progress (second dataset and hub ablation remain).
-Current commands and evidence: `docs/graphsage-design-decisions.md`.
-Earlier entries below are historical logs, not the current completion checklist.
+**Đã chạy thí nghiệm loại bỏ thành phần trên VG ∩ COCO và đo độ trung thực bằng
+can thiệp lên mô hình cố định. Chưa hoàn tất toàn bộ giai đoạn 5.** Còn tập công
+khai thứ hai, thí nghiệm xử lý đỉnh bậc cao và các giới hạn kiểm chứng bên dưới.
 
-## Overview
+Hướng dẫn chạy: `docs/graphsage-design-decisions.md`, mục “Ablation và fidelity”.
+Checklist tổng: `plan-task/requirements-checklist.md`.
 
-Trả lời "phần cải thiện đến từ thành phần nào": ablation trên VG ∩ COCO, lặp lại trên FB15k-237-IMG, và đo fidelity của lời giải thích.
+## Hai việc trong checklist cũ đã làm đến đâu?
 
-## Mục tiêu
+Các dòng cũ nhắc đến bản thử 40 ảnh và `src/evaluation/ablations.py` đã bị xoá.
+Chúng không còn mô tả đúng bộ mã hiện tại. Trạng thái chính xác là:
 
-- Chứng minh phần tăng đến từ **quan hệ** chứ không chỉ từ danh sách đối tượng (CLIP vốn nhận ra đối tượng khá tốt).
-- Chứng minh cấu trúc đồ thị có nghĩa, không chỉ là "thêm đặc trưng".
-- Chứng minh cạnh được dùng để giải thích thực sự ảnh hưởng điểm.
+- [x] **Kiểm tra lại trên mô tả COCO:** đã dùng 10.000 ảnh, mô tả độc lập từ COCO và GraphSAGE được huấn luyện thật; không còn lấy truy vấn bằng cách ghép chữ từ quan hệ của đồ thị.
+- [x] **Thay cách giả lập cạnh ngẫu nhiên:** `src/models/ablations.py` đã tách `drop_predicates` và `random_edges`. Bản thứ nhất đặt đặc trưng vị từ bằng 0; bản thứ hai hoán vị riêng các đầu chủ thể và tân ngữ, giữ bậc vào/ra, số quan hệ và phân bố vị từ. Không dùng nhãn giả `random_relation` để gọi là cạnh ngẫu nhiên.
+- [ ] **Tái hiện và xác nhận nguyên nhân chính xác của số cũ** “bỏ hết cạnh MRR 0,495 > đầy đủ 0,213”: chưa làm. Đây là kết quả của bộ dữ liệu và bộ chấm điểm bản thử cũ; chưa đủ bằng chứng quy lỗi riêng cho cách tạo truy vấn hay ghép từ khoá. Việc triển khai lại không đồng nghĩa đã chứng minh nguyên nhân lịch sử này.
 
-## Input
+Hai việc triển khai/kiểm tra lại đã xong; mục điều tra nguyên nhân lịch sử vẫn mở
+và không phải điều kiện chặn chạy bộ mã mới. Không sử dụng số của bản thử cũ để
+kết luận về GraphSAGE hiện tại.
 
-- Dữ liệu, split, đồ thị VG ∩ COCO (Phase 2); bộ đo, α, K chọn trên val (Phase 3); phương pháp chính (Phase 4).
-- FB15k-237-IMG (tải ở phase này).
+## Mục tiêu và đầu vào
 
-## Việc phải làm trước khi chạy ablation
+Kiểm tra phần cải thiện đến từ danh sách đối tượng, nhãn vị từ hay cấu trúc quan
+hệ; đánh giá lời giải thích có phản ánh ảnh hưởng đến dự đoán hay không. Kết quả
+cần được báo cáo trung thực, kể cả khi bản đầy đủ không hơn mọi biến thể.
 
-- [ ] Tìm nguyên nhân kết quả ngược hiện tại (bỏ hết cạnh MRR 0,495 > đầy đủ 0,213). Nghi ngờ (chưa kiểm): truy vấn cũ sinh từ quan hệ + `graph_score` ghép từ khoá. Kiểm lại trên dữ liệu caption COCO.
-- [ ] Sửa `remove_relationships(mode="shuffle")` trong `src/evaluation/ablations.py`: hiện chỉ đổi tên vị từ thành `random_relation`, không phải cạnh ngẫu nhiên. Tách thành hai chế độ rõ tên: `drop_predicates` và `random_edges`.
+Đầu vào: dữ liệu/đồ thị VG ∩ COCO đã chia tập; bộ nhớ đệm vector CLIP đóng băng;
+cấu hình và điểm lưu mô hình của ba hạt giống huấn luyện 13, 37, 97. Tập thứ hai
+dự kiến là FB15k-237-IMG, chưa triển khai. Mọi lựa chọn α/k và điểm lưu tốt nhất
+đều dựa trên tập xác thực, không chọn lại bằng tập kiểm thử.
 
-## Ablation (tất cả cùng backbone, α và K chọn trên val)
+## Thí nghiệm loại bỏ thành phần
 
-| # | Biến thể | Trả lời câu hỏi |
+| Mục | Biến thể | Trạng thái |
 |---|---|---|
-| A1 | Đầy đủ (đối tượng + quan hệ) | Mốc |
-| A2 | Chỉ đối tượng (bỏ mọi cạnh khái niệm–khái niệm) | Quan hệ có giúp không? **Quan trọng nhất** |
-| A3 | Bỏ vị từ (giữ cạnh, mất nhãn quan hệ) | Nhãn vị từ có giúp không? |
-| A4 | Cạnh ngẫu nhiên cùng số lượng | Cấu trúc thật hay chỉ là thêm đặc trưng? Mặc định giữ bậc từng đỉnh (hoán đổi cặp cạnh); có thể đổi khi bắt đầu phase |
-| A5 | Không GNN (chỉ `graph_score` ghép từ khoá) | GNN có giá trị không? |
-| A6 | Quét α (0 → 1) và K (10, 20, 40, 100) | Độ nhạy siêu tham số (vẽ trên val, báo test tại điểm chọn) |
-| A7 | Có/không xử lý hub | Quyết định ở 2.6 có đúng không? |
+| A1 | Đầy đủ: đối tượng và quan hệ | Đã huấn luyện, xuất vector và đánh giá đủ ba hạt giống |
+| A2 | Chỉ đối tượng: bỏ các bộ ba và đỉnh quan hệ, giữ cạnh ảnh → đối tượng | Đã chạy đủ ba hạt giống |
+| A3 | Bỏ đặc trưng vị từ: giữ đỉnh quan hệ, cạnh và hướng | Đã chạy đủ ba hạt giống |
+| A4 | Đầu mút ngẫu nhiên, giữ bậc vào/ra | Đã chạy đủ ba hạt giống; cho phép bộ ba trùng và quan hệ tự nối |
+| A5 | Không dùng mạng đồ thị: so khớp từ có trọng số | Đã có phương pháp đối chứng trên main |
+| A6 | Quét α và k trên tập xác thực | Đã dùng để chọn cấu hình; chưa có biểu đồ phân tích độ nhạy đầy đủ |
+| A7 | Có/không xử lý đỉnh bậc cao | Chưa làm |
+| Bổ sung | Bỏ hướng bằng lớp không hướng sẵn có | Đã chạy đủ ba hạt giống; số tham số ít hơn bản đầy đủ |
 
-Ablation có ConceptNet (VG sạch so với VG + cạnh ConceptNet) thuộc Phase 7.
+Cấu hình: `configs/retrieval/ablations/*.yaml`. Không sửa đè tệp chú giải gốc.
+Thí nghiệm thêm cạnh ConceptNet thuộc giai đoạn 7.
 
-## Fidelity
+## Kết quả đã có trên VG ∩ COCO
 
-- Xoá các cạnh nằm trên đường giải thích so với xoá cùng số cạnh ngẫu nhiên, đo độ giảm điểm của ảnh đúng.
-- Đồ thị do người gán (oracle) so với đồ thị do mô hình SGG dự đoán: tuỳ chọn, chỉ làm nếu còn thời gian (cần mô hình SGG huấn luyện trên VG150).
+Tập kiểm thử gồm 1.500 ảnh và 7.500 truy vấn. Đơn vị %, trung bình ± độ lệch
+chuẩn qua ba lượt huấn luyện; α/k chọn riêng trên tập xác thực.
 
-## Tập thứ hai: FB15k-237-IMG
+| Biến thể | R@1 sau kết hợp với CLIP |
+|---|---:|
+| Đầy đủ | 48,12 ± 0,23 |
+| Chỉ đối tượng | 47,56 ± 0,16 |
+| Bỏ vị từ | 48,06 ± 0,28 |
+| Đầu mút ngẫu nhiên | 47,79 ± 0,18 |
+| Bỏ hướng | 47,84 ± 0,15 |
 
-- [ ] Quyết định dạng truy vấn (mô tả thực thể hay bộ ba khuyết đuôi)
-- [ ] Loader + đồ thị, theo cùng cấu trúc module của Phase 2
-- [ ] Chạy B1, Ours, A1, A2, A4 trên tập này
+Bản đầy đủ không thắng trên mọi chỉ số. Hai lượt đầy đủ chọn k=10, làm R@10 giữ
+mức CLIP. Kiểm tra bổ sung với cùng k=500, giữ α cũ, giúp giải thích hiện tượng;
+đây là phân tích sau thực nghiệm, không thay kết quả chính thức hoặc chọn lại k.
 
-## Output
+Lấy mẫu lại theo cụm ảnh 2.000 lần, giữ ba mô hình cố định, cho khoảng 95% của
+chênh lệch R@1: đầy đủ − chỉ đối tượng [0,05; 1,06] điểm phần trăm; đầy đủ − bỏ
+vị từ [−0,35; 0,45]; đầy đủ − ngẫu nhiên [−0,09; 0,74]. Các khoảng mang tính
+khám phá, chưa hiệu chỉnh đa so sánh và không đo bất định qua các lần huấn luyện
+mới. Chưa chứng minh được nhãn vị từ/cạnh thật là nguyên nhân chính của cải thiện.
 
-- `runs/phase5/<variant>-seed<n>.json`
-- `reports/phase5-ablation-fidelity.md`: bảng ablation hai tập (mean ± std), biểu đồ quét α/K, bảng fidelity.
+Kiểm tra phép ngẫu nhiên: 9.491/10.000 đồ thị đổi tập bộ ba, 96,3% vị trí bộ ba
+thay đổi; bậc vào/ra và phân bố vị từ được giữ nguyên.
 
-## Success Criteria
+## Độ trung thực của lời giải thích bằng can thiệp
 
-- [ ] Trên cả hai tập: A1 > A2 và A1 > A4, chênh lệch vượt sai số qua seed
-- [ ] Xoá cạnh giải thích làm giảm điểm nhiều hơn xoá cạnh ngẫu nhiên
-- [ ] Kết quả ngược cũ có nguyên nhân được ghi rõ
+- [x] Chọn trước 200 truy vấn kiểm thử, dùng đủ ba mô hình, không huấn luyện lại.
+- [x] Xoá đồng thời nhóm quan hệ giải thích, so với 20 nhóm ngẫu nhiên cùng số lượng.
+- [x] Giữ CLIP, α/k, tập ứng viên và điểm của mọi ảnh đối thủ; chỉ đổi đồ thị của ảnh được dự đoán đứng đầu ban đầu.
+- [x] Đo giảm điểm đồ thị có dấu, tăng thứ hạng và mất vị trí đầu; giữ cả dự đoán đúng lẫn sai.
+- [x] Ghi tỷ lệ xoá thực tế và lý do bỏ qua đồ thị có ít hơn ba quan hệ.
+- [ ] Đánh giá tính đúng về ngữ nghĩa hoặc bằng con người.
+- [ ] So sánh đồ thị do người gán với đồ thị do mô hình sinh: tuỳ chọn, chưa làm.
 
-## Implementation update — ablation from main 49bd52d
+Có 198/195/196 truy vấn hợp lệ theo hạt giống 13/37/97. Ở mức yêu cầu xoá 10%,
+tỷ lệ mất vị trí đầu trung bình qua ba mô hình là 17,81% so với ngẫu nhiên 4,31%;
+ở mức 25% là 25,45% so với 6,06%. Vì xoá tối thiểu hai quan hệ và chừa một quan
+hệ, tỷ lệ thực tế có thể khác mức yêu cầu ở đồ thị nhỏ.
 
-Implemented `src/models/ablations.py`: full, objects_only, drop_predicates,
-random_edges (independent endpoint permutations preserving directed degrees;
-self-relations/duplicate triples allowed), and undirected (existing encoder variant).
-Configuration lives in `configs/retrieval/ablations/*.yaml`; training, export,
-checkpoint resume validation and explanation use the same intervention settings.
-The obsolete pilot ablation tasks above refer to deleted modules, not this implementation.
+**Giới hạn:** nhóm giải thích được chọn từ ảnh hưởng của phép xoá từng quan hệ.
+Phép xoá nhóm và đo hạng vẫn phụ thuộc cách chọn đó; đây là bằng chứng can thiệp,
+không phải chứng minh độc lập rằng lời giải thích đúng về ngữ nghĩa. Ảnh mục tiêu
+là ảnh mô hình dự đoán, không bắt buộc là ảnh đúng trong dữ liệu.
 
-Input: existing VG-COCO JSON + frozen embedding cache. Output: existing GraphSAGE
-run layout and benchmark JSON, with variant-specific names. Acceptance: invariant
-tests and training/checkpoint/export integration pass; final experiment acceptance
-still requires all configured seeds on actual data, without tuning on test.
+## Tập công khai thứ hai: FB15k-237-IMG
 
-Verification: `python -m pytest -q` → 250 passed; targeted Ruff → clean;
-`git diff --check` → clean. Real-data smoke blocked before training because
-`data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json` is absent.
-No final ablation metrics claimed. mypy unavailable in the environment.
+- [ ] Chốt dạng truy vấn: mô tả thực thể hay bộ ba khuyết đuôi.
+- [ ] Viết bộ đọc và xây đồ thị theo ranh giới mô-đun hiện có.
+- [ ] Chạy CLIP, phương pháp chính, A1/A2/A4 trên tập này.
+- [ ] Tổng hợp trung bình/độ lệch chuẩn qua các hạt giống tương ứng.
 
-Educational walkthrough: `private/ablation-guide.html` (offline source
-excerpts with block notes, commands, intervention simulator and limitations).
-Browser checks: no JS errors, clickable notes, syntax tokens, simulator and
-390px layout without page overflow; print PDF generated as a temporary QA artifact.
+## Đầu ra và cách kiểm tra
 
-Remaining: restore/rebuild embedding cache; train four variants with three seeds;
-benchmark using the matching YAML; compare graph-only and fused results.
-Fidelity, second dataset, hub-policy ablation and a parameter-matched undirected
-control are not implemented by this update. W&B is disabled in the new configs.
+- `runs/benchmark/graphsage-*.json`: đánh giá từng biến thể.
+- `runs/graphsage/<tên-lượt>/seed<n>/`: cấu hình, lịch sử và kết quả từng lượt; điểm lưu/vector nằm local.
+- `runs/analysis/ablation.json`: thắng/thua theo cặp, khoảng bất định và mười trường hợp minh hoạ.
+- `runs/fidelity/full-joint-test.json`: dấu vết can thiệp và tổng hợp theo hạt giống.
+- `private/ablation-guide.html`: tài liệu tương tác local, không commit.
 
-### Actual local execution — 18/11/2026
+Đã kiểm tra đủ 15 lượt: điểm lưu và vector hữu hạn, chuẩn hoá 10.000×512; mã băm
+đầu vào nhất quán. Kiểm tra tiếp tục chạy bỏ qua đúng 15 lượt hoàn chỉnh. Chạy
+lại phép đo độ trung thực cho kết quả giống hoàn toàn. Bộ mã cuối có 263 kiểm thử
+qua, Ruff và mypy sạch; các bản ghi 250/262 kiểm thử trước đó là mốc lịch sử.
 
-Restored all 10,000 source images (no failed downloads), regenerated CLIP cache
-(own-image cosine 0.3042 vs random 0.1515), and trained full plus four variants
-for seeds 13/37/97 with W&B disabled. All 15 runs have best/last checkpoints and
-finite unit graph vectors (10,000 × 512); all input hashes match across runs.
-All five benchmarks completed with alpha/k selected on validation.
+`runs/` và `private/` bỏ qua đầu ra mới trong Git. Tệp lịch sử đã được theo dõi
+vẫn được theo dõi. Đã commit mã và JSON/YAML kết quả nhỏ theo cấu trúc có sẵn;
+không commit điểm lưu, bộ nhớ đệm, dấu vết thô hoặc tài liệu riêng tư.
 
-Test fused R@1 mean ± std (%): full 48.12 ± 0.23; objects_only 47.56 ± 0.16;
-drop_predicates 48.06 ± 0.28; random_edges 47.79 ± 0.18; undirected 47.84 ± 0.15.
-Full does not win on every metric: drop_predicates/undirected have higher test
-R@10 and MRR in these runs. No statistical significance or fidelity claim.
-Randomization audit: changed triplet multisets in 9,491 graphs and 96.3% of
-triplet positions; all directed degrees and predicate histograms preserved.
+## Điều kiện nghiệm thu và việc còn lại
 
-Benchmark JSON: runs/benchmark/graphsage-*.json. Prior full benchmark and training
-metadata backed up under private/ablation-execution/. CSV, complete metric table,
-validation selections, artifact verification and execution logs are private/local;
-see private/ablation-guide.html and private/ablation-execution/comparison.csv.
-Remaining: fidelity, second dataset, hub ablation, parameter-matched direction
-control and stronger statistical analysis. No commits made.
+- [x] Các biến thể cốt lõi trên tập thứ nhất có kết quả đủ ba lượt huấn luyện.
+- [x] Đã báo cáo so sánh can thiệp với nhóm ngẫu nhiên, có giới hạn diễn giải.
+- [ ] Lặp lại các thí nghiệm cần thiết trên tập công khai thứ hai.
+- [ ] Thí nghiệm xử lý đỉnh bậc cao và biểu đồ độ nhạy đầy đủ.
+- [ ] Đối chứng bỏ hướng có số tham số tương đương bản đầy đủ.
+- [ ] Phân tích thủ công hoàn chỉnh các trường hợp thành công/thất bại và đánh giá ngữ nghĩa.
+- [ ] Tái hiện nguyên nhân kết quả ngược của bản thử cũ nếu tiếp tục yêu cầu này.
 
-### Analysis, fidelity and commit-readiness verification — 18/11/2026
-
-Added reusable paired-analysis and fidelity modules plus CLI/config/tests.
-No retrieval model or hyperparameters changed. Image-cluster bootstrap (2,000
-draws, three fixed checkpoints) gives full−masked-label ΔR@1 CI [-0.35, 0.45]
-pp and full−random CI [-0.09, 0.74]. No clear semantic-label/connectivity
-superiority established. Full−objects CI [0.05,1.06] is exploratory and conditional
-on trained checkpoints, not an uncertainty interval over new training seeds.
-
-Fidelity: 200 presampled test queries, 198/195/196 evaluated after explicit
-small-graph skips, all three seeds. Joint selected deletion loses top-1 at
-17.81% vs random 4.31% (10% requested budget), 25.45% vs 6.06% (25% budget).
-Selection still uses single-deletion score drops; report as selection-dependent
-perturbation evidence, not independent semantic faithfulness proof.
-
-Safety fixes: finished resume verifies settings + required artifacts;
-benchmark/explanation/fidelity check run provenance and stale benchmark inputs.
-Full config is now public; historical private config paths in snapshots are not
-needed to replay. Tests: 262 passed; Ruff src/scripts/tests clean; mypy src/scripts
-clean. All 15 real runs passed resume validation without retraining.
-Artifacts: runs/analysis/ablation.json and runs/fidelity/full-joint-test.json.
-Interactive educational report stays ignored in private/. No commit created.
-
-### Readability and artifact policy — 18/11/2026
-
-Formatted new Python files completely and only changed regions of existing
-modules; grouped operations and expanded substantial parameter lists. Added short
-English processing comments and checked import ordering. Generated runs/private
-outputs are ignored for future Git additions; already tracked historical results
-remain tracked. Current acceptance status is consolidated in
-`plan-task/requirements-checklist.md`; second dataset, hub control and semantic
-validity remain open. This update does not rerun or alter model results.
+Không coi “mọi biến thể phải kém bản đầy đủ” là điều kiện để sửa số liệu hoặc đổi
+cấu hình sau khi thấy tập kiểm thử. Giai đoạn này vẫn đang thực hiện.

@@ -7,7 +7,7 @@ status: todo
 
 ## Overview
 
-Dựng tập dữ liệu thật cho Task 1–4 từ phần giao Visual Genome ∩ COCO: ảnh VG có `coco_id`, truy vấn là caption COCO (độc lập với scene graph), nhãn đồ thị chuẩn hoá theo synset WordNet có sẵn trong VG, chia split bằng scikit-learn. Làm tuần tự, mỗi bước có input/output kiểm được. **Duyệt dữ liệu (bước 2.6) là cổng bắt buộc trước khi xây đồ thị (bước 2.7).**
+Dựng tập dữ liệu thật cho Nhiệm vụ 1–4 từ phần giao Visual Genome ∩ COCO: ảnh VG có `coco_id`, truy vấn là caption COCO (độc lập với scene graph), nhãn đồ thị chuẩn hoá theo synset WordNet có sẵn trong VG, chia split bằng scikit-learn. Làm tuần tự, mỗi bước có input/output kiểm được. **Duyệt dữ liệu (bước 2.6) là cổng bắt buộc trước khi xây đồ thị (bước 2.7).**
 
 Cách làm: code từng bước → test → chạy → xem output → mới sang bước sau. Không chạy gộp nhiều bước khi output bước trước chưa được xem.
 
@@ -25,7 +25,7 @@ Cách làm: code từng bước → test → chạy → xem output → mới san
 | Quy mô | 10.000 ảnh: train 7.000 / val 1.500 / test 1.500 (7.500 truy vấn test). Nâng từ 5.000 theo yêu cầu user 17/11 | Plan gốc 70/15/15 |
 | Ảnh dùng | Ảnh VG (toạ độ bbox khớp scene graph), không dùng file ảnh COCO | Brainstorm |
 
-Giới hạn đã biết: synset gộp số ít/nhiều và biến thể cùng nghĩa (`bike`, `bikes` → `bicycle.n.01`) nhưng **không** gộp từ gần nghĩa (`guy.n.01` ≠ `man.n.01`, đã kiểm trên ảnh 1). Gộp theo cây WordNet/ConceptNet thuộc Phase 7; bước 2.6 đo xem có cần sớm hơn không.
+Giới hạn đã biết: synset gộp số ít/nhiều và biến thể cùng nghĩa (`bike`, `bikes` → `bicycle.n.01`) nhưng **không** gộp từ gần nghĩa (`guy.n.01` ≠ `man.n.01`, đã kiểm trên ảnh 1). Gộp theo cây WordNet/ConceptNet thuộc Giai đoạn 7; bước 2.6 đo xem có cần sớm hơn không.
 
 ## Cấu trúc code
 
@@ -66,7 +66,7 @@ data/processed/vg_coco/          # 10K ảnh đã chọn: images, queries, scene
 data/splits/vg_coco.json
 ```
 
-`data/interim/` và ảnh trong `data/processed/vg_coco/images/` thêm vào `.gitignore`. Dữ liệu và script của tập 40 ảnh cũ đã xoá ngày 17/11 khi Phase 1 chuyển sang `vg_coco` (còn trong lịch sử git).
+`data/interim/` và ảnh trong `data/processed/vg_coco/images/` thêm vào `.gitignore`. Dữ liệu và script của tập 40 ảnh cũ đã xoá ngày 17/11 khi Giai đoạn 1 chuyển sang `vg_coco` (còn trong lịch sử git).
 
 Thư viện thêm vào `requirements.txt`: `scikit-learn`, `pyyaml`, `pytest`, `matplotlib` (`.venv` hiện chưa có `sklearn`).
 
@@ -122,7 +122,7 @@ Thư viện thêm vào `requirements.txt`: `scikit-learn`, `pyyaml`, `pytest`, `
   - Test: `train_test_split(test_pool, train_size=1500, stratify=strata, random_state=seed)`.
   - Train/val: lấy 8.500 ảnh từ kho train/val cùng cách, rồi tách 7.000/1.500 bằng một lần `train_test_split` nữa, cũng phân tầng.
   - Kho test < 1.500 → báo lỗi kèm số thật, không tự giảm.
-  - Split dùng một seed cố định; nhiều seed ở Phase 3 là seed huấn luyện, không phải seed chia.
+  - Split dùng một seed cố định; nhiều seed ở Giai đoạn 3 là seed huấn luyện, không phải seed chia.
 - **Xong khi:** test kiểm (a) không trùng giữa 3 tập, (b) không ảnh Karpathy test nào trong train/val, (c) cùng seed + config → file giống hệt sha256, (d) tỉ lệ các tầng giữa 3 tập lệch ≤ 2 điểm %.
 
 ### 2.5 Xuất tập con + tải ảnh
@@ -158,12 +158,12 @@ Quyết định 2.6 (user chốt theo đề xuất 17/11):
 | D1 | Id đỉnh khái niệm = synset (không có synset → `name:<tên thô chuẩn hoá>`); chữ hiển thị/nhúng = tên thô phổ biến nhất của khái niệm, đếm trên train |
 | D2 | Bỏ object có tên thô thuộc danh sách rác/màu/vị trí trong config, **xét tên thô bất kể có synset** (VG gán `he` → helium, `it` → information technology, `an` → associate in nursing); ~3.932 object (1,1%) |
 | D3 | Bỏ khái niệm và vị từ có < 5 ảnh train |
-| D4 | Giữ hub; tính IDF trên train, lưu kèm khái niệm; dùng hay không chốt ở Phase 1/3 |
-| D5 | Chưa gộp từ gần nghĩa (Phase 7) |
+| D4 | Giữ hub; tính IDF trên train, lưu kèm khái niệm; dùng hay không chốt ở Giai đoạn 1/3 |
+| D5 | Chưa gộp từ gần nghĩa (Giai đoạn 7) |
 | D6 | Chưa thêm thuộc tính VG; đo B4 xong mới quyết định |
-| D7 | Caption là truy vấn, **không trộn vào đồ thị ảnh** (trộn thì ảnh test mang sẵn đáp án). Phân tích caption thành đồ thị truy vấn bằng SceneGraphParser là lựa chọn phía truy vấn ở Phase 4; 2.7 không phụ thuộc (user đồng ý 17/11) |
+| D7 | Caption là truy vấn, **không trộn vào đồ thị ảnh** (trộn thì ảnh test mang sẵn đáp án). Phân tích caption thành đồ thị truy vấn bằng SceneGraphParser là lựa chọn phía truy vấn ở Giai đoạn 4; 2.7 không phụ thuộc (user đồng ý 17/11) |
 
-- **Mục tiêu:** từ vựng khái niệm/vị từ cố định + đồ thị từng ảnh trên từ vựng đó, dùng chung cho GraphSAGE (Phase 1/3) và B4 (Phase 4).
+- **Mục tiêu:** từ vựng khái niệm/vị từ cố định + đồ thị từng ảnh trên từ vựng đó, dùng chung cho GraphSAGE (Giai đoạn 1/3) và B4 (Giai đoạn 4).
 - **Input:** `data/processed/vg_coco/{scene_graphs.json, images.json}`, config mục `graph`.
 - **Output:** `data/processed/vg_coco/graph/`
   - `concepts.json`: `concept_id`, `key` (synset hoặc `name:<tên>`), `text` (D1), `synset`, `train_images`, `idf`

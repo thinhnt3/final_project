@@ -1,6 +1,6 @@
 # Cách xây MMKG
 
-Tài liệu cho người nhận việc "xây MMKG" ở cấp độ 3 (xem [task.md](task.md)). Nó chỉ ghi yêu cầu của đề, vài kinh nghiệm thu thập, cách tạo bộ truy vấn theo hướng dẫn của thầy, và dạng file pipeline cần. Chọn miền, nguồn, quy mô và cách dựng đồ thị là quyền của người làm.
+Tài liệu cho người nhận việc "xây MMKG" ở cấp độ 3 (xem [task.md](../task.md)). Nó chỉ ghi yêu cầu của đề, vài kinh nghiệm thu thập, cách tạo bộ truy vấn theo hướng dẫn của thầy, và dạng file pipeline cần. Chọn miền, nguồn, quy mô và cách dựng đồ thị là quyền của người làm.
 
 ## 1. Đề bài yêu cầu gì
 

@@ -7,7 +7,7 @@ status: in-progress
 
 ## Overview
 
-Bộ đo Recall@1/5/10 và MRR dùng chung cho mọi phương pháp, trên tập test cố định (1.500 ảnh, 7.500 truy vấn). α và siêu tham số chỉ chọn trên validation. Làm ngay sau bước 1.1 của Phase 1, trước GraphSAGE.
+Bộ đo Recall@1/5/10 và MRR dùng chung cho mọi phương pháp, trên tập test cố định (1.500 ảnh, 7.500 truy vấn). α và siêu tham số chỉ chọn trên validation. Làm ngay sau bước 1.1 của Giai đoạn 1, trước GraphSAGE.
 
 ## Các bước
 
@@ -61,9 +61,9 @@ Kết quả 3.3, CLIP ViT-B/32, gallery 1.500 ảnh, 7.500 truy vấn mỗi spli
 
 Đã tính lại độc lập bằng numpy thuần, khớp cả 4 số của test. Mức ngẫu nhiên R@1 = 0,07%. Số đã công bố của CLIP ViT-B/32 zero-shot trên COCO 5K (text → image): R@1 30,4 / R@5 54,8 / R@10 66,1 (bảng 9 của paper LAION-5B, arXiv 2210.08402). Gallery ở đây nhỏ hơn 3,3 lần nên số cao hơn là hợp lý; không so trực tiếp được.
 
-Quy ước 3.4 (user duyệt 17/11): điểm cuối dùng cosine thô theo đúng công thức đề bài, không chuẩn hoá thang điểm; α quét với bước 0,01 trên [0, 1] (`benchmark.alpha_step`). Số đo dẫn tới lựa chọn này ghi ở Phase 4.
+Quy ước 3.4 (user duyệt 17/11): điểm cuối dùng cosine thô theo đúng công thức đề bài, không chuẩn hoá thang điểm; α quét với bước 0,01 trên [0, 1] (`benchmark.alpha_step`). Số đo dẫn tới lựa chọn này ghi ở Giai đoạn 4.
 
-Code-review 1.1 và Phase 3 (agent độc lập, 17/11): tính lại độc lập khớp cả validation và test; metric, cách chọn gallery và truy vấn đúng. Đã sửa 4 lỗi ở phần xếp hạng lại, chưa lỗi nào ảnh hưởng tới số đã ghi:
+Code-review 1.1 và Giai đoạn 3 (agent độc lập, 17/11): tính lại độc lập khớp cả validation và test; metric, cách chọn gallery và truy vấn đúng. Đã sửa 4 lỗi ở phần xếp hạng lại, chưa lỗi nào ảnh hưởng tới số đã ghi:
 
 1. α = 1 không cho đúng thứ hạng CLIP trên điểm float32 (trừ 3 làm các điểm sát nhau thành bằng nhau; 1 truy vấn validation tụt từ hạng 38 xuống 39) → tính bằng float64. Kiểm lại trên validation: 0 truy vấn đổi hạng ở k = 1, 5, 10, 50, 1.500.
 2. Chọn cấu hình tốt nhất bị nhiễu số học chi phối, và khi hoà thì nghiêng về điểm đồ thị → luật chọn mới ở 3.4. Kiểm lại: điểm đồ thị toàn 0 cho kết quả α = 1.
