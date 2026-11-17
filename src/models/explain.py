@@ -1,7 +1,8 @@
 """Explain a graph score: how much each relation of the image contributes to it."""
+
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -42,17 +43,11 @@ def explain_graph_score(
     large positive drop means the score relied on that relation; a negative one means the
     relation pulled the score down. The same removal is what a fidelity test perturbs.
     """
-    if query_vector.ndim != 1:
-        raise DataError(f"query vector must be one-dimensional, got shape {tuple(query_vector.shape)}")
     triplets = [tuple(int(v) for v in t) for t in image_graph["triplets"]]
     variants = [image_graph] + [
-        {**image_graph, "triplets": triplets[:position] + triplets[position + 1:]}
-        for position in range(len(triplets))
+        {**image_graph, "triplets": triplets[:position] + triplets[position + 1 :]} for position in range(len(triplets))
     ]
-    model.eval()
-    device = next(model.parameters()).device
-    batch = Batch.from_data_list([image_graph_to_data(variant, image_row) for variant in variants]).to(device)
-    scores = (model(batch) @ query_vector.to(device)).cpu()
+    scores = score_graph_variants(model, variants, image_row, query_vector)
     full_score = float(scores[0])
     contributions = [
         RelationContribution(
@@ -65,3 +60,24 @@ def explain_graph_score(
     ]
     # Largest contribution first; equal drops keep the order of the image graph.
     return full_score, sorted(contributions, key=lambda c: -c.score_drop)
+
+
+@torch.no_grad()
+def score_graph_variants(
+    model: nn.Module,
+    variants: Sequence[Mapping[str, Any]],
+    image_row: int,
+    query_vector: torch.Tensor,
+) -> tuple[float, ...]:
+    """Score variants of one image with fixed features and one fixed query."""
+    if query_vector.ndim != 1:
+        raise DataError(f"query vector must be one-dimensional, got shape {tuple(query_vector.shape)}")
+    if not variants or not torch.isfinite(query_vector).all():
+        raise DataError("need graph variants and a finite query vector")
+    model.eval()
+    device = next(model.parameters()).device
+    batch = Batch.from_data_list([image_graph_to_data(variant, image_row) for variant in variants]).to(device)
+    scores = model(batch) @ query_vector.to(device)
+    if not torch.isfinite(scores).all():
+        raise DataError("graph variant scores contain NaN or infinity")
+    return tuple(float(score) for score in scores.cpu())
