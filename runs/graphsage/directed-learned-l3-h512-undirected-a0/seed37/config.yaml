@@ -1,0 +1,39 @@
+# Settings of this training run. Written by train_graphsage.
+run_name: directed-learned-l3-h512-undirected-a0
+seed: 37
+config_file: configs/retrieval/ablations/undirected.yaml
+git:
+  commit: 49bd52dae454cec45876bcad8e2f1395fdc4dab3
+  dirty: true
+clip_model: openai/clip-vit-base-patch32
+graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  directed: true
+  image_node: learned
+  ablation: undirected
+  ablation_seed: 0
+training:
+  seeds:
+  - 13
+  - 37
+  - 97
+  device: cpu
+  batch_size: 256
+  max_epochs: 50
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+recall_ks:
+- 1
+- 5
+- 10
+train_images: 7000
+val_images: 1500
+inputs_sha256:
+  data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json: 554779907a7879b94a2f3c8c8c7d91426908570b49359cd6bff44a09c5ebc894
+  data/processed/vg_coco/graph/image_graphs.json: 3102673586f0b97632142ee70638ccc0d9899c3883df2d74702a6e970359c836
+  data/splits/vg_coco.json: c20951270f42b7451af64618e3d5bd8a065292b79f9b194edd5ac617c27cbc57
