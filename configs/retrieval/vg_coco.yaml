@@ -36,3 +36,26 @@ graphsage:
   num_layers: 3
   directed: true
   image_node: learned
+
+# Training of the graph encoder. Starting values; tune on validation only.
+# device: cpu is faster than mps for these small sub-graphs, and identical across machines.
+# patience: stop after this many epochs in a row without a better validation result.
+# selection_metric: validation metric of the graph score alone that picks the best epoch
+# (recall@1 or mrr; the other one breaks ties).
+training:
+  seeds: [13, 37, 97]
+  device: cpu
+  batch_size: 256
+  max_epochs: 50
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+
+# Weights & Biases tracking. mode: online (needs `wandb login`), offline (local files, upload
+# later with `wandb sync`), or disabled.
+wandb:
+  mode: online
+  project: vg-coco-graph-retrieval

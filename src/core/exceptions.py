@@ -20,3 +20,7 @@ class ChecksumMismatchError(DataError):
 
 class UpstreamError(AppError):
     """An external service returned an error status or an error payload."""
+
+
+class TrainingError(AppError):
+    """Training cannot continue: the loss diverged or a run directory is in the wrong state."""

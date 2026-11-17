@@ -21,6 +21,12 @@ def _raw(**clip_overrides):
         "benchmark": {"recall_ks": [1, 5, 10], "alpha_step": 0.5, "top_k_grid": [10, 50]},
         "runs_dir": "runs",
         "graphsage": {"hidden_dim": 64, "num_layers": 3, "directed": True, "image_node": "learned"},
+        "training": {
+            "seeds": [13, 37], "device": "cpu", "batch_size": 8, "max_epochs": 5, "patience": 2,
+            "learning_rate": 0.001, "weight_decay": 0, "temperature": 0.07, "grad_clip_norm": 1.0,
+            "selection_metric": "recall@1",
+        },
+        "wandb": {"mode": "disabled", "project": "p"},
     }
 
 
@@ -95,5 +101,35 @@ def test_graphsage_section_is_parsed_and_validated():
     ):
         raw = _raw()
         raw["graphsage"].update(overrides)
+        with pytest.raises(ConfigError, match=message):
+            RetrievalConfig.from_dict(raw)
+
+
+def test_training_section_is_parsed_and_validated():
+    training = RetrievalConfig.from_dict(_raw()).training
+    assert training.seeds == (13, 37) and training.device is Device.CPU
+    assert (training.batch_size, training.max_epochs, training.patience) == (8, 5, 2)
+    assert training.weight_decay == 0.0 and training.selection_metric.value == "recall@1"
+    for overrides, message in (
+        ({"seeds": []}, "seeds"),
+        ({"seeds": [1, 1]}, "seeds"),
+        ({"seeds": "13"}, "seeds"),
+        ({"device": "auto"}, "must name a device"),
+        ({"batch_size": 0}, "must be >= 1"),
+        ({"temperature": 0}, "must be > 0"),
+        ({"weight_decay": -1}, "weight_decay"),
+        ({"selection_metric": "recall@5"}, "selection_metric"),
+    ):
+        raw = _raw()
+        raw["training"].update(overrides)
+        with pytest.raises(ConfigError, match=message):
+            RetrievalConfig.from_dict(raw)
+
+
+def test_wandb_section_is_parsed_and_validated():
+    assert RetrievalConfig.from_dict(_raw()).wandb.mode.value == "disabled"
+    for overrides, message in (({"mode": "cloud"}, "wandb.mode"), ({"project": ""}, "project")):
+        raw = _raw()
+        raw["wandb"].update(overrides)
         with pytest.raises(ConfigError, match=message):
             RetrievalConfig.from_dict(raw)

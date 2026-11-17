@@ -2,13 +2,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
+from src.connectors.wandb_tracker import WandbConfig, WandbMode
 from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.embeddings.device import Device
 from src.models.graphsage import GraphSageConfig, ImageNodeFeature
+from src.models.train import SelectionMetric, TrainingConfig
 
 _ALPHA_STEP_TOLERANCE = 1e-9
 _ALPHA_DECIMALS = 6
@@ -46,6 +49,8 @@ class RetrievalConfig:
     benchmark: BenchmarkConfig
     runs_dir: Path
     graphsage: GraphSageConfig
+    training: TrainingConfig
+    wandb: WandbConfig
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> RetrievalConfig:
@@ -56,12 +61,9 @@ class RetrievalConfig:
     def from_dict(cls, raw: dict[str, Any]) -> RetrievalConfig:
         """Build from an already-parsed mapping (used by tests)."""
         clip_raw = require_section(raw, "clip")
-        device_raw = require_field(clip_raw, "device", str)
-        if device_raw not in set(Device):
-            raise ConfigError(f"clip.device must be one of {[d.value for d in Device]}, got {device_raw!r}")
         clip = ClipConfig(
             model_name=require_field(clip_raw, "model_name", str),
-            device=Device(device_raw),
+            device=_choice(clip_raw, "device", Device, "clip"),
             image_batch_size=require_field(clip_raw, "image_batch_size", int),
             text_batch_size=require_field(clip_raw, "text_batch_size", int),
         )
@@ -76,6 +78,8 @@ class RetrievalConfig:
             benchmark=_benchmark_config(raw),
             runs_dir=Path(require_field(raw, "runs_dir", str)),
             graphsage=_graphsage_config(raw),
+            training=_training_config(raw),
+            wandb=_wandb_config(raw),
         )
 
     def model_embeddings_dir(self) -> Path:
@@ -114,11 +118,6 @@ def _number_list(raw: dict[str, Any], key: str, kind: type | tuple[type, ...]) -
 
 def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
     graphsage_raw = require_section(raw, "graphsage")
-    image_node = require_field(graphsage_raw, "image_node", str)
-    if image_node not in set(ImageNodeFeature):
-        raise ConfigError(
-            f"graphsage.image_node must be one of {[v.value for v in ImageNodeFeature]}, got {image_node!r}"
-        )
     directed = graphsage_raw.get("directed")
     if not isinstance(directed, bool):
         raise ConfigError(f"graphsage.directed must be true or false, got {directed!r}")
@@ -126,5 +125,41 @@ def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
         hidden_dim=require_field(graphsage_raw, "hidden_dim", int),
         num_layers=require_field(graphsage_raw, "num_layers", int),
         directed=directed,
-        image_node=ImageNodeFeature(image_node),
+        image_node=_choice(graphsage_raw, "image_node", ImageNodeFeature, "graphsage"),
+    )
+
+
+def _choice[Choice: StrEnum](raw: dict[str, Any], key: str, kind: type[Choice], section: str) -> Choice:
+    """Read a string field that must be one of the values of a StrEnum."""
+    value = require_field(raw, key, str)
+    if value not in {member.value for member in kind}:
+        raise ConfigError(f"{section}.{key} must be one of {[member.value for member in kind]}, got {value!r}")
+    return kind(value)
+
+
+def _training_config(raw: dict[str, Any]) -> TrainingConfig:
+    training_raw = require_section(raw, "training")
+    seeds = training_raw.get("seeds")
+    if not isinstance(seeds, list) or not all(isinstance(v, int) and not isinstance(v, bool) for v in seeds):
+        raise ConfigError("training.seeds must be a list of integers")
+    number = (int, float)
+    return TrainingConfig(
+        seeds=tuple(seeds),
+        device=_choice(training_raw, "device", Device, "training"),
+        batch_size=require_field(training_raw, "batch_size", int),
+        max_epochs=require_field(training_raw, "max_epochs", int),
+        patience=require_field(training_raw, "patience", int),
+        learning_rate=float(require_field(training_raw, "learning_rate", number)),
+        weight_decay=float(require_field(training_raw, "weight_decay", number)),
+        temperature=float(require_field(training_raw, "temperature", number)),
+        grad_clip_norm=float(require_field(training_raw, "grad_clip_norm", number)),
+        selection_metric=_choice(training_raw, "selection_metric", SelectionMetric, "training"),
+    )
+
+
+def _wandb_config(raw: dict[str, Any]) -> WandbConfig:
+    wandb_raw = require_section(raw, "wandb")
+    return WandbConfig(
+        mode=_choice(wandb_raw, "mode", WandbMode, "wandb"),
+        project=require_field(wandb_raw, "project", str),
     )

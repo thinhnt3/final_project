@@ -38,3 +38,11 @@ reports/data-review/diagrams/
 
 # CLIP embeddings (about 130 MB); regenerate with `python -m scripts.embed_vg_coco`.
 data/processed/vg_coco/embeddings/
+
+# Training runs: checkpoints, exported graph vectors and W&B files are large or machine-local.
+runs/graphsage/**/*.pt
+runs/graphsage/**/graph_vectors.*
+runs/graphsage/**/wandb/
+runs/graphsage/**/train.log
+wandb/
+runs/graphsage/**/tracker_run_id.txt
