@@ -93,7 +93,7 @@ Bộ mã cuối qua 263 kiểm thử, Ruff và mypy sạch. Hai bài thực hàn
 - Tài liệu diễn giải dùng tiếng Việt; giữ nguyên tên hàm, đường dẫn, tham số và tên thư viện. Chú thích trong mã, tên biến và nhật ký chương trình vẫn theo quy ước tiếng Anh đã chốt.
 - Tệp Python mới định dạng toàn bộ, tệp cũ chỉ sửa vùng thay đổi. Chia nhóm thao tác, chú thích ngắn và tách dòng lời gọi nhiều tham số; phần nhập mô-đun theo Ruff.
 - `runs/` và `private/` bỏ qua đầu ra mới; tệp lịch sử đã theo dõi vẫn được theo dõi. Không tự xoá hoặc ngừng theo dõi kết quả của người dùng.
-- Đã chia lịch sử thành tám commit; commit mô phỏng lỗi resume được đánh dấu rõ và sửa ngay sau đó. Nhánh chính cuối cùng đã sửa, không có kiểm thử dự kiến thất bại còn bật.
+- Lịch sử local ban đầu gồm tám commit được giữ ở `backup/ablation-before-prs-20261118`. Chuỗi nhánh review không mang commit mô phỏng bug; chỉ giữ implementation cuối đã sửa và regression test đang bật. Không có kiểm thử dự kiến thất bại còn bật.
 - Chỉ cập nhật tài liệu đã có trên main. Tài liệu mới local và mọi nội dung `private/` không được commit.
 - Hướng dẫn hiện hành: `docs/graphsage-design-decisions.md`; trạng thái nghiệm thu: `plan-task/requirements-checklist.md`; report tương tác local: `private/ablation-guide.html`.
 
