@@ -10,6 +10,7 @@ from src.connectors.wandb_tracker import WandbConfig, WandbMode
 from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.embeddings.device import Device
+from src.models.ablations import Ablation
 from src.models.graphsage import GraphSageConfig, ImageNodeFeature
 from src.models.train import SelectionMetric, TrainingConfig
 
@@ -122,6 +123,14 @@ def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
     if not isinstance(directed, bool):
         raise ConfigError(f"graphsage.directed must be true or false, got {directed!r}")
     return GraphSageConfig(
+        # Old YAML files keep the full-graph default.
+        ablation=_choice(
+            {"ablation": graphsage_raw.get("ablation", "full")},
+            "ablation",
+            Ablation,
+            "graphsage",
+        ),
+        ablation_seed=require_field({"ablation_seed": graphsage_raw.get("ablation_seed", 0)}, "ablation_seed", int),
         hidden_dim=require_field(graphsage_raw, "hidden_dim", int),
         num_layers=require_field(graphsage_raw, "num_layers", int),
         directed=directed,

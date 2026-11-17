@@ -35,6 +35,7 @@ from src.data.schemas import Split
 from src.data.sources import sha256_of
 from src.data.yaml_io import write_yaml
 from src.embeddings.store import META_FILE, EmbeddingTable, load_table, save_table, verify_inputs_unchanged
+from src.models.ablations import Ablation, ablate_graph
 from src.models.checkpoint import (
     GRAPH_VECTORS,
     LOG_FILE,
@@ -103,7 +104,11 @@ def _settings(config: RetrievalConfig, config_path: str, name: str, seed: int, d
         "config_file": config_path,
         "git": _git_state(),
         "clip_model": config.clip.model_name,
-        "graphsage": {**asdict(config.graphsage), "image_node": config.graphsage.image_node.value},
+        "graphsage": {
+            **asdict(config.graphsage),
+            "image_node": config.graphsage.image_node.value,
+            "ablation": config.graphsage.ablation.value,
+        },
         "training": {
             **asdict(config.training),
             "seeds": list(config.training.seeds),
@@ -216,7 +221,16 @@ def run(
     verify_inputs_unchanged(embeddings_dir)
     images = read_json(processed / "images.json")
     queries = read_json(processed / "queries.json")
-    image_graphs = read_json(processed / GRAPH_FILE)
+
+    # Apply the same intervention before building train, validation and export graphs.
+    image_graphs = [
+        ablate_graph(
+            g,
+            config.graphsage.ablation,
+            config.graphsage.ablation_seed,
+        )
+        for g in read_json(processed / GRAPH_FILE)
+    ]
     image_table, query_table = load_table(embeddings_dir, "images"), load_table(embeddings_dir, "queries")
 
     train, _ = build_retrieval_set(Split.TRAIN, images, queries, image_graphs, image_table, query_table)
@@ -246,6 +260,16 @@ def run(
     for seed in seeds:
         run_dir = RunDirectory(config.runs_dir / RUNS_SUBDIR / name / f"seed{seed}")
         if resume and run_dir.is_finished():
+            # A result marker alone does not guarantee reusable local artifacts.
+            run_dir.validate_finished(
+                _settings(
+                    config,
+                    config_path,
+                    name,
+                    seed,
+                    data,
+                )
+            )
             log.info("seed %d already finished in %s; skipped", seed, run_dir.path)
             continue
         resume_seed = resume and run_dir.has_progress()
@@ -279,6 +303,12 @@ def main() -> int:
         choices=[v.value for v in ImageNodeFeature],
         help="initial feature of the image node; overrides graphsage.image_node of the config",
     )
+    parser.add_argument("--ablation", choices=[v.value for v in Ablation])
+    parser.add_argument(
+        "--ablation-seed",
+        type=int,
+        help="fixed graph randomization seed (default: config or 0)",
+    )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--resume", action="store_true", help="skip finished seeds, continue interrupted ones")
     mode.add_argument("--overwrite", action="store_true", help="delete an existing run of a seed and start again")
@@ -290,6 +320,22 @@ def main() -> int:
         if args.image_node:
             model_config = replace(config.graphsage, image_node=ImageNodeFeature(args.image_node))
             config = replace(config, graphsage=model_config)
+        if args.ablation:
+            config = replace(
+                config,
+                graphsage=replace(
+                    config.graphsage,
+                    ablation=Ablation(args.ablation),
+                ),
+            )
+        if args.ablation_seed is not None:
+            config = replace(
+                config,
+                graphsage=replace(
+                    config.graphsage,
+                    ablation_seed=args.ablation_seed,
+                ),
+            )
         seeds = args.seed or list(config.training.seeds)
         name = args.name or config.graphsage.run_name()
         run(config, args.config, name, seeds, handlers, resume=args.resume, overwrite=args.overwrite)

@@ -46,3 +46,10 @@ runs/graphsage/**/wandb/
 runs/graphsage/**/train.log
 wandb/
 runs/graphsage/**/tracker_run_id.txt
+
+# Generated experiment outputs stay local; reproduce them with scripts/.
+# Historical files already tracked by Git are still tracked.
+/runs/
+
+# Private reports, local orchestration and verification logs.
+/private/
