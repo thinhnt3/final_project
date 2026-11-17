@@ -46,3 +46,6 @@ runs/graphsage/**/wandb/
 runs/graphsage/**/train.log
 wandb/
 runs/graphsage/**/tracker_run_id.txt
+
+# Archived result folders at the root (e.g. runs.zip) are too large for git; share them separately.
+/*.zip
