@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="360" viewBox="0 0 920 360" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
 <title id="fig-title">R@1 khi chỉ dùng điểm đồ thị</title>
-<desc id="fig-desc">Chọn ngẫu nhiên: 0,07; So khớp từ với đồ thị: 12,63; GraphSAGE (mô hình chính): 27,78 ± 0,63; GraphSAGE, đỉnh ảnh mang vector CLIP: 42,25 ± 0,48; CLIP thuần (để so sánh): 43,89 (%).</desc>
+<desc id="fig-desc">Chọn ngẫu nhiên: 0,07; So khớp từ với đồ thị: 12,63; GraphSAGE (mô hình chính): 27,54 ± 0,50; GraphSAGE, đỉnh ảnh mang vector CLIP: 42,25 ± 0,48; CLIP thuần (để so sánh): 43,89 (%).</desc>
 <style>
 @media (prefers-color-scheme: dark) {
   .f-axis { fill: #4a4a46; } .s-axis { stroke: #4a4a46; }
@@ -39,11 +39,11 @@
 <path d="M330,136 h124.8 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-124.8 z" fill="#b3b1aa" class="f-gray" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>So khớp từ với đồ thị: 12,63</title></path>
 <text x="467.8" y="151.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >12,63</text>
 <text x="316.0" y="195.0" font-size="13.5" font-weight="600" text-anchor="end" fill="#0b0b0b" class="f-ink" >GraphSAGE (mô hình chính)</text>
-<path d="M330,180 h279.4 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-279.4 z" fill="#2a78d6" class="f-blue" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>GraphSAGE (mô hình chính): 27,78</title></path>
-<line x1="606.9" y1="190.0" x2="619.8" y2="190.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
-<line x1="606.9" y1="185.0" x2="606.9" y2="195.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
-<line x1="619.8" y1="185.0" x2="619.8" y2="195.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
-<text x="628.8" y="195.0" font-size="13" font-weight="600" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >27,78 ± 0,63</text>
+<path d="M330,180 h276.9 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-276.9 z" fill="#2a78d6" class="f-blue" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>GraphSAGE (mô hình chính): 27,54</title></path>
+<line x1="605.8" y1="190.0" x2="616.0" y2="190.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
+<line x1="605.8" y1="185.0" x2="605.8" y2="195.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
+<line x1="616.0" y1="185.0" x2="616.0" y2="195.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
+<text x="625.0" y="195.0" font-size="13" font-weight="600" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >27,54 ± 0,50</text>
 <text x="316.0" y="239.0" font-size="13.5" font-weight="400" text-anchor="end" fill="#0b0b0b" class="f-ink" >GraphSAGE, đỉnh ảnh mang vector CLIP</text>
 <path d="M330,224 h426.9 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-426.9 z" fill="#eb6834" class="f-orange" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>GraphSAGE, đỉnh ảnh mang vector CLIP: 42,25</title></path>
 <line x1="756.1" y1="234.0" x2="765.8" y2="234.0" fill="none" stroke="#0b0b0b" class="s-ink" stroke-width="1.4" stroke-linecap="round" />
@@ -54,5 +54,5 @@
 <path d="M330,268 h443.7 a4,4 0 0 1 4,4 v12 a4,4 0 0 1 -4,4 h-443.7 z" fill="#6f6d67" class="f-gray2" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"><title>CLIP thuần (để so sánh): 43,89</title></path>
 <text x="786.7" y="283.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >43,89</text>
 <line x1="330.0" y1="84.0" x2="330.0" y2="294.0" fill="none" stroke="#c3c2b7" class="s-axis" stroke-width="1.0" stroke-linecap="round" />
-<text x="28.0" y="340.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >GraphSAGE gấp 2,2 lần so khớp từ và khoảng 417 lần mức ngẫu nhiên, dù đỉnh ảnh không mang thông tin gì về điểm ảnh.</text>
+<text x="28.0" y="340.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >GraphSAGE gấp 2,2 lần so khớp từ và khoảng 413 lần mức ngẫu nhiên, dù đỉnh ảnh không mang thông tin gì về điểm ảnh.</text>
 </svg>

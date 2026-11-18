@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="352" viewBox="0 0 920 352" font-family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' role="img" aria-labelledby="fig-title fig-desc">
 <title id="fig-title">R@1 trên tập test</title>
-<desc id="fig-desc">CLIP ViT-B/32 (chỉ CLIP): 43,89; CLIP + so khớp từ với đồ thị: 46,41; CLIP + GraphSAGE (mô hình chính): 48,20 ± 0,05; CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP: 49,43 ± 0,46 (%).</desc>
+<desc id="fig-desc">CLIP ViT-B/32 (chỉ CLIP): 43,89; CLIP + so khớp từ với đồ thị: 46,41; CLIP + GraphSAGE (mô hình chính): 48,12 ± 0,23; CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP: 49,43 ± 0,46 (%).</desc>
 <style>
 @media (prefers-color-scheme: dark) {
   .f-bg { fill: #1a1a19; } .s-bg { stroke: #1a1a19; }
@@ -40,11 +40,11 @@
 <text x="659.4" y="156.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >46,41</text>
 <text x="392.0" y="219.0" font-size="13.5" font-weight="600" text-anchor="end" fill="#0b0b0b" class="f-ink" >CLIP + GraphSAGE (mô hình chính)</text>
 <line x1="420.0" y1="214.0" x2="880.0" y2="214.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
-<line x1="734.3" y1="214.0" x2="739.4" y2="214.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
-<line x1="734.3" y1="208.0" x2="734.3" y2="220.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
-<line x1="739.4" y1="208.0" x2="739.4" y2="220.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
-<circle cx="736.9" cy="214.0" r="7" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"><title>CLIP + GraphSAGE (mô hình chính): 48,20 ± 0,05</title></circle>
-<text x="750.9" y="204.0" font-size="13" font-weight="600" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >48,20 ± 0,05</text>
+<line x1="721.0" y1="214.0" x2="744.6" y2="214.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
+<line x1="721.0" y1="208.0" x2="721.0" y2="220.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
+<line x1="744.6" y1="208.0" x2="744.6" y2="220.0" fill="none" stroke="#2a78d6" class="s-blue" stroke-width="2" stroke-linecap="round" />
+<circle cx="732.8" cy="214.0" r="7" fill="#2a78d6" stroke="#fcfcfb" class="f-blue s-bg" stroke-width="2"><title>CLIP + GraphSAGE (mô hình chính): 48,12 ± 0,23</title></circle>
+<text x="746.8" y="204.0" font-size="13" font-weight="600" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >48,12 ± 0,23</text>
 <text x="392.0" y="267.0" font-size="13.5" font-weight="400" text-anchor="end" fill="#0b0b0b" class="f-ink" >CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP</text>
 <line x1="420.0" y1="262.0" x2="880.0" y2="262.0" fill="none" stroke="#e1e0d9" class="s-grid" stroke-width="1.0" stroke-linecap="round" />
 <line x1="776.2" y1="262.0" x2="823.3" y2="262.0" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2" stroke-linecap="round" />
@@ -52,5 +52,5 @@
 <line x1="823.3" y1="256.0" x2="823.3" y2="268.0" fill="none" stroke="#eb6834" class="s-orange" stroke-width="2" stroke-linecap="round" />
 <circle cx="799.8" cy="262.0" r="7" fill="#eb6834" stroke="#fcfcfb" class="f-orange s-bg" stroke-width="2"><title>CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP: 49,43 ± 0,46</title></circle>
 <text x="813.8" y="252.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >49,43 ± 0,46</text>
-<text x="28.0" y="330.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >CLIP + GraphSAGE hơn CLIP 4,31 điểm R@1: thêm khoảng 323 trên 7.500 truy vấn có ảnh đúng đứng đầu.</text>
+<text x="28.0" y="330.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >CLIP + GraphSAGE hơn CLIP 4,23 điểm R@1: thêm khoảng 317 trên 7.500 truy vấn có ảnh đúng đứng đầu.</text>
 </svg>

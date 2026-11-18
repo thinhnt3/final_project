@@ -31,8 +31,9 @@ Quy ước viết số: dấu phẩy ngăn phần thập phân (0,5), dấu ch�
 | [A14](#a14-số-thực-float32-và-float64) | Số thực float32 và float64 |
 | [A15](#a15-sha256-và-tính-tái-lập) | sha256 và tính tái lập |
 | [A16](#a16-giải-thích-mô-hình-bỏ-từng-relation-fidelity-sparsity-validity) | Giải thích mô hình: bỏ từng relation, fidelity, sparsity, validity |
-| [A17](#a17-ablation-và-đảo-cạnh-giữ-bậc) | Ablation và đảo cạnh giữ bậc |
+| [A17](#a17-ablation-và-xáo-trộn-cạnh) | Ablation và xáo trộn cạnh |
 | [A18](#a18-hướng-mở-rộng-đồ-thị-tri-thức-r-gcn-hgt) | Hướng mở rộng: đồ thị tri thức, R-GCN, HGT |
+| [A19](#a19-bootstrap-theo-cụm-và-khoảng-95) | Bootstrap theo cụm và khoảng 95% |
 
 ## Bảng ký hiệu
 
@@ -384,7 +385,7 @@ $$
 - **Cột j:** caption j phải nhận ra ảnh của mình trong B ảnh. Đây là chiều từ caption tìm ảnh, cũng là chiều của bài toán truy hồi.
 - **Mức đoán bừa:** loss = ln B. Với B = 256, đó là ln 256 = 5,545.
 
-Số thật (seed 13): loss train ở vòng 1 là 5,06, chỉ thấp hơn mức đoán bừa một chút; đến vòng 27 còn 1,53.
+Số thật (lượt 18/11, seed 13): loss train ở vòng 1 là 4,98, chỉ thấp hơn mức đoán bừa một chút; đến vòng 26 còn 1,54.
 
 **Nhiệt độ τ.** Chia cho τ nhỏ phóng đại khác biệt giữa các điểm, nên softmax "nhọn" hơn và mô hình bị phạt nặng hơn khi cặp đúng không vượt hẳn các cặp sai. Ví dụ batch 2 cặp ở Phụ lục B, cùng một bảng điểm:
 
@@ -434,13 +435,13 @@ g = (3; 4)   ‖g‖ = 5 > 1   →   g' = (3; 4) × 1/5 = (0,6; 0,8)
 
 **Batch và vòng (epoch).** Một vòng đi qua cả 7.000 ảnh train, chia thành các batch 256 ảnh: 27 batch đủ 256 ảnh và 1 batch 88 ảnh (27 × 256 = 6.912; 7.000 − 6.912 = 88), tổng 28 batch. Thứ tự ảnh và caption được chọn ở mỗi vòng chỉ phụ thuộc vào (seed, số vòng). Nhờ vậy, chạy tiếp bằng `--resume` cho đúng kết quả như khi chạy liền mạch.
 
-**Dừng sớm (số thật, seed 13, patience 5).**
+**Dừng sớm (số thật, lượt 18/11, seed 13, patience 5).**
 
-| Vòng | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 |
+| Vòng | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 |
 |---|---|---|---|---|---|---|---|---|---|
-| R@1 val (%) | 27,48 ★ | 27,37 | 27,13 | **27,76 ★** | 27,51 | 27,23 | 26,76 | 27,13 | 27,55 |
+| R@1 val (%) | 27,35 ★ | 27,03 | 27,28 | **27,41 ★** | 27,24 | 27,09 | 27,00 | 26,75 | 26,64 |
 
-★ đánh dấu vòng lập kỷ lục mới. Trước khi bắt đầu vòng 28, script kiểm tra 28 − 1 − 22 = 5 ≥ patience = 5, nên dừng. Mô hình dùng về sau là `best.pt` của vòng 22, không phải vòng 27. Đó là lý do bảng huấn luyện ghi "22 / 27".
+★ đánh dấu vòng lập kỷ lục mới. Trước khi bắt đầu vòng 27, script kiểm tra 27 − 1 − 21 = 5 ≥ patience = 5, nên dừng. Mô hình dùng về sau là `best.pt` của vòng 21, không phải vòng 26. Đó là lý do bảng huấn luyện ghi "21 / 26".
 
 ## A12. Train, validation, test: quá khớp, rò rỉ và chọn tham số
 
@@ -452,7 +453,7 @@ g = (3; 4)   ‖g‖ = 5 > 1   →   g' = (3; 4) × 1/5 = (0,6; 0,8)
 
 Nếu chọn bất cứ thứ gì dựa trên test, con số trên test không còn đo được khả năng của hệ thống trên dữ liệu mới.
 
-**Quá khớp (số thật, seed 13).** Từ vòng 11 đến vòng 27, loss train vẫn giảm từ 1,98 xuống 1,53, nhưng loss validation đi ngang quanh 1,98–2,08. Mô hình bắt đầu "học thuộc" train. Dừng sớm cắt đúng lúc đó.
+**Quá khớp (số thật, lượt 18/11, seed 13).** Từ vòng 10 đến vòng 26, loss train vẫn giảm từ 2,03 xuống 1,54, nhưng loss validation chỉ đi ngang trong khoảng 1,98–2,14. Mô hình bắt đầu "học thuộc" train. Dừng sớm cắt đúng lúc đó.
 
 **Rò rỉ dữ liệu: các ví dụ dự án đã chặn.**
 
@@ -499,20 +500,22 @@ $$
 s=\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar x)^2}
 $$
 
-**Ví dụ (số thật): R@1 trên test của CLIP + GraphSAGE.**
+**Ví dụ (số thật, lượt 18/11): R@1 trên test của CLIP + GraphSAGE.**
 
 ```
-seed 13: 48,24     seed 37: 48,20     seed 97: 48,15
-trung bình = (48,24 + 48,20 + 48,15) / 3 = 48,1967
-độ lệch    = +0,0433; +0,0033; −0,0467
-bình phương: 0,00188 + 0,00001 + 0,00218 = 0,00407
-s = √(0,00407 / 2) = √0,00203 = 0,045        → báo cáo 48,20 ± 0,05
+seed 13: 48,36     seed 37: 48,08     seed 97: 47,91
+trung bình = (48,36 + 48,08 + 47,91) / 3 = 48,1167
+độ lệch    = +0,2433; −0,0367; −0,2067
+bình phương: 0,05921 + 0,00134 + 0,04271 = 0,10327
+s = √(0,10327 / 2) = √0,05163 = 0,227        → báo cáo 48,12 ± 0,23
 ```
+
+Lượt 17/11 có ba giá trị 48,24; 48,20; 48,15, tính theo cùng cách ra 48,20 ± 0,05.
 
 **Cách đọc.**
 
-- Mức tăng so với CLIP (4,31 điểm) gần gấp 100 lần độ lệch giữa các seed, nên không phải do may rủi lúc khởi tạo.
-- Lưu ý: seed chỉ thay đổi phần ngẫu nhiên của huấn luyện; tập test thì giữ nguyên. Độ lệch chuẩn này không đo được việc kết quả sẽ dao động bao nhiêu nếu chọn một tập test khác.
+- Mức tăng so với CLIP (4,23 điểm) gấp khoảng 18 lần độ lệch giữa các seed, nên không phải do may rủi lúc khởi tạo.
+- Lưu ý: seed chỉ thay đổi phần ngẫu nhiên của huấn luyện; tập test thì giữ nguyên. Độ lệch chuẩn này không đo được việc kết quả sẽ dao động bao nhiêu nếu chọn một tập test khác. Muốn đo điều đó thì dùng bootstrap (mục [A19](#a19-bootstrap-theo-cụm-và-khoảng-95)).
 
 ## A14. Số thực float32 và float64
 
@@ -550,7 +553,7 @@ sha256("abd") = a52d159f262b2c6d…      ← chỉ khác một chữ, chuỗi b�
 
 ## A16. Giải thích mô hình: bỏ từng relation, fidelity, sparsity, validity
 
-**Bỏ từng relation (leave-one-out, một dạng giải thích bằng nhiễu).** Đóng góp của relation r là mức giảm điểm đồ thị khi bỏ r khỏi đồ thị (giữ nguyên hai đối tượng của nó):
+**Bỏ từng relation (leave-one-out, một dạng giải thích bằng nhiễu).** Đóng góp của relation r là mức giảm điểm đồ thị khi bỏ r khỏi đồ thị, giữ nguyên hai đối tượng của nó:
 
 $$
 \Delta_r=s(G)-s(G\setminus r)
@@ -559,7 +562,7 @@ $$
 - Δ lớn và dương: điểm dựa nhiều vào relation đó.
 - Δ âm: relation đó đang kéo điểm xuống.
 
-**Ví dụ (số thật).** Với ảnh 2350042, s(G) = 0,4142:
+**Ví dụ (số thật, lượt 17/11).** Với ảnh 2350042, s(G) = 0,4142:
 
 - Δ(woman → cutting → cake) = 0,0073;
 - Δ(woman → wearing → shirt) = 0,0063;
@@ -569,79 +572,126 @@ $$
 
 | Tiêu chí | Hỏi điều gì | Trạng thái trong repo |
 |---|---|---|
-| Fidelity (độ trung thực) | Bỏ các relation được dùng để giải thích có làm điểm giảm nhiều hơn bỏ ngẫu nhiên cùng số relation không? | Có code (`src/evaluation/fidelity.py`, `scripts/evaluate_fidelity.py`), chưa có kết quả |
-| Sparsity (độ gọn) | Lời giải thích dùng ít hay nhiều relation? | Có trong code fidelity |
-| Validity (độ hợp lý) | Con người có thấy lời giải thích hợp lý không? | Chưa có. Code ghi rõ "no semantic validity claim" |
+| Fidelity (độ trung thực) | Xoá các relation dùng để giải thích có làm dự đoán thay đổi nhiều hơn xoá ngẫu nhiên cùng số relation không? | Đã đo trên 200 truy vấn × 3 seed (`src/evaluation/fidelity.py`) |
+| Sparsity (độ gọn) | Lời giải thích dùng bao nhiêu phần trăm số relation? | Đã đo, kèm phép keep-only (`src/evaluation/explanation_quality.py`) |
+| Validity (độ hợp lý) | Con người có thấy relation đúng với ảnh và liên quan tới truy vấn không? | Mới có lượt thử do AI gán nhãn; form cho người chấm ở `tools/validity-review/` |
 
-**Fidelity được tính thế nào** (theo `evaluate_fidelity`). Gọi R là số relation của ảnh và b là ngân sách (mặc định 3).
-
-1. m = min(b, ⌊R/2⌋). Giới hạn này bảo đảm luôn còn đủ relation khác để làm nhóm đối chứng.
-2. Tính Δ cho từng relation. Lấy tối đa m relation có Δ > 0, ưu tiên Δ lớn nhất: đây là tập giải thích S.
-3. Chọn ngẫu nhiên |S| relation trong số còn lại làm nhóm đối chứng C. Ngẫu nhiên này cố định theo seed và mã ảnh.
-4. Bỏ **cùng lúc** cả nhóm S và tính lại điểm, rồi làm tương tự với nhóm C. Kết quả được tính lại chứ không cộng các Δ, vì hiệu ứng chung của nhiều relation không bằng tổng hiệu ứng riêng.
+**Fidelity được tính thế nào** (theo hàm `joint_relation_fidelity`). Ảnh mục tiêu là ảnh **đang đứng đầu** cho truy vấn, dù ảnh đó đúng hay sai. Gọi n là số relation của ảnh mục tiêu và f là mức xoá yêu cầu (10% hoặc 25%). Số relation bị xoá là:
 
 $$
-\operatorname{drop}(S)=(1-\alpha)\bigl[s(G)-s(G\setminus S)\bigr],\qquad
-\operatorname{drop}(C)=(1-\alpha)\bigl[s(G)-s(G\setminus C)\bigr],\qquad
-\text{sparsity}=1-\frac{|S|}{R}
+b=\min\bigl(n-1,\ \max(2,\ \lceil n\cdot f\rceil)\bigr)
 $$
 
-Hệ số (1 − α) quy mức giảm của điểm đồ thị ra mức giảm của **điểm cuối**. Nếu ảnh không nằm trong top-k thì điểm cuối của nó không dùng điểm đồ thị, nên cả hai mức giảm bằng 0. Mỗi kết quả có một trạng thái:
+1. **Chọn nhóm giải thích.** Tính Δ cho mọi relation. Nhóm giải thích S gồm b relation có Δ lớn nhất.
+2. **Rút nhóm ngẫu nhiên.** Rút 20 nhóm ngẫu nhiên, mỗi nhóm b relation, từ toàn bộ n relation. Nhóm ngẫu nhiên có thể trùng một phần với S.
+3. **Xoá và đo.** Xoá **cùng lúc** cả nhóm S, rồi tính lại điểm đồ thị. Làm tương tự với từng nhóm ngẫu nhiên. Trong lúc đó, giữ nguyên điểm CLIP, α, k, tập ứng viên và điểm của mọi ảnh khác. Sau đó xem ảnh mục tiêu có còn đứng đầu không và tụt mấy hạng.
+4. **Bỏ qua ảnh quá nhỏ.** Ảnh có n < 3 bị bỏ qua, vì không thể xoá 2 relation mà vẫn chừa lại 1.
 
-- `controlled`: đã đo đủ cả hai nhóm;
-- `insufficient_relations`: ảnh có ít hơn 2 relation;
-- `no_supporting_relations`: không relation nào có Δ > 0.
+Ví dụ về số relation bị xoá:
 
-**Ví dụ (số giả định; dùng Δ thật của 3 relation đầu, 3 relation còn lại là giả định).** R = 6, b = 3, nên m = min(3, 3) = 3.
+| n (số relation) | f = 10% | f = 25% |
+|---|---|---|
+| 4 | 2 (50%) | 2 (50%) |
+| 6 (như ảnh 2350042) | 2 (33%) | 2 (33%) |
+| 12 (trung vị của tập dữ liệu) | 2 (17%) | 3 (25%) |
+| 20 | 2 (10%) | 5 (25%) |
+
+Vì mỗi lần phải xoá ít nhất 2 relation, tỉ lệ xoá thực tế (trung bình 20,24% và 30,17%) cao hơn mức yêu cầu.
+
+**Ví dụ tính một lần mất hạng 1 (số giả định).** Lấy lại bảng ví dụ ở tài liệu 4: ảnh mục tiêu có điểm cuối 0,3413, ảnh đứng thứ hai có 0,3378, và α = 0,81. Chỉ điểm đồ thị của ảnh mục tiêu thay đổi, nên điểm cuối của nó giảm đúng (1 − α) lần mức giảm điểm đồ thị.
 
 ```
-Δ = (0,0073; 0,0063; 0,0052; 0,0010; −0,0004; 0)
-S = {r1, r2, r3}   (3 Δ dương lớn nhất)        C = 3 relation còn lại = {r4, r5, r6}
-Giả định: s(G \ S) = 0,3950    s(G \ C) = 0,4130    s(G) = 0,4142    α = 0,81
-drop(S) = 0,19 × (0,4142 − 0,3950) = 0,19 × 0,0192 = 0,003648
-drop(C) = 0,19 × (0,4142 − 0,4130) = 0,19 × 0,0012 = 0,000228
-sparsity = 1 − 3/6 = 0,5
+Xoá nhóm giải thích: điểm đồ thị giảm 0,0200 → điểm cuối giảm 0,19 × 0,0200 = 0,0038
+                     0,3413 − 0,0038 = 0,3375 < 0,3378   → mất vị trí đầu
+Xoá một nhóm ngẫu nhiên: điểm đồ thị giảm 0,0010 → điểm cuối giảm 0,00019
+                     0,3413 − 0,00019 = 0,34111 > 0,3378  → vẫn đứng đầu
 ```
 
-Ở ví dụ này, bỏ tập giải thích làm điểm cuối giảm gấp khoảng 16 lần so với bỏ ngẫu nhiên, nên lời giải thích có fidelity tốt. Một kết luận thật cần trung bình trên nhiều truy vấn: mặc định là 10 truy vấn, đúng mức tối thiểu đề bài yêu cầu.
+**Số thật (lượt 18/11, trung bình qua 3 seed).** Xoá nhóm giải thích làm ảnh mất vị trí đầu ở 17,81% truy vấn, so với 4,31% khi xoá ngẫu nhiên (f = 10%). Với f = 25%, hai con số là 25,45% và 6,06%. Mức giảm điểm đồ thị là 0,02200 so với 0,00142 (f = 10%), và 0,03040 so với 0,00216 (f = 25%).
 
-## A17. Ablation và đảo cạnh giữ bậc
+Giới hạn: nhóm giải thích được chọn bằng chính phép xoá từng relation, nên phép đo này không độc lập với cách chọn. Đây là kiểm tra bằng can thiệp, không chứng minh lời giải thích đúng về ngữ nghĩa.
 
-**Ý tưởng.** Ablation bỏ hoặc phá một thành phần rồi đo lại. Nếu kết quả giảm, thành phần đó có đóng góp. Kế hoạch Phase 5 có các biến thể sau:
+**Sparsity và keep-only.**
 
-| Mã | Biến thể | Trả lời câu hỏi | Code trong repo |
+$$
+\text{sparsity}=1-\frac{|S|}{n}
+$$
+
+- Ví dụ: n = 6 và |S| = 2 cho sparsity = 1 − 2/6 = 0,667.
+- **Keep-only** chỉ giữ lại nhóm S, bỏ n − |S| relation còn lại (mọi đối tượng vẫn giữ), rồi xem ảnh mục tiêu có còn đứng đầu không. Kết quả được so với việc chỉ giữ 20 nhóm ngẫu nhiên cùng kích thước.
+- Số thật, trung bình qua 3 seed, ở f = 10% và f = 25%:
+  - sparsity là 79,76% và 69,83%;
+  - chỉ giữ nhóm giải thích thì ảnh vẫn đứng đầu ở 94,23% và 98,81% truy vấn;
+  - chỉ giữ nhóm ngẫu nhiên thì tỉ lệ đó là 81,52% và 85,82%.
+
+**Validity.** Mỗi relation được gán hai nhãn, mỗi nhãn là "có", "không" hoặc "chưa rõ":
+
+- *đúng với ảnh* (`image_support`);
+- *liên quan tới truy vấn* (`query_relevance`).
+
+Một relation "đạt" khi cả hai nhãn đều là "có". Lượt thử do AI gán nhãn chấm 42 relation:
+
+```
+đúng với ảnh:          29 có, 2 không, 11 chưa rõ
+liên quan tới truy vấn: 20 có
+đạt cả hai:            17 / 42 = 40,48%      (nếu 2 ca chưa rõ đều đạt: 19 / 42 = 45,24%)
+```
+
+Đây chưa phải kết quả cuối: chỉ có một người chấm, lại là AI, và mẫu được chọn cân bằng nên không đại diện cho toàn bộ tập test. Bước tiếp theo là cho người chấm bằng form `tools/validity-review/index.html`.
+
+## A17. Ablation và xáo trộn cạnh
+
+**Ý tưởng.** Ablation bỏ hoặc phá một thành phần rồi huấn luyện lại và đo lại. Nếu kết quả giảm, thành phần đó có đóng góp. Dự án có 4 biến thể, mỗi biến thể có một config trong `configs/retrieval/ablations/` và được chạy với 3 seed:
+
+| Biến thể | Làm gì | Code | Trả lời câu hỏi |
 |---|---|---|---|
-| A1 | Đầy đủ | Mốc so sánh | Mô hình hiện tại |
-| A2 | Chỉ đối tượng (bỏ mọi relation) | Relation có giúp không? | `objects_only` trong `src/models/ablations.py` |
-| A3 | Bỏ vị từ, giữ cạnh | Nhãn vị từ có giúp không? | Chưa có |
-| A4 | Cạnh ngẫu nhiên, giữ bậc | Cấu trúc thật hay chỉ là thêm đặc trưng? | `rewire_relations` trong `src/models/ablations.py` |
-| A5 | Không GNN (so khớp từ) | GNN có giá trị không? | Đã có kết quả (B4) |
-| A6 | Quét α và k | Kết quả nhạy với tham số đến đâu? | Đường quét của B4 đã lưu |
-| A7 | Có hoặc không xử lý hub | Quyết định giữ hub có đúng không? | Chưa có |
-| — | Tắt hướng | Hướng của relation có giúp không? | Cờ `graphsage.directed: false` |
+| `full` | Mô hình đầy đủ | — | Mốc so sánh |
+| `objects_only` | Xoá mọi bộ ba; giữ đối tượng và cạnh ảnh → đối tượng | `ablate_graph` trong `src/models/ablations.py` | Relation có giúp không? |
+| `drop_predicates` | Vector ban đầu của đỉnh phụ bằng 0; giữ đỉnh, cạnh, hướng | Trong `GraphImageEncoder` | Nhãn vị từ có giúp không? |
+| `random_edges` | Xáo trộn riêng danh sách chủ thể và danh sách đối tượng | `ablate_graph` | Cấu trúc thật có tốt hơn cấu trúc ngẫu nhiên không? |
+| `undirected` | Một `SAGEConv` trên cạnh hai chiều | Trong `GraphImageEncoder` | Hướng có giúp không? |
 
-Hiện chưa có script nào chạy các biến thể A2 và A4 rồi ghi kết quả. Mới có các hàm biến đổi đồ thị và test cho chúng.
+**Xáo trộn cạnh** (`random_edges`). Với mỗi ảnh, lấy danh sách chủ thể và danh sách đối tượng của các bộ ba rồi xáo trộn **riêng** từng danh sách. Vị từ giữ nguyên vị trí. Bộ sinh ngẫu nhiên được khởi tạo từ `ablation_seed` và mã ảnh, nên kết quả không phụ thuộc thứ tự xử lý ảnh. Cách xáo trộn này giữ nguyên ba thứ:
 
-**Đảo cạnh giữ bậc (A4).** Lấy hai bộ ba (s, p, o) và (u, q, v), rồi đổi đối tượng của chúng cho nhau, thành (s, p, v) và (u, q, o). Phép đảo bị từ chối nếu:
+- số lần mỗi khái niệm làm chủ thể;
+- số lần mỗi khái niệm làm đối tượng;
+- số lần mỗi vị từ xuất hiện.
 
-- tạo ra vòng tự thân, tức s trùng v hoặc u trùng o;
-- s trùng u, hoặc o trùng v;
-- tạo ra một bộ ba đã có sẵn.
+Nó cho phép cạnh tự nối và bộ ba trùng nhau.
 
-**Ví dụ (số thật, hai bộ ba của ảnh 2350042).**
+**Ví dụ (số thật: đúng đồ thị mà thí nghiệm đã dùng cho ảnh 2350042, `ablation_seed` = 0).**
 
 ```
-Trước:  (woman, wearing, shirt)    (girl, on, chair)
-Sau:    (woman, wearing, chair)    (girl, on, shirt)
+Trước: (woman, wearing, shirt)  (woman, next to, woman)  (woman, cutting, cake)
+       (girl, on, chair)        (pillow, on, couch)       (candle, on, cake)
+Sau:   (woman, wearing, shirt)  (candle, next to, couch) (woman, cutting, woman)
+       (woman, on, chair)       (pillow, on, cake)        (girl, on, cake)
 ```
 
-Kiểm điều kiện: woman không trùng girl hay chair; shirt khác chair; girl khác shirt; hai bộ ba mới chưa có trong ảnh. Vậy phép đảo hợp lệ. Sau khi đảo:
+| Khái niệm | Số lần làm chủ thể (trước → sau) | Số lần làm đối tượng (trước → sau) |
+|---|---|---|
+| woman | 3 → 3 | 1 → 1 |
+| girl, pillow, candle | mỗi khái niệm 1 → 1 | 0 → 0 |
+| cake | 0 → 0 | 2 → 2 |
+| shirt, chair, couch | 0 → 0 | mỗi khái niệm 1 → 1 |
 
-- woman vẫn là chủ thể của đúng một relation, và girl cũng vậy;
-- shirt và chair vẫn là đối tượng của đúng một relation;
-- vị từ `wearing` và `on` vẫn xuất hiện mỗi loại một lần.
+Bộ ba quan trọng nhất cho truy vấn, `woman → cutting → cake`, đã thành `woman → cutting → woman`, một cạnh tự nối vô nghĩa. Bộ ba `woman → wearing → shirt` tình cờ giữ nguyên.
 
-Như vậy chỉ có *ai nối với ai* bị xáo trộn. Nếu mô hình vẫn đạt điểm như cũ trên đồ thị đã đảo, nghĩa là nó không thật sự dùng cấu trúc quan hệ. Hàm này ghi lại số lần đảo được yêu cầu, số lần thành công và số relation bị đổi, vì đồ thị nhỏ có thể không đảo được lần nào.
+Nếu mô hình học trên đồ thị đã xáo trộn mà vẫn đạt điểm như cũ, nghĩa là nó không thật sự dùng *ai nối với ai*, chỉ dùng *có những gì*.
+
+**Kết quả ngắn gọn (lượt 18/11, chi tiết ở tài liệu 4).** R@1 sau khi trộn với CLIP:
+
+| Biến thể | R@1 |
+|---|---|
+| Đầy đủ | 48,12 |
+| Chỉ đối tượng | 47,56 |
+| Bỏ nhãn vị từ | 48,06 |
+| Xáo trộn cạnh | 47,79 |
+| Bỏ hướng | 47,84 |
+
+- Chỉ có chênh lệch với bản "chỉ đối tượng" là có khoảng 95% không chứa 0 (xem mục [A19](#a19-bootstrap-theo-cụm-và-khoảng-95)).
+- Bản bỏ hướng có ít tham số hơn bản đầy đủ, nên chênh lệch của nó chưa đo riêng được ảnh hưởng của hướng.
+- Ablation xử lý hub chưa làm.
 
 ## A18. Hướng mở rộng: đồ thị tri thức, R-GCN, HGT
 
@@ -658,6 +708,55 @@ Với dự án, R-GCN là một cách khác để mô hình hiểu vị từ: th
 **HGT** (Hu và cộng sự, 2020) là một Transformer trên đồ thị dị thể: trọng số chú ý phụ thuộc vào loại đỉnh nguồn, loại cạnh và loại đỉnh đích.
 
 Cả R-GCN và HGT đều thuộc Phase 6 và chưa làm.
+
+## A19. Bootstrap theo cụm và khoảng 95%
+
+**Ý tưởng.** Bản đầy đủ hơn bản "chỉ đối tượng" 0,56 điểm R@1. Câu hỏi là: con số này có thể chỉ do may rủi của 7.500 truy vấn test cụ thể hay không? Bootstrap trả lời bằng cách:
+
+1. lấy mẫu lại dữ liệu test **có hoàn lại**, tức một phần tử có thể được lấy nhiều lần;
+2. tính lại chênh lệch trên mẫu mới;
+3. lặp lại nhiều lần, rồi xem chênh lệch dao động trong khoảng nào.
+
+Hai chi tiết giúp phép đo công bằng hơn:
+
+- **Ghép cặp.** Hai biến thể được chấm trên **cùng** các truy vấn, nên ta so từng truy vấn một: $d_q = h_1(q) - h_2(q)$. Ở đây $h_m(q) = 1$ nếu bản $m$ đặt ảnh đúng ở hạng 1, và bằng 0 trong trường hợp ngược lại. Mỗi $d_q$ chỉ nhận một trong ba giá trị −1, 0 hoặc 1.
+- **Theo cụm.** 5 caption của cùng một ảnh không độc lập với nhau, vì chúng có chung ảnh đúng. Vì vậy ta lấy mẫu lại theo **ảnh**: chọn một ảnh nghĩa là lấy cả 5 caption của nó, cùng kết quả của cả 3 seed.
+
+**Công thức.** Gọi $I$ là tập ảnh test và $Q_i$ là các caption của ảnh $i$. Mỗi lần lặp $b$ rút ngẫu nhiên có hoàn lại $|I|$ ảnh thành tập $I^{(b)}$, rồi tính:
+
+$$
+\hat\Delta^{(b)}=\frac{\sum_{i\in I^{(b)}}\sum_{q\in Q_i} d_q}{\sum_{i\in I^{(b)}} |Q_i|}
+$$
+
+Sau đó xếp 2.000 giá trị $\hat\Delta^{(b)}$ từ nhỏ đến lớn. Khoảng 95% đi từ giá trị thứ 50 (vị trí 2,5%) tới giá trị thứ 1.950 (vị trí 97,5%).
+
+**Ví dụ (số giả định).** Có 4 ảnh, mỗi ảnh 2 caption. $d_q$ của từng ảnh như sau:
+
+```
+Ảnh 1: (0; 1)     Ảnh 2: (0; 0)     Ảnh 3: (1; −1)     Ảnh 4: (0; 1)
+Chênh lệch quan sát = (0 + 1 + 0 + 0 + 1 − 1 + 0 + 1) / 8 = 2/8 = 0,25
+
+Vài lần lấy mẫu lại theo ảnh:
+  {1, 1, 3, 2} → (1 + 1 + 0 + 0) / 8 = 0,25
+  {4, 2, 2, 3} → (1 + 0 + 0 + 0) / 8 = 0,125
+  {3, 3, 2, 2} → (0 + 0 + 0 + 0) / 8 = 0
+Sau 2.000 lần (seed 310): khoảng 95% = [0; 0,5]
+```
+
+Khoảng này chạm 0, nên với chỉ 4 ảnh thì chưa kết luận được bản 1 tốt hơn. Trong 2.000 lần lấy mẫu, có 5,6% lần cho chênh lệch ≤ 0.
+
+**Số thật (lượt 18/11, 1.500 ảnh test, 2.000 lần lặp).**
+
+| Bản đầy đủ so với | Chênh lệch R@1 | Khoảng 95% |
+|---|---|---|
+| Chỉ đối tượng | +0,56 | [0,05; 1,06], không chứa 0 |
+| Bỏ nhãn vị từ | +0,05 | [−0,35; 0,45], chứa 0 |
+| Xáo trộn cạnh | +0,33 | [−0,09; 0,74], chứa 0 |
+
+**Giới hạn.**
+
+- Khoảng này tính trên chính 3 mô hình đã huấn luyện, nên không phản ánh dao động khi huấn luyện lại với seed khác.
+- Có nhiều phép so sánh cùng lúc nhưng chưa hiệu chỉnh cho điều đó. Vì vậy một khoảng "vừa đủ" không chứa 0, như [0,05; 1,06], chỉ nên đọc là bằng chứng yếu.
 
 ---
 

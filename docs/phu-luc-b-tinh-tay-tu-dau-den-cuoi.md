@@ -192,7 +192,7 @@ Cách đọc:
 - **"riding" đóng góp dương** (+0,1207). Lời giải thích cho kết quả hạng 1 sẽ ghi `man → riding → horse`.
 - **"next to" đóng góp âm** (−0,0041): bỏ nó đi, điểm đồ thị của A còn tăng nhẹ. Relation này đang kéo A ra xa truy vấn, đúng với trực giác.
 
-Ở ví dụ thật (ảnh 2350042), mức giảm nhỏ hơn nhiều, chỉ khoảng 0,005–0,007. Một lý do có thể là đồ thị thật có tới 15 đối tượng và 6 relation, nên khi lấy trung bình, mỗi relation chỉ chiếm một phần nhỏ. Lý do này chưa được kiểm; ablation ở Phase 5 sẽ trả lời rõ hơn.
+Ở ví dụ thật (ảnh 2350042), mức giảm nhỏ hơn nhiều, chỉ khoảng 0,005–0,007. Một lý do có thể là đồ thị thật có tới 15 đối tượng và 6 relation, nên khi lấy trung bình, mỗi relation chỉ chiếm một phần nhỏ. Ablation ở tài liệu 4 cho kết quả cùng chiều: bỏ hết relation chỉ làm R@1 giảm khoảng 0,56 điểm, vì phần lớn mức tăng đến từ các đối tượng.
 
 ## B10. Huấn luyện: loss InfoNCE cho batch gồm A và B
 
@@ -252,7 +252,7 @@ Cách đọc:
 | Đồ thị | 3 đỉnh + 1 đỉnh phụ | Trung vị 17–18 đối tượng và 12 relation mỗi ảnh |
 | GraphSAGE | 2 tầng, ma trận đơn vị | 3 tầng, ma trận 512 × 512 được học (3,41 triệu tham số) |
 | Đỉnh ảnh | (0; 0; 0) | Vector học được, dùng chung cho mọi ảnh |
-| α, k | 0,8 và 2, chọn tay | Chọn trên validation, ví dụ α = 0,81 và k = 1.500 (seed 13) |
+| α, k | 0,8 và 2, chọn tay | Chọn trên validation, ví dụ α = 0,78 và k = 500 (lượt 18/11, seed 13) |
 | Batch | 2 cặp | 256 cặp |
 | Giải thích | Δ(riding) = +0,12 | Δ khoảng 0,005–0,045 |
 

@@ -27,7 +27,7 @@ Mỗi ảnh trong Visual Genome có một **đồ thị cảnh** do người gá
 - **Đối tượng:** các vật có trong ảnh, ví dụ `woman`, `cake`, `candle`, `knife`.
 - **Relation (quan hệ):** các bộ ba *chủ thể → vị từ → đối tượng*, ví dụ `woman → cutting → cake` hay `candle → on → cake`.
 
-Đồ thị cảnh nói rõ *vật nào làm gì với vật nào*. Dự án đặt giả thuyết rằng thông tin này bổ sung được cho CLIP. CLIP nén cả bức ảnh vào một vector, nên nắm tốt việc ảnh có những vật gì, nhưng có thể nắm kém hơn việc các vật liên hệ với nhau ra sao. Giả thuyết này chưa được kiểm trọn vẹn: phần đo riêng đóng góp của relation (ablation) thuộc Phase 5 và chưa làm.
+Đồ thị cảnh nói rõ *vật nào làm gì với vật nào*. Dự án đặt giả thuyết rằng thông tin này bổ sung được cho CLIP. CLIP nén cả bức ảnh vào một vector, nên nắm tốt việc ảnh có những vật gì, nhưng có thể nắm kém hơn việc các vật liên hệ với nhau ra sao. Ablation (tài liệu 4) đã kiểm giả thuyết này. Bỏ hết relation chỉ làm R@1 giảm khoảng 0,56 điểm, nên relation có đóng góp nhưng nhỏ; phần lớn mức tăng đến từ danh sách đối tượng. Bỏ nhãn vị từ hay xáo trộn cạnh chưa cho khác biệt rõ.
 
 Dự án không tự sinh đồ thị cảnh từ ảnh. Đồ thị được lấy sẵn từ nhãn người gán của Visual Genome.
 

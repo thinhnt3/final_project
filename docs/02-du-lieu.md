@@ -33,7 +33,7 @@ Vì sao không sinh truy vấn từ đồ thị? Bản thử 40 ảnh trước �
    - Tính vector cho 10.000 ảnh, 50.000 caption và 2.271 chữ trên đồ thị (1.778 khái niệm và 493 vị từ).
    - Vector được chuẩn hoá về độ dài 1, lưu kèm sha256 của dữ liệu đầu vào. Nếu dữ liệu đổi, các bước sau từ chối chạy trên vector cũ.
 
-Kiểm tra sau bước 6:
+Kiểm tra sau bước 6 (ở lần nhúng ngày 17/11; ngày 18/11 nhóm tải lại ảnh và tạo lại vector để chạy lại mô hình và ablation):
 
 - Cosine trung bình giữa một caption và đúng ảnh của nó là 0,304; với một ảnh ngẫu nhiên chỉ là 0,152.
 - Mã hoá lại một phần nhỏ cho ra cùng vector, sai khác tối đa 3,9 × 10⁻⁷.

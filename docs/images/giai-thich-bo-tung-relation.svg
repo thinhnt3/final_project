@@ -45,6 +45,6 @@
 <text x="857.5" y="247.0" font-size="13" font-weight="400" text-anchor="start" style="font-variant-numeric: tabular-nums" fill="#0b0b0b" class="f-ink" >0,0052</text>
 <line x1="700.0" y1="120.0" x2="700.0" y2="260.0" fill="none" stroke="#c3c2b7" class="s-axis" stroke-width="1.0" stroke-linecap="round" />
 <text x="512.0" y="288.0" font-size="12" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Các relation còn lại của ảnh làm điểm giảm ít hơn.</text>
-<text x="28.0" y="336.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Relation đứng đầu, woman → cutting → cake, đúng là hành động mà truy vấn mô tả. Nhưng mức giảm rất nhỏ so với điểm 0,4142: gợi ý phần lớn điểm đồ thị đến</text>
-<text x="28.0" y="354.1" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >từ các đối tượng. Relation đóng góp thật đến đâu sẽ được kiểm bằng ablation và fidelity ở Phase 5.</text>
+<text x="28.0" y="336.0" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >Relation đứng đầu, woman → cutting → cake, đúng là hành động mà truy vấn mô tả. Mức giảm rất nhỏ so với điểm 0,4142: phần lớn điểm đồ thị đến từ các đối</text>
+<text x="28.0" y="354.1" font-size="12.5" font-weight="400" text-anchor="start" fill="#52514e" class="f-ink2" >tượng. Ablation cho kết quả cùng chiều: bỏ hết relation, R@1 chỉ giảm 0,56 điểm.</text>
 </svg>

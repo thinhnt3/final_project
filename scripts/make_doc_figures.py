@@ -15,6 +15,8 @@ from __future__ import annotations
 import argparse
 import html
 import logging
+import math
+import re
 import sys
 import unicodedata
 from collections.abc import Callable
@@ -656,7 +658,7 @@ def fig_training(out: Path) -> None:
     s.save(out / "huan-luyen-infonce.svg")
 
 
-def fig_explain(out: Path, explanation: dict[str, Any]) -> None:
+def fig_explain(out: Path, explanation: dict[str, Any], objects_gap: float) -> None:
     query = next((q for q in explanation["queries"] if q["query_id"] == EXAMPLE_QUERY_ID), None)
     if query is None or not query["results"][0]["is_relevant"]:
         raise DataError(f"explanation file has no correct top result for {EXAMPLE_QUERY_ID}")
@@ -690,9 +692,9 @@ def fig_explain(out: Path, explanation: dict[str, Any]) -> None:
         s.text(x0 + width + 8, y + 15, vn(relation["score_drop"], 4), size=13, tabular=True)
     s.line(x0, 120, x0, 128 + 2 * 52 + 28, stroke="axis")
     s.text(512, 128 + 3 * 52 + 4, "Các relation còn lại của ảnh làm điểm giảm ít hơn.", size=12, fill="ink2")
-    note = ("Relation đứng đầu, woman → cutting → cake, đúng là hành động mà truy vấn mô tả. Nhưng mức giảm rất nhỏ so "
-            f"với điểm {vn(top['graph_score'], 4)}: gợi ý phần lớn điểm đồ thị đến từ các đối tượng. Relation đóng góp "
-            "thật đến đâu sẽ được kiểm bằng ablation và fidelity ở Phase 5.")
+    note = ("Relation đứng đầu, woman → cutting → cake, đúng là hành động mà truy vấn mô tả. Mức giảm rất nhỏ so "
+            f"với điểm {vn(top['graph_score'], 4)}: phần lớn điểm đồ thị đến từ các đối tượng. Ablation cho kết quả "
+            f"cùng chiều: bỏ hết relation, R@1 chỉ giảm {vn(objects_gap)} điểm.")
     paragraph(s, 28, 336, note, s.w - 56)
     s.save(out / "giai-thich-bo-tung-relation.svg")
 
@@ -703,45 +705,51 @@ def fig_commands(out: Path) -> None:
          [("data/processed/vg_coco/embeddings/<model>/", False)]),
         ("python -m scripts.run_benchmark --method clip", "Baseline CLIP (và graph_lexical: so khớp từ)",
          [("runs/benchmark/clip.json", True), ("graph_lexical.json", True)]),
-        ("python -m scripts.train_graphsage", "Huấn luyện 3 seed, mỗi seed khoảng 2 phút trên CPU",
+        ("python -m scripts.train_graphsage", "3 seed; ablation: thêm --config configs/retrieval/ablations/…",
          [("…/seed<n>/config.yaml, history.json, result.json", True), ("best.pt, last.pt, graph_vectors.*", False)]),
         ("python -m scripts.run_benchmark --method graphsage", "Chọn α, k trên validation, chấm test",
          [("runs/benchmark/graphsage-<run>.json", True)]),
         ("python -m scripts.explain_retrieval --sample 5", "Kết quả kèm relation giải thích",
          [("runs/explanations/<run>-seed<n>.json", True)]),
-        ("python -m scripts.evaluate_fidelity --output <file>", "Đo fidelity của lời giải thích (chưa chạy)",
-         [("<file>.json: file mới, không ghi đè", False)]),
+        ("python -m scripts.analyze_ablation", "So sánh ghép cặp các biến thể, khoảng 95% bootstrap",
+         [("runs/analysis/ablation.json", False)]),
+        ("python -m scripts.evaluate_fidelity", "Xoá nhóm giải thích so với nhóm ngẫu nhiên",
+         [("runs/fidelity/full-joint-test.json", False)]),
+        ("python -m scripts.evaluate_explanation_quality", "Sparsity, keep-only; xuất mẫu chấm validity",
+         [("runs/explanation-quality/*.json", False)]),
     ]
     s = Svg(1000, 64 + 56 + len(rows) * 84 + 40, "Lệnh chạy và file sinh ra",
-            "Sáu lệnh theo thứ tự: embed_vg_coco, run_benchmark clip, train_graphsage, run_benchmark graphsage, "
-            "explain_retrieval, evaluate_fidelity, cùng các file mỗi lệnh ghi ra.")
+            "Tám lệnh theo thứ tự: embed_vg_coco, run_benchmark clip, train_graphsage, run_benchmark graphsage, "
+            "explain_retrieval, analyze_ablation, evaluate_fidelity, evaluate_explanation_quality, cùng file mỗi "
+            "lệnh ghi ra.")
     s.background()
     s.heading("Lệnh chạy và file mỗi lệnh sinh ra",
-              "Chạy từ thư mục gốc của repo, theo thứ tự từ trên xuống. Thẻ xanh: file có trong repo; thẻ xám: chỉ có "
+              "Chạy từ thư mục gốc, từ trên xuống. Thẻ xanh: loại file đã có bản commit trong repo; thẻ xám: chỉ có "
               "trên máy đã chạy.")
     s.text(28, 98, "Đầu vào có sẵn trong repo: data/processed/vg_coco/*.json, graph/*.json, data/splits/. "
            "Ảnh (1,4 GB) phải tải riêng vào data/processed/vg_coco/images/.", size=12.5, fill="ink2")
-    top, step, cx, cw = 120, 84, 28, 430
+    top, step, cx, cw = 120, 84, 28, 470
     for i, (command, what, outputs) in enumerate(rows):
         y = top + i * step
         s.rect(cx, y, cw, 58, fill="card", stroke="border", rx=8, sw=1.2)
         s.text(cx + 14, y + 25, command, size=12.5, mono=True)
         check_fit(command, 12.5, cw - 24, mono=True, where=s.title)
         s.text(cx + 14, y + 45, what, size=12, fill="ink2")
-        s.arrow(cx + cw + 4, y + 29, 506, y + 29)
+        check_fit(what, 12, cw - 24, where=s.title)
+        s.arrow(cx + cw + 4, y + 29, cx + cw + 46, y + 29)
         tag_y = y + 8.0
         for path, in_repo in outputs:
             width = text_width(path, 12, mono=True) + 20
-            s.rect(512, tag_y, width, 22, fill="blueT" if in_repo else "grayT", stroke="blue" if in_repo else "gray",
-                   rx=6, sw=1.1)
-            s.text(522, tag_y + 15, path, size=12, mono=True)
-            if 512 + width > s.w - 20:
+            s.rect(cx + cw + 52, tag_y, width, 22, fill="blueT" if in_repo else "grayT",
+                   stroke="blue" if in_repo else "gray", rx=6, sw=1.1)
+            s.text(cx + cw + 62, tag_y + 15, path, size=12, mono=True)
+            if cx + cw + 52 + width > s.w - 16:
                 WARNINGS.append(f"commands: '{path}' overflows")
             tag_y += 26
         if i < len(rows) - 1:
             s.arrow(cx + 40, y + 60, cx + 40, y + step - 2, tok="gray", sw=1.3)
-    s.text(28, s.h - 18, "pytest chạy toàn bộ test không cần mạng, không cần dữ liệu thật. "
-           "train_graphsage báo cáo lên Weights & Biases; đặt wandb.mode: disabled nếu không dùng.", size=12,
+    s.text(28, s.h - 18, ".gitignore bỏ qua /runs/ và /private/: output mới chỉ nằm trên máy, file đã commit "
+           "từ trước vẫn được theo dõi. Config mặc định báo cáo lên W&B; config ablation đã tắt.", size=12,
            fill="ink2")
     s.save(out / "lenh-va-file.svg")
 
@@ -844,6 +852,69 @@ def fig_graph_only(out: Path, res: dict[str, dict[str, Any]]) -> None:
            f"{round(main_mean / random_r1)} lần mức ngẫu nhiên, dù đỉnh ảnh không mang thông tin gì về điểm ảnh.",
            size=12.5, fill="ink2")
     s.save(out / "ket-qua-chi-do-thi.svg")
+
+
+ABLATION_LABELS = {"full": "Đầy đủ", "objects_only": "Chỉ đối tượng", "drop_predicates": "Bỏ nhãn vị từ",
+                   "random_edges": "Xáo trộn cạnh", "undirected": "Bỏ hướng"}
+
+
+def _panel_domain(values: list[tuple[float, float]]) -> tuple[float, float, float]:
+    """Axis range and tick step covering every mean ± std with a little air."""
+    low = min(m - sd for m, sd in values) - 0.2
+    high = max(m + sd for m, sd in values) + 0.2
+    tick = 0.5 if high - low <= 2.5 else 1.0
+    return math.floor(low / tick) * tick, math.ceil(high / tick) * tick, tick
+
+
+def fig_ablation(out: Path, reports: dict[str, dict[str, Any]]) -> None:
+    names = [name for name in ABLATION_LABELS if name in reports]
+    series: dict[int, list[tuple[float, float]]] = {1: [], 2: []}
+    for name in names:
+        for column, kind in ((1, "reranked"), (2, "graph_only")):
+            mean, std = _metric(reports[name], kind, "test")
+            series[column].append((mean, std or 0.0))
+    s = Svg(1000, 404, "Kết quả ablation",
+            "; ".join(f"{ABLATION_LABELS[n]}: sau khi trộn {vn(f[0])} ± {vn(f[1])}, chỉ đồ thị {vn(g[0])} ± "
+                      f"{vn(g[1])}" for n, f, g in zip(names, series[1], series[2], strict=True)) + " (R@1 test, %).")
+    s.background()
+    s.heading("Ablation: R@1 trên tập test khi bỏ hoặc phá từng phần của đồ thị",
+              "Mỗi biến thể được huấn luyện lại với 3 seed và chọn α, k riêng trên validation. Chấm: trung bình; vạch "
+              "ngang: ± 1 độ lệch chuẩn. Đơn vị: %.")
+    top, step, label_x = 140, 46, 214
+    panels = [("Sau khi trộn với CLIP", 1, 262, 600), ("Chỉ điểm đồ thị, không có CLIP", 2, 650, 972)]
+    for title, column, x0, x1 in panels:
+        values = series[column]
+        lo, hi, tick = _panel_domain(values)
+
+        def to_x(value: float, lo: float = lo, hi: float = hi, x0: float = x0, x1: float = x1) -> float:
+            return x0 + (value - lo) * (x1 - x0) / (hi - lo)
+
+        s.text(x0, top - 38, title, size=13.5, weight=600)
+        bottom = top + step * (len(names) - 1) + 22
+        value = lo
+        while value <= hi + 1e-9:
+            s.line(to_x(value), top - 20, to_x(value), bottom, stroke="grid")
+            s.text(to_x(value), bottom + 18, vn(value, 1), size=12, fill="muted", anchor="middle", tabular=True)
+            value += tick
+        full_mean = values[0][0]
+        s.line(to_x(full_mean), top - 20, to_x(full_mean), bottom, stroke="blue", sw=1)
+        for i, (mean, std) in enumerate(values):
+            y = top + i * step
+            tok = "blue" if i == 0 else "gray2"
+            if std:
+                s.line(to_x(mean - std), y, to_x(mean + std), y, stroke=tok, sw=2)
+                for edge in (mean - std, mean + std):
+                    s.line(to_x(edge), y - 5, to_x(edge), y + 5, stroke=tok, sw=2)
+            label = f"{vn(mean)} ± {vn(std)}"
+            s.circle(to_x(mean), y, 6.5, fill=tok, stroke="bg", sw=2, tip=f"{ABLATION_LABELS[names[i]]}: {label}")
+            s.text(to_x(mean), y - 11, label, size=12, anchor="middle", tabular=True, weight=600 if i == 0 else 400)
+    for i, name in enumerate(names):
+        y = top + i * step
+        s.text(label_x, y + 5, ABLATION_LABELS[name], size=13.5, anchor="end", weight=600 if i == 0 else 400)
+    s.text(28, s.h - 22, "Đường dọc xanh: mức của bản đầy đủ. Chỉ chênh lệch với bản “chỉ đối tượng” có khoảng 95% "
+           "không chứa 0 (xem tài liệu 4).", size=12.5, fill="ink2")
+    s.save(out / "ket-qua-ablation.svg")
+
 
 
 def fig_curves(out: Path, histories: dict[str, dict[str, list[dict[str, Any]]]], clip_val: float,
@@ -949,7 +1020,8 @@ def _graphsage_reports(benchmark_dir: Path) -> tuple[dict[str, Any], dict[str, A
     reports = [read_json(path) for path in sorted(benchmark_dir.glob("graphsage-*.json"))]
 
     def pick(marker: str) -> dict[str, Any]:
-        found = [r for r in reports if marker in r["run_name"]]
+        # Ablation runs carry a `-<variant>-a<seed>` suffix; only the unablated run of each kind is wanted.
+        found = [r for r in reports if marker in r["run_name"] and not re.search(r"-a\d+$", r["run_name"])]
         if len(found) != 1:
             raise DataError(f"expected one GraphSAGE benchmark with '{marker}' in {benchmark_dir}, found {len(found)}")
         return found[0]
@@ -964,6 +1036,14 @@ def run(config_path: str, out: Path) -> None:
     processed = DataConfig.from_yaml(require_field(raw, "data_config", str)).paths.processed_dir
     benchmark_dir = runs_dir / "benchmark"
     main_report, variant_report = _graphsage_reports(benchmark_dir)
+    ablations = {"full": main_report}
+    for path in sorted(benchmark_dir.glob(f"graphsage-{main_report['run_name']}-*-a*.json")):
+        report = read_json(path)
+        ablations[report["run_name"][len(main_report["run_name"]) + 1:].rsplit("-a", 1)[0]] = report
+    objects_gap = (
+        _metric(main_report, "reranked", "test")[0] - _metric(ablations["objects_only"], "reranked", "test")[0]
+        if "objects_only" in ablations else 0.0
+    )
     res = {
         "clip": read_json(benchmark_dir / "clip.json"),
         "lexical": read_json(benchmark_dir / "graph_lexical.json"),
@@ -994,13 +1074,14 @@ def run(config_path: str, out: Path) -> None:
         lambda: fig_subgraph(out, example, concept_text, predicate_text),
         lambda: fig_layers(out),
         lambda: fig_training(out),
-        lambda: fig_explain(out, explanation),
+        lambda: fig_explain(out, explanation, objects_gap),
         lambda: fig_commands(out),
         lambda: fig_results(out, res),
         lambda: fig_graph_only(out, res),
         lambda: fig_curves(out, histories, res["clip"]["clip"]["val"]["recall@1"] * 100,
                            res["lexical"]["graph_only"]["val"]["recall@1"] * 100),
         lambda: fig_alpha(out, res["lexical"]),
+        lambda: fig_ablation(out, ablations),
     ]
     for draw in drawers:
         draw()

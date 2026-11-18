@@ -113,26 +113,55 @@ Với mỗi ảnh trả về, hệ thống làm như sau:
 
 Lời giải thích được đo trên đúng mô hình đã chấm điểm, không phải một mô tả viết thêm sau đó. [Phụ lục B, mục B9](phu-luc-b-tinh-tay-tu-dau-den-cuoi.md#b9-giải-thích-bỏ-relation-rồi-tính-lại) tính tay một lần bỏ relation.
 
-## Đo độ trung thực (fidelity) và ablation: code đã có, chưa có kết quả
+## Ablation và kiểm tra lời giải thích
 
-Bốn commit mới nhất (của nghidt) thêm công cụ cho Phase 5. Mọi phần dưới đây đều đã có test, nhưng **chưa có file kết quả nào trong repo**.
+Hai câu hỏi cần trả lời sau khi đã có kết quả chính:
 
-**Đo fidelity** (`src/evaluation/fidelity.py`, chạy bằng `scripts/evaluate_fidelity.py`). Phép đo trả lời câu hỏi: các relation dùng để giải thích có thật sự quan trọng với điểm hơn các relation ngẫu nhiên không? Với mỗi truy vấn được lấy mẫu, công cụ xét ảnh đúng của truy vấn đó:
+1. Phần cải thiện đến từ đâu? Câu hỏi này được trả lời bằng **ablation**.
+2. Lời giải thích có phản ánh thứ mô hình thật sự dựa vào không? Câu hỏi này được trả lời bằng **fidelity**, **sparsity** và **validity**.
 
-1. Tính mức giảm khi bỏ từng relation, rồi chọn tối đa `budget` relation có mức giảm dương lớn nhất. Đây là tập giải thích. Mặc định `budget` = 3, và không vượt quá một nửa số relation của ảnh.
-2. Chọn ngẫu nhiên cùng số lượng relation trong phần còn lại làm nhóm đối chứng.
-3. Bỏ **cùng lúc** từng nhóm, tính lại điểm đồ thị, rồi quy ra mức giảm của điểm cuối bằng cách nhân với (1 − α). Nếu ảnh không nằm trong top-k thì mức giảm bằng 0.
-4. Ghi thêm *sparsity* = 1 − (số relation trong tập giải thích) / (tổng số relation).
+Kết quả của cả hai nằm ở [tài liệu 4](04-ket-qua.md#ablation-phần-cải-thiện-đến-từ-đâu-lượt-1811). Giao thức gốc do nhóm ghi ở mục "Ablation và fidelity" của [graphsage-design-decisions.md](graphsage-design-decisions.md#ablation-và-fidelity).
 
-Lời giải thích trung thực nếu bỏ tập giải thích làm điểm giảm rõ rệt hơn bỏ nhóm đối chứng. Công thức chi tiết và một ví dụ bằng số nằm ở [Phụ lục A, mục A16](phu-luc-a-kien-thuc-nen.md#a16-giải-thích-mô-hình-bỏ-từng-relation-fidelity-sparsity-validity). Công cụ dùng checkpoint và α, k đã chọn sẵn, không huấn luyện hay chọn lại gì. File kết quả của nó ghi rõ ba giới hạn: không đo thay đổi thứ hạng, không đánh giá validity, và ngân sách tối đa bằng một nửa số relation.
+### Ablation: bốn biến thể của đồ thị
 
-**Biến đổi đồ thị cho ablation** (`src/models/ablations.py`):
+Mỗi biến thể có một file config trong `configs/retrieval/ablations/`. Config chọn biến thể bằng `graphsage.ablation`, còn `graphsage.ablation_seed` đặt hạt giống cho phép xáo trộn. Mỗi biến thể được **huấn luyện lại từ đầu** với 3 seed, rồi chọn α, k riêng trên validation. Cùng một phép biến đổi được áp dụng nhất quán cho huấn luyện, validation, xuất vector và giải thích.
 
-- `objects_only`: bỏ mọi relation, chỉ giữ ảnh và đối tượng. Đây là biến thể A2.
-- `rewire_relations`: đảo đầu cạnh giữa các cặp relation, giữ nguyên số relation đi ra và đi vào của mỗi đối tượng cũng như số lần mỗi vị từ xuất hiện. Đây là biến thể A4 (xem ví dụ ở [Phụ lục A, mục A17](phu-luc-a-kien-thuc-nen.md#a17-ablation-và-đảo-cạnh-giữ-bậc)).
-- `remove_relations`: bỏ các relation theo vị trí. Phép đo fidelity dùng hàm này.
+| Biến thể | Thay đổi gì | Trả lời câu hỏi |
+|---|---|---|
+| `objects_only` | Xoá mọi bộ ba trước khi dựng đồ thị; giữ đối tượng và cạnh ảnh → đối tượng | Relation có giúp không? |
+| `drop_predicates` | Đặt vector ban đầu của đỉnh phụ bằng 0; giữ nguyên đỉnh, cạnh và hướng | Nhãn vị từ có giúp không? |
+| `random_edges` | Xáo trộn riêng danh sách chủ thể và danh sách đối tượng của các bộ ba, theo một bộ sinh ngẫu nhiên gắn với mã ảnh | Cấu trúc thật có tốt hơn cấu trúc ngẫu nhiên có cùng thành phần không? |
+| `undirected` | Dùng một `SAGEConv` trên cạnh hai chiều thay cho hai lớp có hướng | Hướng của relation có giúp không? |
 
-Chưa có script nào huấn luyện hoặc chấm điểm trên các đồ thị đã biến đổi. Biến thể A3 (bỏ vị từ) và A7 (xử lý hub) chưa có code. Biến thể tắt hướng dùng cờ `graphsage.directed: false` có sẵn trong config.
+Một số lưu ý:
+
+- `random_edges` giữ nguyên số lần mỗi khái niệm làm chủ thể hay làm đối tượng, và số lần mỗi vị từ xuất hiện. Nó cho phép cạnh tự nối và bộ ba trùng nhau. [Phụ lục A, mục A17](phu-luc-a-kien-thuc-nen.md#a17-ablation-và-xáo-trộn-cạnh) có ví dụ thật trên ảnh 2350042.
+- `undirected` có ít tham số hơn bản đầy đủ, nên chưa tách được ảnh hưởng của hướng với ảnh hưởng của kích thước mô hình.
+- `scripts/analyze_ablation.py` so sánh từng cặp biến thể trên **cùng các truy vấn**. Nó dùng bootstrap gom theo ảnh đúng, lặp 2.000 lần, để ra khoảng 95% cho chênh lệch R@1 (xem [Phụ lục A, mục A19](phu-luc-a-kien-thuc-nen.md#a19-bootstrap-theo-cụm-và-khoảng-95)).
+
+### Fidelity: xoá đồng thời nhóm giải thích
+
+Phép đo này nằm ở `src/evaluation/fidelity.py` và được chạy bằng `scripts/evaluate_fidelity.py` với config `configs/evaluation/fidelity.yaml`. Nó dùng 3 checkpoint của mô hình chính và không huấn luyện lại hay chọn lại gì.
+
+1. **Lấy mẫu.** Lấy cố định 200 truy vấn test (seed 2026). Với mỗi truy vấn, mục tiêu là **ảnh đang đứng đầu**, dù ảnh đó đúng hay sai.
+2. **Xếp hạng relation.** Xếp các relation của ảnh mục tiêu theo mức giảm điểm khi bỏ từng relation, giống hệt cách giải thích ở trên.
+3. **Tính số relation cần xoá.** Với mức xoá yêu cầu f (10% hoặc 25%), số relation bị xoá là b = min(n − 1, max(2, ⌈n·f⌉)), trong đó n là số relation của ảnh. Nghĩa là xoá ít nhất 2 và luôn chừa lại ít nhất 1. Ảnh có ít hơn 3 relation bị bỏ qua.
+4. **Xoá và so sánh.** Xoá **cùng lúc** b relation đứng đầu, rồi so với 20 nhóm ngẫu nhiên, mỗi nhóm cũng gồm b relation.
+5. **Đo ảnh hưởng.** Đo mức giảm điểm đồ thị, mức tụt hạng và việc ảnh có mất vị trí đầu hay không. Mọi thứ khác được giữ nguyên: điểm CLIP, α, k, tập ứng viên và điểm của mọi ảnh khác. Chỉ đồ thị của ảnh mục tiêu thay đổi.
+
+Lời giải thích có fidelity tốt nếu xoá nhóm giải thích gây ảnh hưởng lớn hơn hẳn so với xoá nhóm ngẫu nhiên.
+
+Giới hạn mà nhóm đã ghi: nhóm giải thích được chọn bằng chính phép xoá từng relation, nên kết quả không độc lập với cách chọn. Đây là kiểm tra bằng can thiệp, không chứng minh lời giải thích đúng về ngữ nghĩa.
+
+### Sparsity, keep-only và validity
+
+- **Sparsity** = 1 − (số relation trong lời giải thích) / (tổng số relation). Lời giải thích càng ít relation thì sparsity càng cao, tức càng gọn.
+- **Keep-only** đi theo chiều ngược lại với fidelity: chỉ giữ nhóm giải thích, bỏ mọi relation khác (đối tượng vẫn giữ nguyên), rồi xem ảnh có còn đứng đầu không. Kết quả được so với 20 nhóm ngẫu nhiên cùng kích thước. Code nằm ở `src/evaluation/explanation_quality.py` và chạy bằng `scripts/evaluate_explanation_quality.py`.
+- **Validity** hỏi xem con người có thấy relation được giải thích là đúng với ảnh và liên quan tới truy vấn không.
+  - Việc này cần người gán nhãn.
+  - Lượt thử hiện có do một trợ lý AI gán nhãn.
+  - Muốn người chấm, xuất dữ liệu bằng `scripts/prepare_validity_review.py` rồi chấm trong form offline `tools/validity-review/index.html`.
+  - Nhãn luôn ghi rõ do AI hay người gán.
 
 ## Phương pháp để so sánh: so khớp từ (B4)
 
