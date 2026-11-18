@@ -87,7 +87,8 @@ thay đổi; bậc vào/ra và phân bố vị từ được giữ nguyên.
 - [x] Giữ CLIP, α/k, tập ứng viên và điểm của mọi ảnh đối thủ; chỉ đổi đồ thị của ảnh được dự đoán đứng đầu ban đầu.
 - [x] Đo giảm điểm đồ thị có dấu, tăng thứ hạng và mất vị trí đầu; giữ cả dự đoán đúng lẫn sai.
 - [x] Ghi tỷ lệ xoá thực tế và lý do bỏ qua đồ thị có ít hơn ba quan hệ.
-- [ ] Đánh giá tính đúng về ngữ nghĩa hoặc bằng con người.
+- [ ] Nghiệm thu validity: có form audit và exporter không giới hạn 20 query; còn thu nhãn người và đối chiếu máy, không coi lượt AI thử nghiệm là human benchmark.
+- [x] Đã chạy relation sparsity và keep-only hai budget, ba seed; không tuyên bố explanation tối thiểu.
 - [ ] So sánh đồ thị do người gán với đồ thị do mô hình sinh: tuỳ chọn, chưa làm.
 
 Có 198/195/196 truy vấn hợp lệ theo hạt giống 13/37/97. Ở mức yêu cầu xoá 10%,
@@ -99,6 +100,21 @@ hệ, tỷ lệ thực tế có thể khác mức yêu cầu ở đồ thị nh�
 Phép xoá nhóm và đo hạng vẫn phụ thuộc cách chọn đó; đây là bằng chứng can thiệp,
 không phải chứng minh độc lập rằng lời giải thích đúng về ngữ nghĩa. Ảnh mục tiêu
 là ảnh mô hình dự đoán, không bắt buộc là ảnh đúng trong dữ liệu.
+
+Sparsity trung bình
+79,76%/69,83% ở budget yêu cầu 10%/25%; keep-only giữ top-1 94,23%/98,81%
+so với random 81,52%/85,82%. Validity do trợ lý xem ảnh và chấm sơ bộ: 17/42
+relation được chấm đúng ảnh và liên quan query, 23 không đạt, 2 chưa rõ.
+Code chỉ tổng hợp nhãn JSON; chưa có pipeline vision judge tự động hoặc người
+chấm độc lập. Rubric hai chiều là đề xuất triển khai, không phải công thức đề
+ấn định. Mẫu 20 query cân bằng của một seed không đại diện toàn benchmark.
+Protocol audit v2 mới ở bước chuẩn bị, chưa có judge run, nhãn người hoặc
+kết quả agreement. CLI tổng hợp nhãn hiện chỉ hỗ trợ schema v1.
+Form tái sử dụng: `tools/validity-review/`; lệnh `python -m scripts.prepare_validity_review --all`
+xuất mọi query hợp lệ của seed/budget yêu cầu. Mẫu AI 20 query/42 relation ở trên
+là lượt thử nghiệm đã thực hiện, không phải giới hạn form hoặc kết luận cho cả 200 query.
+Lệnh: `python -m scripts.evaluate_explanation_quality`;
+artifact: `runs/explanation-quality/`; report local: `private/reports/xai-quality/index.html`.
 
 ## Tập công khai thứ hai: FB15k-237-IMG
 

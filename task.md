@@ -11,7 +11,7 @@ Cập nhật: 18/11/2026.
 
 - CLIP vs CLIP + GraphSAGE - done
 - Phân tích 5 truy vấn thành công, 5 thất bại - xong, chưa commit
-- Ablation (bỏ cạnh, cạnh ngẫu nhiên) - đã chạy đủ 3 seed; code/kết quả trên nhánh review, chờ merge - Nghị
+- Ablation (bỏ cạnh, cạnh ngẫu nhiên) - đã chạy đủ 3 seed; code/kết quả đã merge main - Nghị
 
 ## Mức 2
 
@@ -22,7 +22,7 @@ Cập nhật: 18/11/2026.
 ## Mức 3
 
 - Xây MMKG: crawl dữ liệu, sinh text query thoả tiêu chí ([build_MMKG.md](docs/build_MMKG.md)) - Nghị
-- Fidelity, validity, sparsity - đã đo fidelity bằng can thiệp; validity/ngữ nghĩa và sparsity đầy đủ còn thiếu - Nghị
+- Fidelity, validity, sparsity - đã chạy fidelity và sparsity/keep-only ba seed; có form audit validity mở rộng, còn thu nhãn người và đối chiếu với máy - Nghị
 
 ## Mức 4
 

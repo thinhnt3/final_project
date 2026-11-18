@@ -125,12 +125,20 @@ Evidence: `src/models/ablations.py`, `configs/retrieval/ablations/`,
 - [x] Đo signed graph-score drop, rank increase và mất top-1, lưu budget thực tế và skip reasons.
 - [x] Giữ nguyên CLIP, α/k, candidate pool và điểm đối thủ khi perturb ảnh dự đoán gốc.
 - [x] Ghi rõ selection dependence: đây là perturbation diagnostic, không phải chứng minh semantic faithfulness độc lập.
-- [ ] Validity về ngữ nghĩa hoặc đánh giá bằng con người.
-- [~] Có removed fraction trong trace; chưa có đánh giá sparsity đầy đủ hoặc lời giải thích tối thiểu.
+- [~] Validity có form người audit và exporter cho toàn bộ query hợp lệ, không giới hạn 20; lượt AI thử nghiệm trước có 20 query/42 relation, chưa phải kết quả cuối.
+- [x] Có relation sparsity theo hai budget và keep-only so với random controls trên ba seed, báo tỷ lệ thật và ca skipped.
 - [ ] Hoàn tất đánh giá cả fidelity/validity/sparsity theo yêu cầu nộp.
 
 Evidence: `src/evaluation/fidelity.py`, `scripts/evaluate_fidelity.py`,
-`configs/evaluation/fidelity.yaml`, output local `runs/fidelity/`.
+`configs/evaluation/fidelity.yaml`, output local `runs/fidelity/`;
+`src/evaluation/explanation_quality.py`,
+`scripts/evaluate_explanation_quality.py`, `configs/evaluation/explanation_quality.yaml`,
+output local `runs/explanation-quality/`. Nhãn review/report ở `private/`, không commit.
+Giới hạn: phép đo sparsity hiện tại không tuyên bố lời giải thích tối thiểu;
+đây không phải một tiêu chí bắt buộc mới được thêm vào đề.
+Form v2 nằm ở `tools/validity-review/`, exporter ở `scripts/prepare_validity_review.py`.
+Dữ liệu/nhãn vẫn local; chưa có judge run, nhãn human hoặc CLI tổng hợp/đối chiếu
+schema v2. CLI `--labels` hiện chỉ nhận v1.
 
 ## J. MMKG và mở rộng
 

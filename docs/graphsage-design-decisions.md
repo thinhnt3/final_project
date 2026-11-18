@@ -279,6 +279,75 @@ mô tả và khả năng CLIP phân biệt chủ thể/tân ngữ cần một ph
 
 ## Validation and remaining scope
 
+### Validity và sparsity
+
+Sparsity/keep-only được đo bằng code, không cần train lại. Validity gồm một
+bước gán nhãn đối chiếu riêng rồi mới dùng code tổng hợp. Lượt hiện tại do
+trợ lý Codex xem ảnh và ghi nhận xét vào JSON; chưa có pipeline gọi model
+vision tự chấm hoặc reviewer con người. Hai tiêu chí đúng ảnh/liên quan query
+là rubric đề xuất của implementation này, không phải công thức được đề ấn định.
+
+Chạy sau khi đã có trace fidelity:
+
+```bash
+OMP_NUM_THREADS=2 python -m scripts.evaluate_explanation_quality
+python -m scripts.evaluate_explanation_quality \
+  --labels review-v1.json
+```
+
+Lệnh đầu dùng `configs/evaluation/explanation_quality.yaml`, giữ đúng mẫu 200
+query và ba checkpoint. Với E là nhóm relation explanation, định nghĩa relation
+sparsity là `1 - |E| / số_relation_gốc`. Keep-only giữ E, bỏ các relation còn lại;
+mọi object/cạnh ảnh–object vẫn giữ. So với 20 nhóm random cùng số relation, dùng
+lại subset từ fidelity, giữ CLIP/alpha/k và mọi score đối thủ. Đây là kiểm tra
+độ gọn và bảo toàn prediction, chưa phải explanation tối thiểu hoặc chứng minh
+ngữ nghĩa độc lập.
+
+Trung bình ba seed, budget yêu cầu 10%/25% cho tỷ lệ explanation thực tế
+20,24%/30,17%, sparsity 79,76%/69,83%. Keep-only nhóm chọn giữ top-1
+94,23%/98,81%, so với random 81,52%/85,82%. Top-1 là prediction gốc, có thể sai;
+CLIP còn nguyên nên không gọi các tỷ lệ này là accuracy hoặc chỉ dựa vào graph.
+
+Lệnh đầu còn xuất mẫu validity checkpoint 13, lấy seed 20261118, cân bằng 10
+đúng ID đích và 10 khác ID. Đây là mẫu AI thử nghiệm đã review, không phải giới
+hạn công cụ audit hoặc số query tối đa AI có thể chấm. Lượt này có 42 relation: 29 đúng ảnh,
+2 không đúng, 11 chưa rõ; 20 liên quan query; 17 đạt cả hai chiều, 23 không đạt,
+2 chưa rõ. Theo nhãn AI sơ bộ, tỷ lệ joint đạt 40,48%; nếu hai ca chưa rõ đều đạt thì
+45,24%. Đây là cận nhãn chưa rõ, không phải confidence interval. Mẫu cân bằng,
+một reviewer AI, chưa đại diện benchmark hoặc đồng thuận của con người.
+
+Lệnh có `--labels` chỉ tổng hợp nhãn **v1**, không chạy inference lại;
+`review-v1.json` là tệp do người dùng cung cấp, không phải tệp có sẵn khi clone.
+File phải có `review_manifest_sha256`,
+`reviewer_type` (`ai_assisted`/`human`), `reviewer_id` và `labels`: mỗi dòng có
+`case_id`, `relation_index`, `image_support`, `query_relevance` (yes/no/uncertain)
+và `reason`. Thiếu/trùng vị trí, nhãn sai hoặc manifest không khớp sẽ bị từ chối.
+Không đổi nhãn AI thành human khi chưa có người chấm.
+
+Form audit người v2 nằm ở `tools/validity-review/index.html`, hướng dẫn cùng
+thư mục. Form nạp bộ JSON local, không chứa ảnh/nhãn cá nhân trong Git. Xuất
+toàn bộ query fidelity hợp lệ, rồi chọn file output trong form:
+
+```bash
+python -m scripts.prepare_validity_review --all
+```
+
+Mặc định dùng seed 13, budget 10%. `--per-stratum 10` là lựa chọn pilot 20
+query; có thể đổi seed/budget, không hard-code 20 query hoặc 42 relation. Exporter
+chỉ chuẩn bị bộ chấm, không gọi AI để gán nhãn. 200 query trong trace fidelity
+không có nghĩa AI đã review nội dung cả 200 query.
+
+Schema v2 tách `supported/refuted/uncertain` và bốn mức query support, khác
+schema yes/no/uncertain của CLI trên. Chưa có CLI chạy judge hoặc tổng hợp/so
+sánh nhãn v2; không truyền file xuất từ trang audit v2 vào lệnh `--labels` v1.
+Chưa có kết quả judge v2, human audit hoặc agreement để nghiệm thu validity.
+
+Artifact local: `runs/explanation-quality/{full-test,validity-cases,validity-summary}.json`.
+Report có ảnh, giải thích code và proposal MMKG:
+`private/reports/xai-quality/index.html`. Không commit file private, nhãn hoặc
+trace thô. Đây là phân tích bổ sung sau khi đã xem test, không tune alpha/budget
+hoặc cách chọn explanation trên test.
+
 Chạy `pytest`, `ruff check src scripts tests` và `mypy src scripts`. Kiểm thử bao
 phủ phép biến đổi, ghép lô, lan truyền ngược, điểm lưu/xuất vector, tiếp tục chạy,
 mã băm đầu vào, số quan hệ xoá, mức giảm âm, xử lý hoà điểm và phân tích theo cặp.
