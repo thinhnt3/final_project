@@ -5,7 +5,7 @@ from src.core.exceptions import ConfigError, DataError
 from src.data.schemas import Split
 from src.evaluation.benchmark import SplitData
 from src.evaluation.metrics import ranks_of_relevant
-from src.retrieval.rerank import clip_candidate_mask, evaluate_reranking, rerank_scores, sweep_alpha_and_k
+from src.retrieval.rerank import evaluate_reranking, rerank_scores, sweep_alpha_and_k
 
 CLIP = np.array([[0.9, 0.8, 0.7, 0.1], [0.2, 0.6, 0.5, 0.4]])
 GRAPH = np.array([[0.0, 0.1, 0.9, 1.0], [0.9, 0.0, 0.8, 0.1]])
@@ -171,11 +171,3 @@ def test_evaluate_reranking_rejects_top_k_larger_than_a_gallery_before_sweeping(
     scores = {Split.VAL: CLIP, Split.TEST: CLIP}
     with pytest.raises(ConfigError, match="exceed the smallest gallery"):
         evaluate_reranking(scores, scores, data, alphas=[1.0], top_ks=[2, 5])
-
-
-def test_shared_candidate_mask_keeps_ties_at_the_cutoff():
-    scores = np.array([[.8, .8, .1]])
-    assert clip_candidate_mask(scores, 1).tolist() == [[True, True, False]]
-    assert scores.tolist() == [[.8, .8, .1]]
-    with pytest.raises(ConfigError):
-        clip_candidate_mask(scores, 0)

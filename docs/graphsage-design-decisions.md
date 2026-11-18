@@ -1,6 +1,6 @@
 # Quyết định kỹ thuật: GraphSAGE trong pipeline truy hồi
 
-Cập nhật: 17/11/2026. Trạng thái: thiết kế đã phỏng vấn xong, **chưa code**. *(Ghi chú 18/11/2026: thiết kế này đã được cài đặt, huấn luyện 3 seed và chấm trên test; xem kết quả ở `docs/04-ket-qua.md`.)* Tài liệu này là nơi ghi quyết định hiện hành cho Phase 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
+Cập nhật: 18/11/2026. Trạng thái: pipeline và ablation đã triển khai; fidelity perturbation đã chạy. Tài liệu này là nơi ghi quyết định hiện hành cho Giai đoạn 1; plan chi tiết nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`.
 
 Minh hoạ:
 
@@ -11,8 +11,8 @@ Minh hoạ:
 
 | Yêu cầu | Cách đáp ứng |
 |---|---|
-| Đỉnh: ảnh, đối tượng, khái niệm | Đỉnh ảnh và đỉnh đối tượng có từ Phase 1. Đỉnh khái niệm dùng chung thêm ở Phase 7 (xem G3) |
-| Cạnh: ảnh – chứa – đối tượng; quan hệ giữa các đối tượng; quan hệ giữa khái niệm từ KG ngoài | Hai loại đầu có từ Phase 1. Cạnh ConceptNet thuộc Phase 7 |
+| Đỉnh: ảnh, đối tượng, khái niệm | Đỉnh ảnh và đỉnh đối tượng có từ Giai đoạn 1. Đỉnh khái niệm dùng chung thêm ở Giai đoạn 7 (xem G3) |
+| Cạnh: ảnh – chứa – đối tượng; quan hệ giữa các đối tượng; quan hệ giữa khái niệm từ KG ngoài | Hai loại đầu có từ Giai đoạn 1. Cạnh ConceptNet thuộc Giai đoạn 7 |
 | Cấp độ 1: một đồ thị tĩnh từ dữ liệu có sẵn | Đồ thị xây từ nhãn Visual Genome ở bước 2.7, không đổi khi chạy |
 | Truy vấn → CLIP → top-k cosine → điểm đồ thị → xếp hạng lại → giải thích → fidelity | Giữ nguyên thứ tự này |
 | Điểm = α·cosine + (1−α)·điểm đồ thị; điểm đồ thị từ nhúng GCN/GAT/GraphSAGE | Dùng GraphSAGE |
@@ -32,13 +32,13 @@ GraphSAGE ở đây là bộ mã hoá **đồ thị thành vector**. Nó không 
 |---|---|---|
 | G1 | Truy vấn mã hoá bằng **CLIP text nguyên câu**, không phân tích thành đồ thị | Chốt |
 | G2 | Đối tượng là đỉnh, relation là cạnh; nhãn relation lưu trên một **đỉnh phụ** giữa cạnh | Chốt |
-| G3 | Cài theo kiểu **ghép batch đồ thị con của từng ảnh**; đỉnh khái niệm dùng chung để Phase 7 | Chốt |
+| G3 | Cài theo kiểu **ghép batch đồ thị con của từng ảnh**; đỉnh khái niệm dùng chung để Giai đoạn 7 | Chốt |
 | G4 | 3 tầng GraphSAGE, gộp bằng trung bình | Chốt (hệ quả của G2) |
 | G5 | Dùng **`SAGEConv` của PyTorch Geometric**, không tự code lớp | Chốt |
 | G6 | Vector ban đầu: CLIP text cho đối tượng và đỉnh phụ; đỉnh ảnh làm hai biến thể | Chốt |
 | G7 | Huấn luyện bằng **InfoNCE trong batch**; CLIP đóng băng | Chốt |
 | G8 | Giải thích bằng cách bỏ từng relation rồi đo điểm đồ thị giảm bao nhiêu | Chốt |
-| G9 | **Mô hình hoá hướng của relation ngay ở Phase 1:** mỗi tầng có hai `SAGEConv`, một cho chiều xuôi và một cho chiều ngược | Chốt |
+| G9 | **Mô hình hoá hướng của relation ngay ở Giai đoạn 1:** mỗi tầng có hai `SAGEConv`, một cho chiều xuôi và một cho chiều ngược | Chốt |
 | G10 | Xoá toàn bộ code thuật toán cũ, viết mới | Chốt |
 
 ### G1. Truy vấn dùng CLIP text
@@ -46,7 +46,7 @@ GraphSAGE ở đây là bộ mã hoá **đồ thị thành vector**. Nó không 
 Điểm đồ thị so vector CLIP text của truy vấn với vector đồ thị của ảnh. GraphSAGE được huấn luyện để vector đồ thị rơi vào không gian của CLIP text.
 
 - **Lý do:** không cần bộ phân tích câu, không có lỗi phân tích, truy vấn giữ nguyên thông tin về hành động và màu sắc.
-- **Phương án chưa làm:** truy vấn → SceneGraphParser → đồ thị → GraphSAGE, rồi so đồ thị với đồ thị. Phương án này cho phần giải thích trực quan hơn (bộ ba của truy vấn khớp bộ ba của ảnh). Quay lại nếu còn thời gian, dưới dạng một biến thể so sánh ở Phase 4.
+- **Phương án chưa làm:** truy vấn → SceneGraphParser → đồ thị → GraphSAGE, rồi so đồ thị với đồ thị. Phương án này cho phần giải thích trực quan hơn (bộ ba của truy vấn khớp bộ ba của ảnh). Quay lại nếu còn thời gian, dưới dạng một biến thể so sánh ở Giai đoạn 4.
 
 ### G2. Cấu trúc đồ thị của một ảnh
 
@@ -54,13 +54,13 @@ GraphSAGE ở đây là bộ mã hoá **đồ thị thành vector**. Nó không 
 - **Đỉnh đối tượng:** mỗi khái niệm có trong ảnh một đỉnh (hai người trong một ảnh gộp thành một đỉnh `man`, theo kết quả bước 2.7).
 - **Relation** `man —riding→ bicycle` là cạnh giữa hai đối tượng. Lớp `SAGEConv` không đọc được nhãn trên cạnh, nên cạnh được lưu thành `man — (riding) — bicycle`, với đỉnh phụ `(riding)` mang vector của chữ "riding".
 
-Đỉnh phụ là cách lưu, không đổi ý nghĩa: relation vẫn là quan hệ giữa hai đối tượng. Nhờ nó, "man riding bicycle" và "man next to bicycle" cho vector khác nhau, và ablation "bỏ vị từ" ở Phase 5 đo được thật.
+Đỉnh phụ là cách lưu, không đổi ý nghĩa: relation vẫn là quan hệ giữa hai đối tượng. Nhờ nó, "man riding bicycle" và "man next to bicycle" cho vector khác nhau, và ablation "bỏ vị từ" ở Giai đoạn 5 đo được thật.
 
 ### G3. Ghép batch đồ thị con của từng ảnh
 
 Mỗi ảnh là một đồ thị con. Khi huấn luyện, nhiều đồ thị con được ghép thành một batch và chạy qua **cùng một bộ trọng số**.
 
-- **Vì sao không dựng một đồ thị chung ngay:** đối tượng là đỉnh riêng của từng ảnh, chỉ đỉnh khái niệm là dùng chung. Thông tin từ ảnh khác phải đi qua đỉnh khái niệm dùng chung, mà đỉnh đó chỉ có ích khi có cạnh ConceptNet giữa các khái niệm (Phase 7). Trước lúc đó, đồ thị chung không thêm thông tin gì cho vector của ảnh, trong khi phải lấy mẫu hàng xóm và phải có quy tắc chống rò rỉ giữa ảnh train và ảnh test.
+- **Vì sao không dựng một đồ thị chung ngay:** đối tượng là đỉnh riêng của từng ảnh, chỉ đỉnh khái niệm là dùng chung. Thông tin từ ảnh khác phải đi qua đỉnh khái niệm dùng chung, mà đỉnh đó chỉ có ích khi có cạnh ConceptNet giữa các khái niệm (Giai đoạn 7). Trước lúc đó, đồ thị chung không thêm thông tin gì cho vector của ảnh, trong khi phải lấy mẫu hàng xóm và phải có quy tắc chống rò rỉ giữa ảnh train và ảnh test.
 - **Hệ quả tốt:** ảnh test không thể ảnh hưởng tới ảnh train, vì không có cạnh nào nối hai đồ thị con.
 
 ### G4. Ba tầng
@@ -81,7 +81,7 @@ Sau tầng cuối không dùng ReLU: vector CLIP có cả thành phần âm, nê
 
 ### G5. Thư viện
 
-Dùng `SAGEConv` và tiện ích ghép batch của PyTorch Geometric. Lý do: lớp đã được kiểm thử rộng rãi, báo cáo chỉ cần trích thư viện, và Phase 6 (R-GCN/HGT) cũng có sẵn trong đó. `.venv` hiện có torch 2.15, chưa cài PyG; cần thêm vào `requirements.txt`.
+Dùng `SAGEConv` và tiện ích ghép batch của PyTorch Geometric. Lý do: lớp đã được kiểm thử rộng rãi, báo cáo chỉ cần trích thư viện, và Giai đoạn 6 (R-GCN/HGT) cũng có sẵn trong đó. `.venv` hiện có torch 2.15, chưa cài PyG; cần thêm vào `requirements.txt`.
 
 ### G6. Vector ban đầu của các đỉnh
 
@@ -100,7 +100,7 @@ Cả hai biến thể được huấn luyện và đưa vào bảng kết quả.
 
 ### G8. Giải thích kết quả
 
-Với mỗi ứng viên được trả về: lần lượt bỏ từng relation khỏi đồ thị của ảnh, tính lại điểm đồ thị, và báo các relation làm điểm giảm nhiều nhất. Cách này cho đúng thứ đề bài gọi là "quan hệ đóng góp vào điểm đồ thị", và chính phép đo "bỏ đi thì điểm giảm bao nhiêu" là cơ sở để đánh giá fidelity ở Phase 5.
+Với mỗi ứng viên được trả về: lần lượt bỏ từng relation khỏi đồ thị của ảnh, tính lại điểm đồ thị, và báo các relation làm điểm giảm nhiều nhất. Cách này cho đúng thứ đề bài gọi là "quan hệ đóng góp vào điểm đồ thị", và chính phép đo "bỏ đi thì điểm giảm bao nhiêu" là cơ sở để đánh giá fidelity ở Giai đoạn 5.
 
 ### G9. Hướng của relation
 
@@ -168,7 +168,7 @@ Lớp `MeanGraphSAGELayer` cũ đúng công thức của paper; nó được tha
 
 ## 5. Siêu tham số chọn trên validation
 
-Chưa có giá trị nào được chốt. Các tham số sẽ quét: số chiều ẩn, cỡ batch, nhiệt độ của InfoNCE, tốc độ học, số vòng, k của top-k, α.
+Đã có cấu hình khởi đầu và lựa chọn α/k trên tập xác thực; chưa khảo sát rộng mọi siêu tham số. Các tham số có thể nghiên cứu tiếp: số chiều ẩn, cỡ batch, nhiệt độ của InfoNCE, tốc độ học, số vòng, k của top-k, α.
 
 ## 6. Giới hạn đã biết
 
@@ -178,5 +178,199 @@ Chưa có giá trị nào được chốt. Các tham số sẽ quét: số chi�
 
 ## 7. Còn mở
 
-- Nhánh `feat/vg-coco-graph-build` (code pipeline và dữ liệu đồ thị) chưa gộp vào `main`; Phase 1 cần nó. *(Đã xong: gộp vào `main` ở commit `a795fd1`.)*
-- Định dạng `image_graphs.json` của bước 2.7 đã đủ để dựng đồ thị con theo G2 (khái niệm và bộ ba theo id); không cần chạy lại bước 2.7. *(Đã xác nhận ở bước 1.2.)*
+- Pipeline xây đồ thị đã có trên `main`; ghi chú nhánh chưa gộp trước đây không còn áp dụng.
+- Định dạng `image_graphs.json` của bước 2.7 đã đủ để dựng đồ thị con theo G2 (khái niệm và bộ ba theo id); không cần chạy lại bước 2.7.
+
+
+## Ablation và fidelity
+
+Chạy từ thư mục gốc, với Python 3.12 và các thư viện trong `requirements.txt`.
+Ảnh VG ∩ COCO, vector CLIP và điểm lưu mô hình là dữ liệu local, không nằm trong Git.
+
+## Reproduce
+
+```bash
+python -m scripts.embed_vg_coco  # Chỉ cần khi thiếu bộ nhớ đệm vector
+for variant in full objects_only drop_predicates random_edges undirected; do
+  python -m scripts.train_graphsage --config "configs/retrieval/ablations/${variant}.yaml" --resume || break
+  python -m scripts.run_benchmark --method graphsage --config "configs/retrieval/ablations/${variant}.yaml" || break
+done
+python -m scripts.analyze_ablation
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+```
+
+Cấu hình có các hạt giống huấn luyện 13, 37, 97; đã tắt W&B. Tên mặc định phân
+biệt biến thể và hạt giống hoán vị đồ thị. Không dùng `--name` để ghi một biến thể
+vào thư mục của bản đầy đủ. `--resume` từ chối lượt đã báo xong nhưng thiếu tệp
+cần thiết hoặc có cấu hình khác. Các lệnh đánh giá/giải thích kiểm tra mã băm để
+tránh dùng nhầm đầu vào hoặc kết quả cũ.
+
+Bản ghi lượt đầy đủ ngày 18/11 ghi `private/ablation-execution/full.yaml`, đúng
+đường dẫn đã dùng lúc chạy. `configs/retrieval/ablations/full.yaml` cung cấp cùng
+thiết lập mô hình/huấn luyện để chạy lại mà không cần tệp riêng tư. Không sửa bản
+ghi lịch sử để biến nó thành cấu hình đầu vào. Kết quả ngày 17/11 còn trong lịch
+sử Git; kết quả đầy đủ hiện tại là lượt khôi phục ngày 18/11, không giống từng byte.
+
+## Intervention contract
+
+- `objects_only`: xoá bộ ba trước khi dựng đồ thị PyG; giữ đỉnh đối tượng và cạnh ảnh → đối tượng. Biến thể vẫn dùng mạng đồ thị, không phải bộ so khớp từ.
+- `drop_predicates`: đặt đặc trưng ban đầu của đỉnh quan hệ bằng 0; giữ đỉnh, cạnh, hướng và truyền thông tin. Không loại bỏ toàn bộ thông tin quan hệ.
+- `random_edges`: hoán vị chủ thể và tân ngữ độc lập bằng bộ sinh số riêng theo mã ảnh và `ablation_seed`; giữ bậc vào/ra, số quan hệ và phân bố vị từ. Cho phép bộ ba trùng và quan hệ tự nối.
+- `undirected`: dùng lớp không hướng sẵn có. Số tham số ít hơn bản đầy đủ, nên chưa tách riêng hoàn toàn ảnh hưởng của hướng và dung lượng mô hình.
+
+Tệp chú giải gốc không bị ghi đè. Cùng phép biến đổi áp dụng cho huấn luyện, tập
+xác thực, xuất vector và giải thích. α/k chọn riêng trên tập xác thực; không dùng
+tập kiểm thử để điều chỉnh tham số.
+
+## Analysis and interpretation
+
+`runs/analysis/ablation.json` lưu chỉ số từng hạt giống, các truy vấn thắng/thua
+theo cặp, mười trường hợp minh hoạ và khoảng bất định khám phá 95%. Phép lấy mẫu
+lại thực hiện 2.000 lần với hạt giống 310, gom các mô tả theo ảnh đúng để giữ
+phụ thuộc giữa chúng. Ba mô hình đã huấn luyện được giữ cố định. Khoảng này
+không mô tả mọi hạt giống huấn luyện có thể có và chưa hiệu chỉnh đa so sánh.
+
+Kiểm tra bổ sung k=500 giữ α đã chọn. Đây là phân tích sau thực nghiệm, không
+thay kết quả chính thức hoặc chọn một hệ thống mới. Hai lượt đầy đủ chọn k=10,
+giải thích việc R@10 của chúng không đổi so với CLIP. Chỉ từ R@10 kết hợp không
+thể kết luận bộ mã hoá đồ thị đầy đủ kém hơn.
+
+## Fidelity protocol
+
+`configs/evaluation/fidelity.yaml` cố định 200 truy vấn kiểm thử lấy mẫu bằng hạt
+giống 2026, ba mô hình đã huấn luyện, mức yêu cầu xoá 0,10/0,25 và 20 nhóm ngẫu
+nhiên đối chứng. Không huấn luyện lại hay tìm tham số. Mục tiêu là ảnh dự đoán
+đứng đầu ban đầu, dù đúng hay sai. Giữ truy vấn, α/k, điểm CLIP, tập ứng viên và
+điểm mọi đối thủ; chỉ thay đổi đồ thị của ảnh mục tiêu.
+
+Xếp quan hệ theo mức giảm điểm khi xoá từng quan hệ, rồi xoá đồng thời nhóm được
+chọn và so với các nhóm ngẫu nhiên cùng số lượng. Xoá ít nhất hai quan hệ và
+chừa ít nhất một; vì thế tỷ lệ thực tế có thể khác mức yêu cầu ở đồ thị nhỏ.
+Đồ thị ít hơn ba quan hệ được ghi nhận bỏ qua và nêu lý do. Giữ cả mức giảm âm:
+xoá một quan hệ gây nhiễu có thể làm điểm tăng.
+
+`runs/fidelity/full-joint-test.json` lưu vị trí quan hệ được xoá, nhóm ngẫu nhiên,
+điểm đồ thị, thay đổi thứ hạng, mất vị trí đầu, mã băm và kết quả tổng hợp.
+
+**Giới hạn:** việc chọn explanation vẫn dựa trên điểm của phép xoá. Xoá nhóm và
+đo hạng bổ sung bằng chứng nhưng không độc lập với cách chọn này. Đây là kiểm
+tra bằng can thiệp, không chứng minh lời giải thích đúng về ngữ nghĩa hay quan
+hệ là nguyên nhân chính của mức tăng truy hồi. Xoá đỉnh quan hệ còn làm đổi cấu
+trúc và cách tổng hợp thông tin lân cận.
+
+## Observed evidence, 18/11/2026
+
+Bản đầy đủ hơn chỉ đối tượng 0,56 điểm phần trăm R@1; khoảng 95% có điều kiện là
+[0,05; 1,06]. So với bỏ vị từ, chênh lệch chưa làm tròn khoảng 0,053 điểm, khoảng
+[−0,35; 0,45]. So với cạnh ngẫu nhiên, khoảng 0,329 điểm, khoảng [−0,09; 0,74].
+Chưa xác lập lợi thế rõ của nhãn vị từ hoặc cấu trúc thật qua các lần huấn luyện mới.
+
+Độ trung thực đánh giá được 198/195/196 trong 200 truy vấn theo hạt giống
+13/37/97. Trung bình qua ba mô hình, xoá nhóm được chọn làm mất vị trí đầu
+17,81% so với ngẫu nhiên 4,31% ở mức yêu cầu 10%; tương ứng 25,45% so với 6,06%
+ở mức 25%. Điểm đồ thị giảm 0,02200 so với 0,00142 và 0,03040 so với 0,00216.
+Tỷ lệ xoá thực tế và truy vấn bỏ qua được ghi lại. Không coi ba phép đo của cùng
+một truy vấn là ba truy vấn độc lập.
+
+Các trường hợp minh hoạ có chú giải khó diễn giải hoặc có thể không liên quan,
+như `skateboard has arm`, `person with platform`. Mười ca được chọn chưa đủ chứng
+minh mức phổ biến hay tác động tổng thể của nhiễu chú giải. Giả thuyết về loại
+mô tả và khả năng CLIP phân biệt chủ thể/tân ngữ cần một phép đánh giá riêng.
+
+## Validation and remaining scope
+
+### Validity và sparsity
+
+Sparsity/keep-only được đo bằng code, không cần train lại. Validity gồm một
+bước gán nhãn đối chiếu riêng rồi mới dùng code tổng hợp. Lượt hiện tại do
+trợ lý Codex xem ảnh và ghi nhận xét vào JSON; chưa có pipeline gọi model
+vision tự chấm hoặc reviewer con người. Hai tiêu chí đúng ảnh/liên quan query
+là rubric đề xuất của implementation này, không phải công thức được đề ấn định.
+
+Chạy sau khi đã có trace fidelity:
+
+```bash
+OMP_NUM_THREADS=2 python -m scripts.evaluate_explanation_quality
+python -m scripts.evaluate_explanation_quality \
+  --labels review-v1.json
+```
+
+Lệnh đầu dùng `configs/evaluation/explanation_quality.yaml`, giữ đúng mẫu 200
+query và ba checkpoint. Với E là nhóm relation explanation, định nghĩa relation
+sparsity là `1 - |E| / số_relation_gốc`. Keep-only giữ E, bỏ các relation còn lại;
+mọi object/cạnh ảnh–object vẫn giữ. So với 20 nhóm random cùng số relation, dùng
+lại subset từ fidelity, giữ CLIP/alpha/k và mọi score đối thủ. Đây là kiểm tra
+độ gọn và bảo toàn prediction, chưa phải explanation tối thiểu hoặc chứng minh
+ngữ nghĩa độc lập.
+
+Trung bình ba seed, budget yêu cầu 10%/25% cho tỷ lệ explanation thực tế
+20,24%/30,17%, sparsity 79,76%/69,83%. Keep-only nhóm chọn giữ top-1
+94,23%/98,81%, so với random 81,52%/85,82%. Top-1 là prediction gốc, có thể sai;
+CLIP còn nguyên nên không gọi các tỷ lệ này là accuracy hoặc chỉ dựa vào graph.
+
+Lệnh đầu còn xuất mẫu validity checkpoint 13, lấy seed 20261118, cân bằng 10
+đúng ID đích và 10 khác ID. Đây là mẫu AI thử nghiệm đã review, không phải giới
+hạn công cụ audit hoặc số query tối đa AI có thể chấm. Lượt này có 42 relation: 29 đúng ảnh,
+2 không đúng, 11 chưa rõ; 20 liên quan query; 17 đạt cả hai chiều, 23 không đạt,
+2 chưa rõ. Theo nhãn AI sơ bộ, tỷ lệ joint đạt 40,48%; nếu hai ca chưa rõ đều đạt thì
+45,24%. Đây là cận nhãn chưa rõ, không phải confidence interval. Mẫu cân bằng,
+một reviewer AI, chưa đại diện benchmark hoặc đồng thuận của con người.
+
+Lệnh có `--labels` chỉ tổng hợp nhãn **v1**, không chạy inference lại;
+`review-v1.json` là tệp do người dùng cung cấp, không phải tệp có sẵn khi clone.
+File phải có `review_manifest_sha256`,
+`reviewer_type` (`ai_assisted`/`human`), `reviewer_id` và `labels`: mỗi dòng có
+`case_id`, `relation_index`, `image_support`, `query_relevance` (yes/no/uncertain)
+và `reason`. Thiếu/trùng vị trí, nhãn sai hoặc manifest không khớp sẽ bị từ chối.
+Không đổi nhãn AI thành human khi chưa có người chấm.
+
+Form audit người v2 nằm ở `tools/validity-review/index.html`, hướng dẫn cùng
+thư mục. Form nạp bộ JSON local, không chứa ảnh/nhãn cá nhân trong Git. Xuất
+toàn bộ query fidelity hợp lệ, rồi chọn file output trong form:
+
+```bash
+python -m scripts.prepare_validity_review --all
+```
+
+Mặc định dùng seed 13, budget 10%. `--per-stratum 10` là lựa chọn pilot 20
+query; có thể đổi seed/budget, không hard-code 20 query hoặc 42 relation. Exporter
+chỉ chuẩn bị bộ chấm, không gọi AI để gán nhãn. 200 query trong trace fidelity
+không có nghĩa AI đã review nội dung cả 200 query.
+
+Schema v2 tách `supported/refuted/uncertain` và bốn mức query support, khác
+schema yes/no/uncertain của CLI trên. Chưa có CLI chạy judge hoặc tổng hợp/so
+sánh nhãn v2; không truyền file xuất từ trang audit v2 vào lệnh `--labels` v1.
+Chưa có kết quả judge v2, human audit hoặc agreement để nghiệm thu validity.
+
+Artifact local: `runs/explanation-quality/{full-test,validity-cases,validity-summary}.json`.
+Report có ảnh, giải thích code và proposal MMKG:
+`private/reports/xai-quality/index.html`. Không commit file private, nhãn hoặc
+trace thô. Đây là phân tích bổ sung sau khi đã xem test, không tune alpha/budget
+hoặc cách chọn explanation trên test.
+
+Chạy `pytest`, `ruff check src scripts tests` và `mypy src scripts`. Kiểm thử bao
+phủ phép biến đổi, ghép lô, lan truyền ngược, điểm lưu/xuất vector, tiếp tục chạy,
+mã băm đầu vào, số quan hệ xoá, mức giảm âm, xử lý hoà điểm và phân tích theo cặp.
+Bộ mã cuối đã qua 263 kiểm thử. Hai bài thực hành lỗi cố ý nằm trong clone riêng
+ở `private/bug-lab/`, không phải lỗi của mã chính hay sự cố thực nghiệm thật.
+
+Các lệnh phân tích/độ trung thực đã chạy trên dữ liệu local thật; không chỉnh
+tham số truy hồi sau khi thấy kết quả kiểm thử. Giai đoạn 5 còn tập dữ liệu thứ
+hai và thí nghiệm xử lý đỉnh bậc cao. Đối chứng hướng có cùng số tham số và kiểm
+tra lời giải thích độc lập là các phần mở rộng còn hữu ích.
+
+## Source formatting and local artifacts
+
+Tệp Python mới được định dạng toàn bộ; tệp cũ chỉ sửa vùng thay đổi. Các bước xử
+lý được nhóm và có chú thích ngắn; danh sách nhiều tham số được tách dòng. Chú
+thích trong mã vẫn giữ tiếng Anh theo quy ước dự án; tài liệu diễn giải dùng
+tiếng Việt. Phần nhập mô-đun tuân theo Ruff.
+
+`runs/` và `private/` bỏ qua tệp mới trong Git. Tệp lịch sử đã được theo dõi vẫn
+được theo dõi: `.gitignore` không xoá hay giấu thay đổi của chúng. Chính sách này
+không xoá hoặc ngừng theo dõi đầu ra cũ. Rà thay đổi kết quả riêng với thay đổi
+mã; dùng các lệnh trên để tạo lại đầu ra.
+
+Checklist hiện hành: `plan-task/requirements-checklist.md`; đã thay trạng thái
+bản thử 40 ảnh và tách rõ bằng chứng can thiệp với tính đúng ngữ nghĩa cũng như
+các sản phẩm nộp chưa hoàn tất.

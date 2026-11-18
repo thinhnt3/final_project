@@ -7,7 +7,7 @@ status: in-progress
 
 ## Overview
 
-Bảng so sánh chính trên tập test VG ∩ COCO của Phase 2: phương pháp của mình có hơn các cách đã có không, và có giữ được khi đổi backbone không. Kèm phân tích 5 truy vấn thành công và 5 thất bại. Phần "cải thiện đến từ đâu" (ablation) nằm ở Phase 5.
+Bảng so sánh chính trên tập test VG ∩ COCO của Giai đoạn 2: phương pháp của mình có hơn các cách đã có không, và có giữ được khi đổi backbone không. Kèm phân tích 5 truy vấn thành công và 5 thất bại. Phần "cải thiện đến từ đâu" (ablation) nằm ở Giai đoạn 5.
 
 ## Mục tiêu
 
@@ -17,9 +17,9 @@ Bảng so sánh chính trên tập test VG ∩ COCO của Phase 2: phương phá
 
 ## Input
 
-- `data/processed/vg_coco/` + `data/splits/vg_coco.json` (Phase 2).
-- Đồ thị + nhúng GraphSAGE (Phase 1, 2.7).
-- Bộ đo và α, K đã chọn trên val (Phase 3).
+- `data/processed/vg_coco/` + `data/splits/vg_coco.json` (Giai đoạn 2).
+- Đồ thị + nhúng GraphSAGE (Giai đoạn 1, 2.7).
+- Bộ đo và α, K đã chọn trên val (Giai đoạn 3).
 
 ## Baseline
 
@@ -33,7 +33,7 @@ Bảng so sánh chính trên tập test VG ∩ COCO của Phase 2: phương phá
 
 Quy tắc so sánh: mọi reranker dùng chung top-K ứng viên của cùng backbone; α, K chọn trên val; báo cáo mean ± std qua 3 seed huấn luyện (13, 37, 97).
 
-Lưu ý đối chiếu số liệu: gallery test là 1.500 ảnh, khác 1K và 5K của COCO, nên số CLIP đã công bố chỉ dùng để kiểm tra độ hợp lý (xem Phase 3, bước 3.3), không so trực tiếp.
+Lưu ý đối chiếu số liệu: gallery test là 1.500 ảnh, khác 1K và 5K của COCO, nên số CLIP đã công bố chỉ dùng để kiểm tra độ hợp lý (xem Giai đoạn 3, bước 3.3), không so trực tiếp.
 
 ## Output
 
@@ -76,6 +76,6 @@ Review B4 (agent độc lập, 17/11): không có lỗi phải sửa; tính lạ
 
 ## Kết quả Ours trên backbone CLIP (17/11)
 
-CLIP + GraphSAGE (3 tầng có hướng, đỉnh ảnh là vector học được) trên test: R@1 48,20 ± 0,05, R@5 75,87 ± 0,18, R@10 86,36 ± 0,13, MRR 60,74 ± 0,10 (3 seed). Hơn CLIP 4,3 điểm R@1 và hơn B4 1,7–1,8 điểm. Chi tiết ở Phase 1, bước 1.5. Chưa làm: biến thể đỉnh ảnh mang CLIP, backbone OpenCLIP (B2), 10 phân tích truy vấn.
+CLIP + GraphSAGE (3 tầng có hướng, đỉnh ảnh là vector học được) trên test: R@1 48,20 ± 0,05, R@5 75,87 ± 0,18, R@10 86,36 ± 0,13, MRR 60,74 ± 0,10 (3 seed). Hơn CLIP 4,3 điểm R@1 và hơn B4 1,7–1,8 điểm. Chi tiết ở Giai đoạn 1, bước 1.5. Chưa làm: biến thể đỉnh ảnh mang CLIP, backbone OpenCLIP (B2), 10 phân tích truy vấn.
 
-Bổ sung 17/11: biến thể đỉnh ảnh mang CLIP đạt R@1 49,43 ± 0,46 trên test; lưới k mở rộng tới cả gallery không đổi kết quả. Bảng đầy đủ ở Phase 1, mục "Bổ sung 1.5".
+Bổ sung 17/11: biến thể đỉnh ảnh mang CLIP đạt R@1 49,43 ± 0,46 trên test; lưới k mở rộng tới cả gallery không đổi kết quả. Bảng đầy đủ ở Giai đoạn 1, mục "Bổ sung 1.5".

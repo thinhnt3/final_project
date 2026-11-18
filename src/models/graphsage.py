@@ -10,6 +10,7 @@ from torch_geometric.data import Batch
 from torch_geometric.nn import SAGEConv
 
 from src.core.exceptions import ConfigError, DataError
+from src.models.ablations import Ablation
 from src.models.graph_data import NodeKind
 
 
@@ -28,6 +29,8 @@ class GraphSageConfig:
     num_layers: int
     directed: bool
     image_node: ImageNodeFeature
+    ablation: Ablation = Ablation.FULL
+    ablation_seed: int = 0
 
     def __post_init__(self) -> None:
         if self.hidden_dim < 1 or self.num_layers < 1:
@@ -36,7 +39,8 @@ class GraphSageConfig:
     def run_name(self) -> str:
         """Name of training runs with this architecture, e.g. `directed-learned-l3-h512`."""
         direction = "directed" if self.directed else "undirected"
-        return f"{direction}-{self.image_node.value}-l{self.num_layers}-h{self.hidden_dim}"
+        base = f"{direction}-{self.image_node.value}-l{self.num_layers}-h{self.hidden_dim}"
+        return base if self.ablation is Ablation.FULL else f"{base}-{self.ablation.value}-a{self.ablation_seed}"
 
 
 class DirectedSAGELayer(nn.Module):
@@ -101,7 +105,9 @@ class GraphImageEncoder(nn.Module):
             # Same scale as a unit vector spread over `dim` components.
             self.image_token = nn.Parameter(torch.randn(dim) / dim**0.5)
 
-        layer = DirectedSAGELayer if config.directed else UndirectedSAGELayer
+        # Direction ablation reuses the existing undirected layer.
+        use_direction = config.directed and config.ablation is not Ablation.UNDIRECTED
+        layer = DirectedSAGELayer if use_direction else UndirectedSAGELayer
         sizes = [dim] + [config.hidden_dim] * config.num_layers
         self.layers = nn.ModuleList(layer(sizes[i], sizes[i + 1]) for i in range(config.num_layers))
         self.project = nn.Linear(config.hidden_dim, dim)
@@ -112,7 +118,10 @@ class GraphImageEncoder(nn.Module):
         features = torch.zeros(kind.shape[0], self.concept_vectors.shape[1], device=row.device)
         is_object, is_relation, is_image = (kind == k for k in (NodeKind.OBJECT, NodeKind.RELATION, NodeKind.IMAGE))
         features[is_object] = self.concept_vectors[row[is_object]]
-        features[is_relation] = self.predicate_vectors[row[is_relation]]
+
+        # Mask predicate features while retaining relation nodes and topology.
+        if self.config.ablation is not Ablation.DROP_PREDICATES:
+            features[is_relation] = self.predicate_vectors[row[is_relation]]
         if self.config.image_node is ImageNodeFeature.CLIP_IMAGE:
             features[is_image] = self.image_vectors[row[is_image]]
         else:

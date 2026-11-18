@@ -28,9 +28,11 @@ from src.data.schemas import Split
 from src.embeddings.store import load_table, verify_inputs_unchanged
 from src.evaluation.benchmark import build_split_data, clip_scores, graph_vector_scores
 from src.evaluation.metrics import ranks_of_relevant
+from src.models.ablations import ablate_graph
 from src.models.checkpoint import GRAPH_VECTORS, RunDirectory
 from src.models.explain import explain_graph_score
 from src.models.graphsage import GraphImageEncoder
+from src.models.run_validation import validate_artifact_inputs, validate_run
 from src.retrieval.config import RetrievalConfig
 from src.retrieval.rerank import rerank_scores
 
@@ -71,10 +73,21 @@ def run(
         raise DataError(f"unknown query ids: {unknown}")
 
     run_dir = RunDirectory(config.runs_dir / TRAINING_RUNS_SUBDIR / name / f"seed{seed}")
+
+    # Explain only artifacts compatible with this config and current inputs.
+    validate_run(
+        run_dir.path,
+        config,
+        seed,
+    )
     benchmark_file = config.runs_dir / BENCHMARK_SUBDIR / f"graphsage-{name}.json"
     if not benchmark_file.is_file():
         raise DataError(f"{benchmark_file} not found; run the benchmark for this training run first")
-    selected = read_json(benchmark_file)["seeds"][str(seed)]["selected_on_validation"]
+    benchmark = read_json(benchmark_file)
+
+    # Keep alpha/k tied to the benchmark inputs that selected them.
+    validate_artifact_inputs(benchmark, str(benchmark_file))
+    selected = benchmark["seeds"][str(seed)]["selected_on_validation"]
     alpha, top_k = float(selected["alpha"]), int(selected["top_k"])
 
     concepts = load_table(embeddings_dir, "concepts")
@@ -111,7 +124,16 @@ def run(
         for position, column in enumerate(np.argsort(-final[0])[:n_results], start=1):
             image_id = data.image_ids[column]
             _, contributions = explain_graph_score(
-                model, graph_of[image_id], image_row[image_id], query_vector, concept_text, predicate_text
+                model,
+                ablate_graph(
+                    graph_of[image_id],
+                    config.graphsage.ablation,
+                    config.graphsage.ablation_seed,
+                ),
+                image_row[image_id],
+                query_vector,
+                concept_text,
+                predicate_text,
             )
             results.append(
                 {

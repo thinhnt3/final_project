@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Evaluate true-image relation fidelity using an existing VG–COCO checkpoint.
+"""Frozen full-model joint-deletion diagnostic; no retraining or parameter selection.
 
-No training or parameter search. The sample, budget, alpha and checkpoint are recorded;
-this measures score sensitivity, not retrieval-rank changes or semantic validity.
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
 """
 
 from __future__ import annotations
@@ -14,159 +13,211 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import torch
 
-from src.core.config_parsing import read_mapping
-from src.core.exceptions import AppError, ConfigError, DataError
+from src.core.config_parsing import read_mapping, require_field
+from src.core.exceptions import AppError, DataError
 from src.data.config import DataConfig
 from src.data.json_io import read_json, write_json
 from src.data.schemas import Split
 from src.data.sources import sha256_of
-from src.embeddings.store import META_FILE, load_table, verify_inputs_unchanged
-from src.evaluation.benchmark import build_split_data
-from src.evaluation.fidelity import evaluate_fidelity
-from src.models.checkpoint import BEST_FILE, SETTINGS_FILE, RunDirectory
-from src.models.graphsage import GraphImageEncoder, GraphSageConfig, ImageNodeFeature
+from src.embeddings.store import load_table, verify_inputs_unchanged
+from src.evaluation.benchmark import build_split_data, clip_scores, graph_vector_scores
+from src.evaluation.fidelity import joint_relation_fidelity, ranking_effects
+from src.models.ablations import Ablation
+from src.models.checkpoint import RunDirectory
+from src.models.graphsage import GraphImageEncoder
+from src.models.run_validation import validate_artifact_inputs, validate_run
 from src.retrieval.config import RetrievalConfig
-from src.retrieval.rerank import clip_candidate_mask
+from src.retrieval.rerank import rerank_scores
 
-log = logging.getLogger("evaluate_fidelity")
-DEFAULT_CONFIG = "configs/retrieval/vg_coco.yaml"
-
-
-def _verify_hashes(hashes: dict[str, str]) -> None:
-    changed = [name for name, digest in hashes.items() if not Path(name).is_file() or sha256_of(Path(name)) != digest]
-    if changed:
-        raise DataError(f"evaluation inputs changed: {changed}")
+log = logging.getLogger(__name__)
 
 
-def run(config: RetrievalConfig, name: str, seed: int, split: Split, sample: int, budget: int) -> dict[str, Any]:
-    """Load unchanged artifacts and evaluate a seed-fixed sample of the split's queries."""
-    if split not in (Split.VAL, Split.TEST) or sample < 1 or budget < 1 or seed < 0:
-        raise ConfigError("need val/test, positive sample/budget and a nonnegative seed")
-    directory = RunDirectory(config.runs_dir / "graphsage" / name / f"seed{seed}")
-    benchmark_path = config.runs_dir / "benchmark" / f"graphsage-{name}.json"
-    if not benchmark_path.is_file() or not (directory.path / SETTINGS_FILE).is_file():
-        raise DataError("run train_graphsage and run_benchmark for this run before fidelity evaluation")
-    benchmark = read_json(benchmark_path)
-    settings = read_mapping(directory.path / SETTINGS_FILE)
-    if settings["clip_model"] != config.clip.model_name or settings["seed"] != seed:
-        raise DataError("training settings differ from the requested CLIP model or seed")
-    _verify_hashes(settings["inputs_sha256"])
-    _verify_hashes(benchmark["inputs_sha256"])
-    selected = benchmark.get("seeds", {}).get(str(seed), {}).get("selected_on_validation")
-    if not selected:
-        raise DataError(f"benchmark has no validation-selected parameters for seed {seed}")
-    alpha = float(selected["alpha"])
+def run(path: str) -> None:
+    """Read frozen protocol, evaluate all configured training seeds, retain per-query outcomes."""
+    # Read the frozen protocol before selecting any queries.
+    protocol = read_mapping(path)
+    config = RetrievalConfig.from_yaml(require_field(protocol, "retrieval_config", str))
+    if config.graphsage.ablation is not Ablation.FULL:
+        raise DataError("this protocol evaluates full-model explanations only")
+    split = Split(require_field(protocol, "split", str))
+    if split is Split.TRAIN:
+        raise DataError("fidelity must use validation or test")
+    sample = require_field(protocol, "sample_queries", int)
+    repeats = require_field(protocol, "random_repeats", int)
+    batch_size = require_field(protocol, "batch_size", int)
+    sample_seed = require_field(protocol, "sample_seed", int)
+    random_seed = require_field(protocol, "random_seed", int)
+    fractions = protocol.get("fractions")
+    if (
+        not isinstance(fractions, list)
+        or not fractions
+        or any(isinstance(f, bool) or not isinstance(f, int | float) or not 0 < f < 1 for f in fractions)
+        or len(set(fractions)) != len(fractions)
+        or min(sample, repeats, batch_size) < 1
+    ):
+        raise DataError("invalid fidelity fractions, sample size, repeats or batch size")
+
+    # Load the same split and embedding tables used by retrieval.
+    processed = DataConfig.from_yaml(config.data_config).paths.processed_dir
     embeddings = config.model_embeddings_dir()
     verify_inputs_unchanged(embeddings)
-    images, queries = load_table(embeddings, "images"), load_table(embeddings, "queries")
-    concepts, predicates = load_table(embeddings, "concepts"), load_table(embeddings, "predicates")
-    if concepts.ids != tuple(range(len(concepts.ids))) or predicates.ids != tuple(range(len(predicates.ids))):
-        raise DataError("concept and predicate embedding rows must match their integer ids")
-    raw_model = settings["graphsage"]
-    model_config = GraphSageConfig(**{**raw_model, "image_node": ImageNodeFeature(raw_model["image_node"])})
-    model = GraphImageEncoder(
-        model_config,
-        torch.from_numpy(concepts.vectors),
-        torch.from_numpy(predicates.vectors),
-        torch.from_numpy(images.vectors),
+    images = read_json(processed / "images.json")
+    queries = read_json(processed / "queries.json")
+    image_table = load_table(embeddings, "images")
+    query_table = load_table(embeddings, "queries")
+    data = build_split_data(
+        split,
+        images,
+        queries,
+        image_table,
+        query_table,
     )
-    model.load_state_dict(directory.load_best()["model"])
-    data_config = DataConfig.from_yaml(config.data_config)
-    processed = data_config.paths.processed_dir
-    graph_path, query_path = processed / "graph/image_graphs.json", processed / "queries.json"
-    for path in (embeddings / META_FILE, graph_path, data_config.paths.split_file):
-        if settings["inputs_sha256"].get(str(path)) != sha256_of(path):
-            raise DataError(f"active input differs from the trained checkpoint: {path}")
-    for path in (embeddings / META_FILE, data_config.paths.split_file):
-        if benchmark["inputs_sha256"].get(str(path)) != sha256_of(path):
-            raise DataError(f"active input differs from the validation benchmark: {path}")
-    graphs = {int(g["vg_image_id"]): g for g in read_json(graph_path)}
-    query_records = read_json(query_path)
-    split_data = build_split_data(split, read_json(processed / "images.json"), query_records, images, queries)
-    pool = sorted((q for q in query_records if q["split"] == split.value), key=lambda q: q["query_id"])
-    columns = {image_id: column for column, image_id in enumerate(split_data.image_ids)}
-    if sample > len(pool):
-        raise ConfigError(f"sample {sample} exceeds the {len(pool)} queries of split {split.value}")
-    query_rows, image_rows = queries.row_of(), images.row_of()
-    records = []
-    for query in random.Random(seed).sample(pool, sample):
-        if len(query["relevant_ids"]) != 1:
-            raise DataError("fidelity requires exactly one relevant image per query")
-        image_id = int(query["relevant_ids"][0])
-        if image_id not in graphs or image_id not in image_rows or query["query_id"] not in query_rows:
-            raise DataError(f"missing graph or embedding for query {query['query_id']}")
-        query_vector = queries.vectors[query_rows[query["query_id"]]]
-        clip = (split_data.image_vectors @ query_vector)[None, :]
-        candidates = clip_candidate_mask(clip, min(int(selected["top_k"]), len(split_data.image_ids)))
-        result = evaluate_fidelity(
-            model,
-            graphs[image_id],
-            image_rows[image_id],
-            torch.from_numpy(query_vector),
-            budget=budget,
-            seed=seed,
-            alpha=alpha,
-            is_candidate=bool(candidates[0, columns[image_id]]),
+
+    # Fix one reproducible query sample for every model seed.
+    if sample > len(data.query_ids):
+        raise DataError("sample_queries exceeds queries in the split")
+    rows = sorted(random.Random(sample_seed).sample(range(len(data.query_ids)), sample))
+    query_of = {q["query_id"]: q for q in queries}
+    graphs = {int(g["vg_image_id"]): g for g in read_json(processed / "graph/image_graphs.json")}
+    concepts = load_table(embeddings, "concepts")
+    predicates = load_table(embeddings, "predicates")
+    if list(concepts.ids) != list(range(len(concepts.ids))) or list(predicates.ids) != list(range(len(predicates.ids))):
+        raise DataError("concept and predicate tables must have dense ordered IDs")
+
+    # Reuse the benchmark selection; reject stale inputs.
+    clip = clip_scores(data)
+    name = config.graphsage.run_name()
+    benchmark_path = config.runs_dir / "benchmark" / f"graphsage-{name}.json"
+    benchmark = read_json(benchmark_path)
+    validate_artifact_inputs(benchmark, str(benchmark_path))
+    records: dict[str, Any] = {}
+    inputs = [Path(path), Path(protocol["retrieval_config"]), benchmark_path, embeddings / "meta.json"]
+    for seed in config.training.seeds:
+        # Restore the trained encoder and its exported graph scores.
+        directory = config.runs_dir / "graphsage" / name / f"seed{seed}"
+        validate_run(
+            directory,
+            config,
+            seed,
         )
-        records.append({"query_id": query["query_id"], "image_id": image_id, **result.to_dict()})
-    inputs = [
-        directory.path / BEST_FILE,
-        directory.path / SETTINGS_FILE,
-        benchmark_path,
-        embeddings / META_FILE,
-        graph_path,
-        query_path,
-        processed / "images.json",
-    ]
-    return {
-        "run_name": name,
-        "seed": seed,
-        "split": split.value,
-        "alpha": alpha,
-        "top_k_selected_on_validation": selected["top_k"],
-        "sample": sample,
-        "budget": budget,
-        "protocol": "fixed checkpoint; true-image score; positive leave-one-out support; disjoint equal-budget control",
-        "limitations": [
-            "no rank-change measurement",
-            "no semantic validity claim",
-            "budget capped at half the relations",
-        ],
-        "inputs_sha256": {str(path): sha256_of(path) for path in inputs},
-        "queries": records,
+        model = GraphImageEncoder(
+            config.graphsage,
+            torch.from_numpy(concepts.vectors),
+            torch.from_numpy(predicates.vectors),
+            torch.from_numpy(image_table.vectors),
+        )
+        model.load_state_dict(RunDirectory(directory).load_best()["model"])
+        model.eval()
+        graph = graph_vector_scores(data, load_table(directory, "graph_vectors"))
+        choice = benchmark["seeds"][str(seed)]["selected_on_validation"]
+        alpha, top_k = choice["alpha"], choice["top_k"]
+        final = rerank_scores(
+            clip,
+            graph,
+            alpha,
+            top_k,
+        )
+        seed_records = []
+        for done, row in enumerate(rows, 1):
+            # Perturb the original prediction while all rival scores stay fixed.
+            target = int(np.argmax(final[row]))
+            image_id = data.image_ids[target]
+            result = joint_relation_fidelity(
+                model,
+                graphs[image_id],
+                image_table.row_of()[image_id],
+                torch.from_numpy(data.query_vectors[row]),
+                fractions,
+                repeats,
+                random_seed + row,
+                batch_size,
+            )
+            result.update(
+                query_id=data.query_ids[row],
+                text=query_of[data.query_ids[row]]["text"],
+                image_id=image_id,
+                predicted_image_is_relevant=target == int(data.relevant_columns[row]),
+            )
+
+            # Check score agreement before measuring rank changes.
+            if result["status"] == "evaluated":
+                if abs(result["baseline_graph_score"] - float(graph[row, target])) > 1e-5:
+                    raise DataError("checkpoint score differs from exported graph vectors")
+                for budget in result["budgets"]:
+                    budget.update(
+                        ranking_effects(
+                            final[row],
+                            target,
+                            float(clip[row, target]),
+                            alpha,
+                            budget,
+                        )
+                    )
+            seed_records.append(result)
+            if done % 25 == 0:
+                log.info("seed %s: %d/%d queries", seed, done, sample)
+
+        # Aggregate evaluated queries and retain skipped cases in the trace.
+        summary = []
+        for fraction in fractions:
+            budgets = [
+                b
+                for r in seed_records
+                if r["status"] == "evaluated"
+                for b in r["budgets"]
+                if b["fraction_requested"] == fraction
+            ]
+            keys = (
+                "selected_drop",
+                "random_drop_mean",
+                "excess_drop",
+                "positive_drop",
+                "beats_random_mean",
+                "selected_rank_increase",
+                "random_rank_increase_mean",
+                "selected_top1_lost",
+                "random_top1_lost_rate",
+            )
+            summary.append(
+                {
+                    "fraction": fraction,
+                    "evaluated": len(budgets),
+                    **{k: float(np.mean([b[k] for b in budgets])) if budgets else None for k in keys},
+                }
+            )
+        records[str(seed)] = {"selected_on_validation": choice, "summary": summary, "queries": seed_records}
+        inputs += [directory / "config.yaml", directory / "best.pt", directory / "graph_vectors.npy"]
+
+    # Save per-query evidence and hashes so this run can be audited.
+    output = {
+        "protocol": protocol,
+        "sampled_query_ids": [data.query_ids[i] for i in rows],
+        "seeds": records,
+        "target": "original_predicted_top1_image; all rival scores and CLIP candidates frozen",
+        "limitation": (
+            "Selected by single-deletion graph score; joint/rank tests are still selection-dependent diagnostics"
+        ),
+        "inputs_sha256": {str(p): sha256_of(p) for p in inputs},
     }
+    write_json(
+        Path(require_field(protocol, "output", str)),
+        output,
+    )
+    log.info("wrote %s", protocol["output"])
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default=DEFAULT_CONFIG)
-    parser.add_argument("--run", help="training run; defaults to the config's architecture")
-    parser.add_argument("--seed", type=int, help="trained seed; defaults to the first configured seed")
-    parser.add_argument("--split", choices=[Split.VAL.value, Split.TEST.value], default=Split.TEST.value)
-    parser.add_argument("--sample", type=int, default=10)
-    parser.add_argument("--budget", type=int, default=3)
-    parser.add_argument(
-        "--output", type=Path, required=True, help="new result file; existing files are never overwritten"
-    )
+    parser.add_argument("--config", default="configs/evaluation/fidelity.yaml")
     args = parser.parse_args()
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    logging.basicConfig(level=logging.INFO)
     try:
-        if args.output.exists():
-            raise DataError(f"output already exists: {args.output}")
-        config = RetrievalConfig.from_yaml(args.config)
-        result = run(
-            config,
-            args.run or config.graphsage.run_name(),
-            args.seed if args.seed is not None else config.training.seeds[0],
-            Split(args.split),
-            args.sample,
-            args.budget,
-        )
-        write_json(args.output, result)
-    except AppError:
-        log.exception("fidelity evaluation failed")
+        run(args.config)
+    except (AppError, ValueError):
+        log.exception("fidelity failed")
         return 1
     return 0
 

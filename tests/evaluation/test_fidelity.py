@@ -1,97 +1,143 @@
-from copy import deepcopy
-
+import numpy as np
 import pytest
 import torch
 
-from src.core.exceptions import ConfigError, DataError
-from src.evaluation.fidelity import evaluate_fidelity
-from src.models.graph_data import NodeKind
-from src.models.graphsage import GraphImageEncoder, GraphSageConfig, ImageNodeFeature
+from src.core.exceptions import DataError
+from src.evaluation.fidelity import joint_relation_fidelity, ranking_effects, remove_relations, target_rank
+from src.models.explain import score_graph_variants
+from tests.models.test_explain import GRAPH, _axis, _SumOfNodes
 
-GRAPH = {"vg_image_id": 7, "concept_ids": [0, 1, 2], "triplets": [[0, 0, 1], [0, 1, 2]]}
-DIM = 8
-
-
-class SumOfNodes(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.weight = torch.nn.Parameter(torch.zeros(1))
-
-    def forward(self, batch):
-        axes = torch.where(batch.node_kind == NodeKind.RELATION, batch.feature_row + 4, batch.feature_row)
-        features = torch.nn.functional.one_hot(axes, DIM).float()
-        features[batch.node_kind == NodeKind.IMAGE] = 0
-        sums = torch.zeros(batch.num_graphs, DIM).index_add_(0, batch.batch, features)
-        return torch.nn.functional.normalize(sums, dim=-1)
+GRAPH3 = {**GRAPH, "triplets": [[0, 0, 1], [0, 1, 2], [1, 1, 2]]}
 
 
-def axis(index):
-    return torch.nn.functional.one_hot(torch.tensor(index), DIM).float()
+def test_removal_keeps_concepts_and_rejects_invalid_indices():
+    g = remove_relations(GRAPH3, [0, 2])
+    assert g["concept_ids"] == GRAPH3["concept_ids"]
+    assert g["triplets"] == [[0, 1, 2]]
+    assert len(GRAPH3["triplets"]) == 3
+    for bad in ([1, 1], [-1], [3]):
+        with pytest.raises(DataError):
+            remove_relations(GRAPH3, bad)
 
 
-def test_known_support_beats_disjoint_control_and_scales_to_final_score():
-    original = deepcopy(GRAPH)
-    result = evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(4), budget=3, seed=13, alpha=0.8)
-    assert result.selected_indices == (0,) and result.control_indices == (1,)
-    assert result.relation_count == 2 and result.requested_budget == 3
-    assert result.graph_score == pytest.approx(1 / 5**0.5)
-    assert result.removed_graph_score == 0
-    assert result.control_graph_score == pytest.approx(0.5)
-    values = result.to_dict()
-    assert values["final_score_drop"] == pytest.approx(0.2 / 5**0.5)
-    assert values["control_final_score_drop"] < 0 < values["final_score_drop"]
-    assert values["sparsity"] == 0.5 and result.status == "controlled"
-    assert original == GRAPH
-    assert result == evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(4), budget=3, seed=13, alpha=0.8)
+def test_chunked_scoring_is_equivalent():
+    variants = [GRAPH3, remove_relations(GRAPH3, [0]), remove_relations(GRAPH3, [1, 2])]
+    model = _SumOfNodes()
+    torch.testing.assert_close(
+        score_graph_variants(
+            model,
+            variants,
+            0,
+            _axis(4),
+            1,
+        ),
+        score_graph_variants(
+            model,
+            variants,
+            0,
+            _axis(4),
+            64,
+        ),
+    )
 
 
-def test_no_support_or_no_disjoint_control_is_explicit():
-    result = evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(0), budget=1, seed=13, alpha=0.8)
-    assert result.status == "no_supporting_relations"
-    assert result.to_dict()["control_final_score_drop"] is None
-    for triplets in ([], [[0, 0, 1]]):
-        result = evaluate_fidelity(
-            SumOfNodes(), {**GRAPH, "triplets": triplets}, 0, axis(4), budget=1, seed=13, alpha=0.8
+def test_joint_control_budget_is_fair_and_seeded_with_signed_effects():
+    model = _SumOfNodes()
+    r = joint_relation_fidelity(
+        model,
+        GRAPH3,
+        0,
+        _axis(4),
+        [0.1, 0.25],
+        20,
+        7,
+    )
+    assert r == joint_relation_fidelity(
+        model,
+        GRAPH3,
+        0,
+        _axis(4),
+        [0.1, 0.25],
+        20,
+        7,
+    )
+    baseline = 1 / 8**0.5  # objects each weight 1, predicate axes weights 1 and 2
+    assert r["baseline_graph_score"] == pytest.approx(baseline)
+    for b in r["budgets"]:
+        assert b["removed"] == 2  # lower bound for joint-deletion, one relation remains
+        assert 0 in b["selected_indices"]  # query-matching predicate
+        assert b["selected_score"] == pytest.approx(0)
+        assert b["selected_drop"] == pytest.approx(baseline)
+        assert len(b["random_indices"]) == 20
+        assert all(len(set(indices)) == 2 for indices in b["random_indices"])
+        assert any(score > baseline for score in b["random_scores"])  # negative drops retained
+        assert b["excess_drop"] == pytest.approx(b["selected_drop"] - b["random_drop_mean"])
+    assert (
+        joint_relation_fidelity(
+            model,
+            GRAPH,
+            0,
+            _axis(4),
+            [0.25],
+            20,
+            7,
+        )["status"]
+        == "skipped"
+    )
+
+
+def test_ranks_use_frozen_competitors_and_conservative_ties():
+    scores = np.array([0.7, 0.6, 0.4])
+    assert (
+        target_rank(
+            scores,
+            0,
+            0.6,
         )
-        assert result.status == "insufficient_relations" and not result.selected_indices
+        == 2
+    )
+    assert (
+        target_rank(
+            scores,
+            0,
+            0.3,
+        )
+        == 3
+    )
+    # alpha=1 makes prediction completely independent of graph interventions.
+    budget = {"selected_score": -1, "random_scores": [-1, 0, 1]}
+    out = ranking_effects(
+        scores,
+        0,
+        0.7,
+        1,
+        budget,
+    )
+    assert out["selected_rank_increase"] == out["fused_score_drop"] == 0
+    assert out["random_top1_lost_rate"] == 0
+    assert np.array_equal(scores, [0.7, 0.6, 0.4])
+    out = ranking_effects(
+        scores,
+        0,
+        0.7,
+        0.5,
+        budget,
+    )
+    assert out["selected_rank"] == 3 and out["selected_top1_lost"]
 
 
-def test_joint_effect_is_recomputed_instead_of_summing_individual_deltas():
-    graph = {**GRAPH, "concept_ids": [0, 1], "triplets": [[0, p, 1] for p in range(4)]}
-    query = (axis(4) + axis(5)) / 2**0.5
-    result = evaluate_fidelity(SumOfNodes(), graph, 0, query, budget=2, seed=37, alpha=0)
-    assert len(result.selected_indices) == len(result.control_indices) == 2
-    assert not set(result.selected_indices) & set(result.control_indices)
-    assert result.removed_graph_score == 0
-    assert result.to_dict()["final_score_drop"] == pytest.approx(2 / 12**0.5)
-
-
-def test_alpha_one_has_zero_fused_drop_even_when_graph_changes():
-    result = evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(4), budget=1, seed=13, alpha=1)
-    assert result.to_dict()["final_score_drop"] == result.to_dict()["control_final_score_drop"] == 0
-
-
-@pytest.mark.parametrize("options", [{"budget": 0}, {"seed": -1}, {"alpha": float("nan")}, {"alpha": 2}])
-def test_invalid_protocol_is_rejected(options):
-    with pytest.raises(ConfigError):
-        evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(4), **({"budget": 1, "seed": 13, "alpha": 0.8} | options))
-
-
-def test_bad_query_is_rejected():
+@pytest.mark.parametrize("fractions,repeats", [([], 1), ([0], 1), ([1], 1), ([0.2], 0)])
+def test_invalid_protocol_is_rejected(
+    fractions,
+    repeats,
+):
     with pytest.raises(DataError):
-        evaluate_fidelity(SumOfNodes(), GRAPH, 0, torch.zeros(2, DIM), budget=1, seed=13, alpha=0.8)
-
-
-def test_existing_graphsage_accepts_perturbed_graphs():
-    torch.manual_seed(13)
-    vectors = lambda n: torch.nn.functional.normalize(torch.randn(n, DIM), dim=-1)  # noqa: E731
-    model = GraphImageEncoder(GraphSageConfig(8, 3, True, ImageNodeFeature.LEARNED), vectors(3), vectors(2))
-    result = evaluate_fidelity(model, GRAPH, 0, vectors(1)[0], budget=1, seed=13, alpha=0.8)
-    assert -1 <= result.graph_score <= 1 and not model.training
-
-
-def test_non_candidate_graph_changes_do_not_change_final_score():
-    result = evaluate_fidelity(SumOfNodes(), GRAPH, 0, axis(4), budget=1, seed=13, alpha=0.8, is_candidate=False)
-    assert result.graph_score > result.removed_graph_score
-    assert result.to_dict()["final_score_drop"] == result.to_dict()["control_final_score_drop"] == 0
-    assert not result.is_candidate
+        joint_relation_fidelity(
+            _SumOfNodes(),
+            GRAPH3,
+            0,
+            _axis(4),
+            fractions,
+            repeats,
+            7,
+        )

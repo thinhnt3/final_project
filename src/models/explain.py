@@ -1,8 +1,7 @@
 """Explain a graph score: how much each relation of the image contributes to it."""
-
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
@@ -43,11 +42,21 @@ def explain_graph_score(
     large positive drop means the score relied on that relation; a negative one means the
     relation pulled the score down. The same removal is what a fidelity test perturbs.
     """
+    if query_vector.ndim != 1:
+        raise DataError(f"query vector must be one-dimensional, got shape {tuple(query_vector.shape)}")
     triplets = [tuple(int(v) for v in t) for t in image_graph["triplets"]]
     variants = [image_graph] + [
-        {**image_graph, "triplets": triplets[:position] + triplets[position + 1 :]} for position in range(len(triplets))
+        {**image_graph, "triplets": triplets[:position] + triplets[position + 1:]}
+        for position in range(len(triplets))
     ]
-    scores = score_graph_variants(model, variants, image_row, query_vector)
+
+    # Share the same chunked scorer with the fidelity interventions.
+    scores = score_graph_variants(
+        model,
+        variants,
+        image_row,
+        query_vector,
+    )
     full_score = float(scores[0])
     contributions = [
         RelationContribution(
@@ -65,19 +74,31 @@ def explain_graph_score(
 @torch.no_grad()
 def score_graph_variants(
     model: nn.Module,
-    variants: Sequence[Mapping[str, Any]],
+    variants: list[Mapping[str, Any]],
     image_row: int,
     query_vector: torch.Tensor,
-) -> tuple[float, ...]:
-    """Score variants of one image with fixed features and one fixed query."""
-    if query_vector.ndim != 1:
-        raise DataError(f"query vector must be one-dimensional, got shape {tuple(query_vector.shape)}")
-    if not variants or not torch.isfinite(query_vector).all():
-        raise DataError("need graph variants and a finite query vector")
+    batch_size: int = 64,
+) -> torch.Tensor:
+    """Graph cosine for each supplied intervention, chunked to bound batch memory."""
+    if batch_size < 1 or query_vector.ndim != 1 or not variants:
+        raise DataError("need non-empty variants, batch_size >= 1 and a one-dimensional query")
     model.eval()
     device = next(model.parameters()).device
-    batch = Batch.from_data_list([image_graph_to_data(variant, image_row) for variant in variants]).to(device)
-    scores = model(batch) @ query_vector.to(device)
+
+    # Bound memory by evaluating graph variants in small batches.
+    outputs = []
+    for start in range(
+        0,
+        len(variants),
+        batch_size,
+    ):
+        batch = Batch.from_data_list(
+            [image_graph_to_data(graph, image_row) for graph in variants[start : start + batch_size]]
+        ).to(device)
+        outputs.append((model(batch) @ query_vector.to(device)).cpu())
+
+    # Fail explicitly instead of writing NaN scores into explanations.
+    scores = torch.cat(outputs)
     if not torch.isfinite(scores).all():
-        raise DataError("graph variant scores contain NaN or infinity")
-    return tuple(float(score) for score in scores.cpu())
+        raise DataError("graph intervention produced non-finite scores")
+    return scores

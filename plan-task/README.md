@@ -1,6 +1,6 @@
 # Plan task - Text-to-image with graph reranking
 
-> **Ghi chú 18/11/2026: tài liệu này đã cũ.** Nó được viết cho bản thử 40 ảnh (10/11/2026). Code và đường dẫn nhắc tới bên dưới phần lớn đã bị xoá khi dự án chuyển sang tập VG ∩ COCO 10.000 ảnh; trạng thái các task cũng không còn đúng. Trạng thái hiện hành nằm ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`, `docs/README.md` và `CLAUDE.md`. Các quy tắc chống rò rỉ dữ liệu, dùng chung split và tập ứng viên, và chạy ít nhất 3 seed vẫn áp dụng.
+> **Ghi chú 18/11/2026:** bảng trạng thái P0–P5 trong file này viết cho bản thử 40 ảnh (10/11/2026) và không còn đúng. Tiến độ nghiệm thu hiện hành nằm ở [requirements-checklist.md](requirements-checklist.md); kế hoạch ở `plans/261117-0037-multimodal-graph-retrieval-roadmap/`; phân công ở `task.md`; giải thích dự án ở `docs/README.md`. Các quy tắc chống rò rỉ dữ liệu, dùng chung split và tập ứng viên, và chạy ít nhất 3 seed vẫn áp dụng.
 
 ## Phạm vi đề xuất
 

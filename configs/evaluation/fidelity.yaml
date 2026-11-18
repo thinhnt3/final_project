@@ -1,0 +1,10 @@
+# Fixed before inspecting fidelity results. Diagnostic on the full frozen model.
+retrieval_config: configs/retrieval/ablations/full.yaml
+split: test
+sample_queries: 200
+sample_seed: 2026
+fractions: [0.1, 0.25]
+random_repeats: 20
+random_seed: 731
+batch_size: 64
+output: runs/fidelity/full-joint-test.json

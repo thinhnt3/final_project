@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>File chấm validity v2 — người audit</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #fafafa;
+        --panel: #fff;
+        --ink: #18181b;
+        --muted: #52525b;
+        --line: #d4d4d8;
+        --accent: #0f766e;
+        --soft: #e7f5f1;
+        --warn: #92400e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          16px/1.65 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        margin: 0;
+      }
+      main {
+        max-width: 1080px;
+        margin: auto;
+        padding: 30px 22px 70px;
+      }
+      h1 {
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        line-height: 1.25;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      p {
+        margin-top: 0;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 18px 0;
+      }
+      .notice {
+        background: var(--soft);
+        border-left: 4px solid var(--accent);
+        padding: 14px 18px;
+        border-radius: 7px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 12px 0 5px;
+      }
+      input[type="text"],
+      select,
+      textarea {
+        font: inherit;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel);
+        color: var(--ink);
+        padding: 9px;
+      }
+      textarea {
+        min-height: 82px;
+        resize: vertical;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: var(--panel);
+        color: var(--ink);
+      }
+      button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        align-items: center;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+      }
+      .grid > * {
+        min-width: 0;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+        max-height: 600px;
+        object-fit: contain;
+        margin: auto;
+        border-radius: 7px;
+      }
+      .claim {
+        font-size: 1.17rem;
+        font-weight: 700;
+        color: var(--accent);
+        overflow-wrap: anywhere;
+      }
+      blockquote {
+        margin: 12px 0;
+        padding: 12px 16px;
+        border-left: 3px solid var(--line);
+        background: var(--bg);
+      }
+      .status {
+        font-size: 0.9rem;
+        color: var(--warn);
+        min-height: 1.5em;
+        overflow-wrap: anywhere;
+      }
+      progress {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 650;
+        color: var(--accent);
+      }
+      .check {
+        display: flex;
+        gap: 9px;
+        align-items: flex-start;
+        font-weight: 400;
+      }
+      a {
+        color: var(--accent);
+      }
+      :focus-visible {
+        outline: 3px solid #5eead4;
+        outline-offset: 2px;
+      }
+      pre {
+        overflow: auto;
+        font-size: 0.8rem;
+      }
+      @media (max-width: 750px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        main {
+          padding: 20px 14px 50px;
+        }
+        .panel {
+          padding: 14px;
+        }
+        img {
+          max-height: 430px;
+        }
+      }
+      @media print {
+        button,
+        .controls,
+        input,
+        textarea,
+        select {
+          display: none;
+        }
+        main {
+          padding: 0;
+        }
+        body {
+          font-size: 11px;
+        }
+        .panel {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="muted">
+          <span id="dataset-info">Validity v2 · chưa nạp bộ chấm</span>
+        </p>
+        <h1>File chấm validity cho người audit</h1>
+        <div class="notice">
+          Trang này không chứa nhãn máy, score drop hoặc nhãn prediction
+          đúng/sai. Hãy chấm theo ảnh và query. Chỉ xem kết quả máy sau khi đã
+          xuất bản nhãn hoàn chỉnh.
+        </div>
+      </header>
+      <section class="panel">
+        <h2>Nạp bộ chấm local</h2>
+        <label for="package-file"
+          >Chọn file validity-audit.json được xuất bằng
+          scripts.prepare_validity_review</label
+        ><input id="package-file" type="file" accept="application/json" />
+        <p id="package-status" class="status" role="status" aria-live="polite">
+          Form không gửi ảnh hoặc nhãn qua mạng. Số query/quan hệ lấy từ file
+          bạn chọn.
+        </p>
+        <p class="muted">
+          <a href="README.md">Hướng dẫn xuất bộ chấm và dùng form</a>.
+        </p>
+      </section>
+      <section class="panel" id="reviewer-panel" hidden>
+        <h2>Thông tin reviewer</h2>
+        <label for="reviewer">Tên hoặc mã người chấm</label
+        ><input
+          id="reviewer"
+          type="text"
+          autocomplete="off"
+          placeholder="Tự nhập tên/mã của bạn"
+        />
+        <label for="exposure"
+          >Bạn đã từng xem nhãn AI của từng quan hệ trong mẫu này chưa?</label
+        ><select id="exposure">
+          <option value="">Chọn câu trả lời</option>
+          <option value="no">Chưa xem nhãn từng quan hệ</option>
+          <option value="yes">Đã xem một phần hoặc toàn bộ</option>
+          <option value="unsure">Không chắc / không nhớ</option>
+        </select>
+        <p class="muted">
+          Khai báo trung thực để báo cáo đúng mức độc lập. Việc đã đọc số tổng
+          hợp không đồng nghĩa đã xem từng nhãn.
+        </p>
+        <label class="check"
+          ><input type="checkbox" id="attestation" /><span
+            >Tôi tự đối chiếu ảnh/query trong lượt audit này; không sao chép đáp
+            án AI để điền nhãn người.</span
+          ></label
+        >
+        <div class="controls">
+          <button id="draft">Tải nháp JSON</button
+          ><button id="final" class="primary">Xuất nhãn hoàn chỉnh</button
+          ><button id="load">Mở lại nháp JSON</button
+          ><input id="file" type="file" accept="application/json" hidden />
+        </div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <p class="muted">
+          <a href="README.md">Hướng dẫn chấm và nơi lưu kết quả</a>. Tiến độ tự
+          lưu trong trình duyệt này. Tải nháp để sao lưu hoặc chuyển máy; chưa
+          xuất nhãn nào nghĩa là chưa có human audit hoàn chỉnh.
+        </p>
+      </section>
+      <section class="panel" id="rubric-panel" hidden>
+        <details>
+          <summary>Rubric và ví dụ biên — đọc trước khi chấm</summary>
+          <h2>A. Đúng về ảnh</h2>
+          <p>
+            <strong>Supported:</strong> ảnh có căn cứ cho cả chủ thể, đối tượng
+            và quan hệ đúng hướng. <strong>Refuted:</strong> có bằng chứng đối
+            lập rõ. <strong>Uncertain:</strong> ảnh mờ, vật bị che, không biết
+            đúng instance hoặc quan hệ không nhìn thấy được. Không thấy rõ chưa
+            đủ để chấm sai.
+          </p>
+          <h2>B. Liên quan query</h2>
+          <p>
+            <strong>Direct support:</strong> hỗ trợ một nội dung trung tâm hoặc
+            ràng buộc query yêu cầu, phải trích đúng cụm query.
+            <strong>Context only:</strong> chỉ liên hệ bối cảnh, ví dụ tất của
+            người trượt ván khi query hỏi cú nhảy.
+            <strong>Unrelated:</strong> không hỗ trợ query.
+            <strong>Uncertain:</strong> câu hỏi/quan hệ mơ hồ.
+          </p>
+          <p>
+            Relation có thể đúng ảnh nhưng chỉ là bối cảnh. Đừng đổi nhãn ảnh
+            chỉ vì relation không liên quan query. Một relation cũng không cần
+            tự chứng minh toàn bộ câu query.
+          </p>
+          <p class="muted">
+            Giữ uncertain nếu chưa chắc; giải thích rõ điều không xác định được.
+            Không suy ra dự đoán đúng chỉ vì ảnh có vẻ hợp query: bộ retrieval
+            hiện dùng một ảnh đích theo ID.
+          </p>
+        </details>
+      </section>
+      <section class="panel" id="scoring-panel" hidden>
+        <div class="controls">
+          <button id="prev">← Trước</button><button id="next">Sau →</button
+          ><button id="unfinished">Ca chưa đủ nhãn tiếp theo</button
+          ><span id="counter"></span>
+        </div>
+        <progress
+          id="progress"
+          value="0"
+          max="1"
+          aria-label="Số relation đã chấm đủ"
+        ></progress>
+        <p id="progress-text" class="muted" aria-live="polite"></p>
+        <div class="grid">
+          <div>
+            <img id="photo" alt="Ảnh gốc cần đối chiếu" />
+            <p id="image-id" class="muted"></p>
+          </div>
+          <div>
+            <p class="muted">Query</p>
+            <blockquote id="query"></blockquote>
+            <p class="muted">Quan hệ cần kiểm chứng</p>
+            <p id="claim" class="claim"></p>
+            <p id="question"></p>
+            <label for="visual">A. Ảnh hỗ trợ quan hệ này không?</label
+            ><select id="visual">
+              <option value="">Chưa chấm</option>
+              <option value="supported">Supported — có căn cứ trong ảnh</option>
+              <option value="refuted">Refuted — có bằng chứng đối lập</option>
+              <option value="uncertain">Uncertain — chưa thể xác định</option>
+            </select>
+            <label for="visual-reason">Căn cứ hoặc điều chưa rõ trong ảnh</label
+            ><textarea
+              id="visual-reason"
+              placeholder="Mô tả chi tiết nhìn thấy, hoặc lý do chưa thể xác định"
+            ></textarea>
+            <label for="relevance">B. Quan hệ hỗ trợ query ở mức nào?</label
+            ><select id="relevance">
+              <option value="">Chưa chấm</option>
+              <option value="direct_support">
+                Direct support — hỗ trợ nội dung được hỏi
+              </option>
+              <option value="context_only">
+                Context only — chỉ liên hệ bối cảnh
+              </option>
+              <option value="unrelated">Unrelated — không hỗ trợ query</option>
+              <option value="uncertain">Uncertain — chưa thể xác định</option>
+            </select>
+            <label for="span"
+              >Cụm query được hỗ trợ — bắt buộc nếu Direct support</label
+            ><input
+              id="span"
+              type="text"
+              placeholder="Copy một cụm nguyên văn trong query"
+            />
+            <label for="relevance-reason"
+              >Vì sao liên quan hoặc không liên quan?</label
+            ><textarea
+              id="relevance-reason"
+              placeholder="Nêu relation hỗ trợ nội dung gì; chung ảnh/chung một từ chưa tự đủ"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+      <footer class="muted">
+        <p>
+          <a href="README.md">Thiết kế đầy đủ và cách xử lý bất đồng</a>. Form
+          chỉ ghi nhãn người; nạp dữ liệu và xuất completed không tự chạy judge
+          hoặc tính agreement.
+        </p>
+      </footer>
+    </main>
+    <script>
+      "use strict";
+      const el = (id) => document.getElementById(id);
+      function validatePackage(value) {
+        if (
+          !value ||
+          value.schema_version !== "validity-v2-package" ||
+          !/^[a-f0-9]{64}$/.test(value.manifest_sha256) ||
+          !/^[a-f0-9]{64}$/.test(value.rubric_sha256) ||
+          !Array.isArray(value.items) ||
+          !value.items.length ||
+          !value.photos ||
+          typeof value.photos !== "object"
+        )
+          throw Error("Sai schema hoặc thiếu item/ảnh/hash.");
+        const seen = new Set();
+        for (const item of value.items) {
+          if (
+            !item ||
+            typeof item.audit_id !== "string" ||
+            !item.audit_id ||
+            seen.has(item.audit_id) ||
+            !Number.isSafeInteger(item.image_id) ||
+            item.image_id < 0 ||
+            !Number.isSafeInteger(item.relation_index) ||
+            item.relation_index < 0 ||
+            [
+              "query_id",
+              "query",
+              "subject",
+              "predicate",
+              "object",
+              "visual_question",
+            ].some(
+              (field) => typeof item[field] !== "string" || !item[field].trim(),
+            ) ||
+            !/^data:image\/(jpeg|png|webp);base64,/.test(
+              value.photos[String(item.image_id)] || "",
+            )
+          )
+            throw Error("Item trùng/không hợp lệ hoặc thiếu ảnh embedded.");
+          seen.add(item.audit_id);
+        }
+        return value;
+      }
+      el("package-file").onchange = async () => {
+        try {
+          const file = el("package-file").files[0];
+          if (!file) return;
+          const data = validatePackage(JSON.parse(await file.text()));
+          startAudit(data);
+          el("package-status").textContent =
+            "Đã nạp bộ chấm. Nhãn người được lưu riêng theo manifest.";
+        } catch (error) {
+          el("package-status").textContent = "Không nạp được: " + error.message;
+        } finally {
+          el("package-file").value = "";
+        }
+      };
+      function startAudit(data) {
+        for (const id of ["reviewer-panel", "rubric-panel", "scoring-panel"])
+          el(id).hidden = false;
+        el("dataset-info").textContent =
+          `Validity v2 · ${new Set(data.items.map((item) => item.query_id)).size} query / ${data.items.length} quan hệ`;
+        el("progress").max = data.items.length;
+        el("status").textContent = "";
+        const key = "validity-human-v2-" + data.manifest_sha256;
+        const visualLabels = ["supported", "refuted", "uncertain"];
+        const relevanceLabels = [
+          "direct_support",
+          "context_only",
+          "unrelated",
+          "uncertain",
+        ];
+        let index = 0,
+          state = {
+            reviewer_id: "",
+            prior_item_labels_seen: "",
+            attestation: false,
+            annotations: {},
+          };
+        try {
+          const saved = JSON.parse(localStorage.getItem(key) || "null");
+          if (saved && saved.manifest_sha256 === data.manifest_sha256)
+            state = saved.state;
+        } catch {}
+        const current = () => data.items[index];
+        function validAnnotation(item, a) {
+          return Boolean(
+            a &&
+              typeof a.visual_reason === "string" &&
+              typeof a.query_reason === "string" &&
+              typeof a.query_span === "string" &&
+              visualLabels.includes(a.visual_label) &&
+              a.visual_reason.trim() &&
+              relevanceLabels.includes(a.query_label) &&
+              a.query_reason.trim() &&
+              (a.query_label !== "direct_support" ||
+                (a.query_span.trim() &&
+                  item.query.includes(a.query_span.trim()))),
+          );
+        }
+        function persist() {
+          try {
+            localStorage.setItem(
+              key,
+              JSON.stringify({ manifest_sha256: data.manifest_sha256, state }),
+            );
+          } catch {
+            el("status").textContent =
+              "Không lưu được vào trình duyệt; hãy tải nháp JSON.";
+          }
+          updateProgress();
+        }
+        function updateProgress() {
+          const done = data.items.filter((item) =>
+            validAnnotation(item, state.annotations[item.audit_id]),
+          ).length;
+          el("progress").value = done;
+          el("progress-text").textContent =
+            `Đã chấm đủ ${done}/${data.items.length} quan hệ. Nhãn chưa rõ vẫn hợp lệ nếu có lý do.`;
+        }
+        function storeForm() {
+          const item = current();
+          state.annotations[item.audit_id] = {
+            audit_id: item.audit_id,
+            visual_label: el("visual").value,
+            visual_reason: el("visual-reason").value,
+            query_label: el("relevance").value,
+            query_span:
+              el("relevance").value === "direct_support"
+                ? el("span").value
+                : "",
+            query_reason: el("relevance-reason").value,
+          };
+          persist();
+        }
+        function show() {
+          const item = current(),
+            a = state.annotations[item.audit_id] || {};
+          el("photo").src = data.photos[String(item.image_id)];
+          el("photo").alt = "Ảnh VG " + item.image_id;
+          el("image-id").textContent =
+            "VG " + item.image_id + " · " + item.query_id;
+          el("query").textContent = item.query;
+          el("claim").textContent =
+            item.subject + " → " + item.predicate + " → " + item.object;
+          el("question").textContent = item.visual_question;
+          el("visual").value = a.visual_label || "";
+          el("visual-reason").value = a.visual_reason || "";
+          el("relevance").value = a.query_label || "";
+          el("span").value = a.query_span || "";
+          el("relevance-reason").value = a.query_reason || "";
+          el("counter").textContent =
+            `Quan hệ ${index + 1}/${data.items.length}`;
+          el("prev").disabled = index === 0;
+          el("next").disabled = index === data.items.length - 1;
+          updateProgress();
+        }
+        function exportReview(completed) {
+          storeForm();
+          const missing = data.items.filter(
+            (item) => !validAnnotation(item, state.annotations[item.audit_id]),
+          );
+          if (
+            completed &&
+            (!state.reviewer_id.trim() ||
+              !["yes", "no", "unsure"].includes(state.prior_item_labels_seen) ||
+              !state.attestation ||
+              missing.length)
+          ) {
+            el("status").textContent =
+              `Chưa xuất hoàn chỉnh: cần thông tin/khai báo reviewer, xác nhận tự chấm và nhãn đủ. Còn ${missing.length} quan hệ thiếu hoặc cụm query chưa khớp.`;
+            return;
+          }
+          const result = {
+            schema_version: "validity-v2",
+            status: completed ? "completed" : "draft",
+            manifest_sha256: data.manifest_sha256,
+            rubric_sha256: data.rubric_sha256,
+            reviewer_type: "human",
+            reviewer_id: state.reviewer_id.trim(),
+            prior_item_labels_seen: state.prior_item_labels_seen,
+            independent_annotation_attested: state.attestation,
+            exported_at: new Date().toISOString(),
+            annotations: data.items
+              .map((item) => state.annotations[item.audit_id])
+              .filter(Boolean),
+          };
+          const blob = new Blob([JSON.stringify(result, null, 2)], {
+              type: "application/json",
+            }),
+            url = URL.createObjectURL(blob),
+            a = document.createElement("a");
+          a.href = url;
+          const stamp = result.exported_at.replace(/[:.]/g, "-"),
+            reviewerSlug =
+              result.reviewer_id
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9_-]+/g, "-") || "reviewer";
+          a.download = `human-review-v2-${reviewerSlug}-${stamp}${completed ? "" : "-draft"}.json`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          el("status").textContent = completed
+            ? "Đã xuất nhãn người hoàn chỉnh. Giữ file này trước khi mở kết quả máy để so sánh."
+            : "Đã xuất nháp; file nháp không được tính là audit hoàn chỉnh.";
+        }
+        el("reviewer").value = state.reviewer_id;
+        el("exposure").value = state.prior_item_labels_seen;
+        el("attestation").checked = state.attestation;
+        for (const id of [
+          "visual",
+          "visual-reason",
+          "relevance",
+          "span",
+          "relevance-reason",
+        ])
+          el(id).oninput = storeForm;
+        el("reviewer").oninput = () => {
+          state.reviewer_id = el("reviewer").value;
+          persist();
+        };
+        el("exposure").onchange = () => {
+          state.prior_item_labels_seen = el("exposure").value;
+          persist();
+        };
+        el("attestation").onchange = () => {
+          state.attestation = el("attestation").checked;
+          persist();
+        };
+        el("prev").onclick = () => {
+          storeForm();
+          index = Math.max(0, index - 1);
+          show();
+        };
+        el("next").onclick = () => {
+          storeForm();
+          index = Math.min(data.items.length - 1, index + 1);
+          show();
+        };
+        el("unfinished").onclick = () => {
+          storeForm();
+          for (let offset = 1; offset <= data.items.length; offset++) {
+            const candidate = (index + offset) % data.items.length;
+            if (
+              !validAnnotation(
+                data.items[candidate],
+                state.annotations[data.items[candidate].audit_id],
+              )
+            ) {
+              index = candidate;
+              show();
+              return;
+            }
+          }
+          el("status").textContent =
+            "Tất cả quan hệ đã đủ nhãn; kiểm tra thông tin reviewer rồi xuất hoàn chỉnh.";
+        };
+        el("draft").onclick = () => exportReview(false);
+        el("final").onclick = () => exportReview(true);
+        el("load").onclick = () => el("file").click();
+        el("file").onchange = async () => {
+          try {
+            const file = el("file").files[0];
+            if (!file) return;
+            const review = JSON.parse(await file.text());
+            if (
+              review.schema_version !== "validity-v2" ||
+              review.reviewer_type !== "human" ||
+              review.manifest_sha256 !== data.manifest_sha256 ||
+              review.rubric_sha256 !== data.rubric_sha256 ||
+              !Array.isArray(review.annotations)
+            )
+              throw Error("Sai schema, rubric, nguồn reviewer hoặc manifest.");
+            const allowed = new Set(data.items.map((item) => item.audit_id)),
+              seen = new Set();
+            for (const a of review.annotations) {
+              if (
+                !a ||
+                !allowed.has(a.audit_id) ||
+                seen.has(a.audit_id) ||
+                ["visual_reason", "query_reason", "query_span"].some(
+                  (field) => typeof a[field] !== "string",
+                ) ||
+                (a.visual_label !== "" &&
+                  !visualLabels.includes(a.visual_label)) ||
+                (a.query_label !== "" &&
+                  !relevanceLabels.includes(a.query_label))
+              )
+                throw Error("Nhãn trùng, không hợp lệ hoặc không thuộc mẫu.");
+              seen.add(a.audit_id);
+            }
+            state = {
+              reviewer_id: String(review.reviewer_id || ""),
+              prior_item_labels_seen: review.prior_item_labels_seen || "",
+              attestation: review.independent_annotation_attested === true,
+              annotations: Object.fromEntries(
+                review.annotations.map((a) => [a.audit_id, a]),
+              ),
+            };
+            el("reviewer").value = state.reviewer_id;
+            el("exposure").value = state.prior_item_labels_seen;
+            el("attestation").checked = state.attestation;
+            persist();
+            show();
+            el("status").textContent = "Đã khôi phục nhãn người từ file.";
+          } catch (e) {
+            el("status").textContent = "Không mở được: " + e.message;
+          } finally {
+            el("file").value = "";
+          }
+        };
+        show();
+      }
+    </script>
+  </body>
+</html>
