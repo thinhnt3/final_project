@@ -105,6 +105,10 @@ def main() -> int:
     parser.add_argument("--runs-dir", type=Path, help="read trained runs and benchmarks here instead")
     parser.add_argument("--run", action="append", metavar="METHOD:RUN", help="score these instead; repeatable")
     parser.add_argument("--out", default="relation_queries", help="report name under <runs_dir>/analysis")
+    parser.add_argument(
+        "--save-ranks", action="store_true",
+        help="also write <out>.ranks.npz: per seed and query, the confuser rank (for paired bootstrap)",
+    )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     try:
@@ -135,11 +139,17 @@ def main() -> int:
         # results[method][setting][kind][group] -> list of per-seed metric dicts
         results: dict[str, dict[str, dict[str, dict[str, list[dict[str, float]]]]]] = {}
 
+        saved_ranks: dict[str, list[np.ndarray]] = {}
+
         def record(method: str, setting: str, kind: QueryKind, scores: np.ndarray) -> None:
             _, data, groups = kinds[kind]
             slot = results.setdefault(method, {}).setdefault(setting, {}).setdefault(kind.value, {})
             for group, (rows, confusers) in groups.items():
                 slot.setdefault(group, []).append(_metrics(scores, data, confusers, rows, ks))
+                if args.save_ranks and kind is QueryKind.RELATION:
+                    relevant = data.relevant_columns[rows].tolist()
+                    ranks = confuser_ranks(scores[rows], relevant, [confusers[r] for r in rows])
+                    saved_ranks.setdefault(f"{method}|{setting}|{group}", []).append(ranks)
 
         for kind in QueryKind:
             record("clip", "clip", kind, clip_scores(kinds[kind][1]))
@@ -204,6 +214,15 @@ def main() -> int:
         }
         out = config.runs_dir / "analysis" / f"{args.out}.json"
         write_json(out, report)
+        if args.save_ranks:
+            # Keys "method|setting|group" → (seeds, queries) ranks; relevant image ids for clustering.
+            relation_queries, relation_data, groups = kinds[QueryKind.RELATION]
+            arrays: dict[str, Any] = {key: np.stack(r) for key, r in saved_ranks.items()}
+            arrays.update({
+                f"image_ids|{g}": np.asarray(relation_data.image_ids)[relation_data.relevant_columns[rows]]
+                for g, (rows, _) in groups.items()
+            })
+            np.savez_compressed(out.with_suffix(".ranks.npz"), allow_pickle=False, **arrays)
         log.info("wrote %s", out)
     except AppError:
         log.exception("relation query evaluation failed")
