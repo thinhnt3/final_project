@@ -50,3 +50,37 @@ def build_retrieval_set(
     query_ids = [query_id for image_id in image_ids for query_id in sorted(queries_of[image_id])]
     vectors = torch.from_numpy(query_table.select(query_ids)).reshape(len(image_ids), counts.pop(), -1)
     return RetrievalSet(graphs=graphs, caption_vectors=vectors), image_ids
+
+
+def hard_negative_partners(
+    image_graphs: Sequence[Mapping[str, Any]], image_ids: Sequence[int], limit: int
+) -> tuple[tuple[int, ...], ...]:
+    """For each image (by position in `image_ids`), up to `limit` positions of hard negatives.
+
+    A hard negative of an image holds both objects of one of its triplets but not that
+    triplet, so only the relation tells the two apart. Rarer object pairs are used first,
+    so hub pairs such as (man, shirt) do not fill every list.
+    """
+    graph_of = {int(g["vg_image_id"]): g for g in image_graphs}
+    concepts = [{int(c) for c in graph_of[i]["concept_ids"]} for i in image_ids]
+    triplets = [{(int(s), int(p), int(o)) for s, p, o in graph_of[i]["triplets"]} for i in image_ids]
+    holders: dict[int, set[int]] = defaultdict(set)
+    for position, ids in enumerate(concepts):
+        for concept in ids:
+            holders[concept].add(position)
+    partners = []
+    for position, own in enumerate(triplets):
+        by_pair = sorted(
+            ((holders[s] & holders[o], (s, p, o)) for s, p, o in own if s != o), key=lambda x: (len(x[0]), x[1])
+        )
+        chosen: list[int] = []
+        for others, triplet in by_pair:
+            for other in sorted(others - {position} - set(chosen)):
+                if triplet not in triplets[other]:
+                    chosen.append(other)
+                    if len(chosen) == limit:
+                        break
+            if len(chosen) == limit:
+                break
+        partners.append(tuple(chosen))
+    return tuple(partners)

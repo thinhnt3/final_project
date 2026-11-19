@@ -109,7 +109,7 @@ def changed_settings(saved: Mapping[str, Any], current: Mapping[str, Any]) -> li
     those that only decide how long training goes on. A continuation with any other change
     would not reproduce an uninterrupted run.
     """
-    top_level = ("graphsage", "clip_model", "inputs_sha256", "seed")
+    top_level = ("graphsage", "adamf_mat", "clip_model", "inputs_sha256", "seed")
     changed = [key for key in top_level if saved.get(key) != current.get(key)]
     saved_training, current_training = saved.get("training", {}), current.get("training", {})
     changed += [

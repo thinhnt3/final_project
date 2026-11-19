@@ -4,10 +4,10 @@ from __future__ import annotations
 import logging
 import random
 import time
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 import numpy as np
 import torch
@@ -57,13 +57,16 @@ class TrainingConfig:
     temperature: float
     grad_clip_norm: float
     selection_metric: SelectionMetric
+    # Images per hard-negative group: an image and partners sharing an object pair with it
+    # (see `RetrievalSet.partners`) are put in the same batch. 1 switches it off.
+    hard_negative_group: int = 1
 
     def __post_init__(self) -> None:
         if not self.seeds or len(set(self.seeds)) != len(self.seeds):
             raise ConfigError("training.seeds must be a non-empty list of distinct integers")
         if self.device is Device.AUTO:
             raise ConfigError("training.device must name a device; 'auto' would make runs differ between machines")
-        if min(self.batch_size, self.max_epochs, self.patience) < 1:
+        if min(self.batch_size, self.max_epochs, self.patience, self.hard_negative_group) < 1:
             raise ConfigError("training.batch_size, max_epochs and patience must be >= 1")
         if min(self.learning_rate, self.temperature, self.grad_clip_norm) <= 0 or self.weight_decay < 0:
             raise ConfigError("training.learning_rate, temperature and grad_clip_norm must be > 0, weight_decay >= 0")
@@ -75,6 +78,8 @@ class RetrievalSet:
 
     graphs: Sequence[Data]
     caption_vectors: torch.Tensor  # (images, captions per image, dim), unit length
+    # For hard-negative batches: per image position, positions of other images to batch it with.
+    partners: Sequence[Sequence[int]] | None = None
 
     def __post_init__(self) -> None:
         if self.caption_vectors.ndim != 3 or self.caption_vectors.shape[0] != len(self.graphs):
@@ -83,6 +88,8 @@ class RetrievalSet:
             )
         if len(self.graphs) < 2:
             raise DataError("a retrieval set needs at least two images")
+        if self.partners is not None and len(self.partners) != len(self.graphs):
+            raise DataError(f"{len(self.graphs)} graphs but {len(self.partners)} partner lists")
 
 
 @dataclass(frozen=True)
@@ -92,6 +99,43 @@ class TrainingResult:
     history: list[dict[str, Any]]
     best_epoch: int
     stop_reason: StopReason
+
+
+@runtime_checkable
+class AdversarialEncoder(Protocol):
+    """Encoder trained against a generator of synthetic inputs, in alternating steps.
+
+    The encoder is the discriminator: its loss asks real inputs to score above synthetic
+    ones, then the generator is updated to close that gap. The generator's parameters belong
+    to the encoder module, so checkpoints hold them, but they have their own optimizer.
+    """
+
+    adversarial: bool  # False: train as any other encoder
+    generator_learning_rate: float
+
+    def generator_parameters(self) -> Iterable[nn.Parameter]:
+        """Parameters updated by the generator step only."""
+        ...
+
+    def discriminator_loss(self, batch: Batch, texts: torch.Tensor, temperature: float) -> torch.Tensor:
+        """Loss of the encoder step: the retrieval loss plus the adversarial term."""
+        ...
+
+    def generator_loss(self, batch: Batch, texts: torch.Tensor, temperature: float) -> torch.Tensor:
+        """Loss of the generator step."""
+        ...
+
+
+def _adversary(model: nn.Module) -> AdversarialEncoder | None:
+    """The model seen as an adversarial encoder, if it is one and the adversary is switched on."""
+    return model if isinstance(model, AdversarialEncoder) and model.adversarial else None
+
+
+def _encoder_parameters(model: nn.Module) -> list[nn.Parameter]:
+    """Parameters updated by the encoder step: all of them but an adversary's generator."""
+    adversary = _adversary(model)
+    generator = {id(p) for p in adversary.generator_parameters()} if adversary is not None else set()
+    return [p for p in model.parameters() if id(p) not in generator]
 
 
 def seed_everything(seed: int) -> None:
@@ -114,18 +158,46 @@ def info_nce(graph_vectors: torch.Tensor, text_vectors: torch.Tensor, temperatur
     return (nn.functional.cross_entropy(logits, targets) + nn.functional.cross_entropy(logits.T, targets)) / 2
 
 
+def _grouped_order(
+    order: torch.Tensor, partners: Sequence[Sequence[int]], group_size: int, generator: torch.Generator
+) -> torch.Tensor:
+    """`order` rearranged so that each image is followed by up to group_size − 1 unused partners."""
+    used = [False] * len(order)
+    grouped: list[int] = []
+    for image in order.tolist():
+        if used[image]:
+            continue
+        used[image] = True
+        free = [p for p in partners[image] if not used[p]]
+        picks = [free[i] for i in torch.randperm(len(free), generator=generator)[:group_size - 1].tolist()]
+        for p in picks:
+            used[p] = True
+        grouped += [image, *picks]
+    return torch.tensor(grouped)
+
+
 def epoch_batches(
-    n_images: int, captions_per_image: int, batch_size: int, seed: int, epoch: int
+    n_images: int,
+    captions_per_image: int,
+    batch_size: int,
+    seed: int,
+    epoch: int,
+    partners: Sequence[Sequence[int]] | None = None,
+    group_size: int = 1,
 ) -> list[tuple[torch.Tensor, torch.Tensor]]:
     """Batches of (image positions, caption choice) for one epoch.
 
     Each image appears exactly once per epoch, hence at most once per batch, with one of its
-    captions drawn at random. The draw depends only on (seed, epoch), so a resumed run
-    repeats exactly what an uninterrupted run would have done.
+    captions drawn at random. With `partners` and group_size > 1, images are laid out in
+    groups of an image and its partners, so most groups land in one batch as hard negatives.
+    The draw depends only on (seed, epoch), so a resumed run repeats exactly what an
+    uninterrupted run would have done.
     """
     generator = torch.Generator().manual_seed(seed * _EPOCH_SEED_STRIDE + epoch)
     order = torch.randperm(n_images, generator=generator)
     captions = torch.randint(captions_per_image, (n_images,), generator=generator)
+    if partners is not None and group_size > 1:
+        order = _grouped_order(order, partners, group_size, generator)
     starts = list(range(0, n_images, batch_size))
     # A final batch of one image has no negative: its loss is zero. Merge it into the batch before.
     if len(starts) > 1 and n_images - starts[-1] == 1:
@@ -134,13 +206,46 @@ def epoch_batches(
     return [(order[a:b], captions[order[a:b]]) for a, b in zip(starts, ends, strict=True)]
 
 
+def _pair_inputs(
+    data: RetrievalSet, images: torch.Tensor, captions: torch.Tensor, config: TrainingConfig
+) -> tuple[Batch, torch.Tensor]:
+    """Batched sub-graphs of the given images and the vectors of their chosen captions."""
+    device = config.device.value
+    batch = Batch.from_data_list([data.graphs[i] for i in images.tolist()]).to(device)
+    return batch, data.caption_vectors[images, captions].to(device)
+
+
 def _pair_loss(
     model: nn.Module, data: RetrievalSet, images: torch.Tensor, captions: torch.Tensor, config: TrainingConfig
 ) -> torch.Tensor:
-    device = config.device.value
-    batch = Batch.from_data_list([data.graphs[i] for i in images.tolist()]).to(device)
-    texts = data.caption_vectors[images, captions].to(device)
+    batch, texts = _pair_inputs(data, images, captions, config)
+    adversary = _adversary(model)
+    if adversary is not None:
+        return adversary.discriminator_loss(batch, texts, config.temperature)
     return info_nce(model(batch), texts, config.temperature)
+
+
+def _generator_step(
+    adversary: AdversarialEncoder,
+    optimizer: torch.optim.Optimizer,
+    data: RetrievalSet,
+    images: torch.Tensor,
+    captions: torch.Tensor,
+    config: TrainingConfig,
+    epoch: int,
+) -> float:
+    """Update the generator on the batch the encoder was just updated on; returns its loss."""
+    loss = adversary.generator_loss(*_pair_inputs(data, images, captions, config), config.temperature)
+    if not torch.isfinite(loss):
+        raise TrainingError(f"generator loss is {loss.item()} at epoch {epoch}")
+    optimizer.zero_grad()
+    loss.backward()
+    try:
+        nn.utils.clip_grad_norm_(list(adversary.generator_parameters()), config.grad_clip_norm, error_if_nonfinite=True)
+    except RuntimeError as error:
+        raise TrainingError(f"generator gradient is not finite at epoch {epoch}") from error
+    optimizer.step()
+    return float(loss.item())
 
 
 def train_epoch(
@@ -152,11 +257,21 @@ def train_epoch(
     epoch: int,
     *,
     show_progress: bool = False,
-) -> float:
-    """One pass over the train images; returns the mean loss per image."""
+    generator_optimizer: torch.optim.Optimizer | None = None,
+) -> dict[str, float]:
+    """One pass over the train images; returns the mean loss per image as history fields.
+
+    With `generator_optimizer`, the model is an adversarial encoder: each batch updates the
+    encoder, then the generator, and the generator's mean loss is returned too.
+    """
     model.train()
-    batches = epoch_batches(len(data.graphs), data.caption_vectors.shape[1], config.batch_size, seed, epoch)
-    total = 0.0
+    batches = epoch_batches(
+        len(data.graphs), data.caption_vectors.shape[1], config.batch_size, seed, epoch,
+        data.partners, config.hard_negative_group,
+    )
+    encoder_parameters = _encoder_parameters(model)
+    adversary = _adversary(model) if generator_optimizer is not None else None
+    total, generator_total = 0.0, 0.0
     for images, captions in tqdm(batches, desc=f"epoch {epoch}", leave=False, disable=not show_progress):
         loss = _pair_loss(model, data, images, captions, config)
         if not torch.isfinite(loss):
@@ -164,12 +279,18 @@ def train_epoch(
         optimizer.zero_grad()
         loss.backward()
         try:
-            nn.utils.clip_grad_norm_(model.parameters(), config.grad_clip_norm, error_if_nonfinite=True)
+            nn.utils.clip_grad_norm_(encoder_parameters, config.grad_clip_norm, error_if_nonfinite=True)
         except RuntimeError as error:
             raise TrainingError(f"gradient is not finite at epoch {epoch}; the weights were not updated") from error
         optimizer.step()
         total += loss.item() * len(images)
-    return total / len(data.graphs)
+        if adversary is not None and generator_optimizer is not None:
+            generator_loss = _generator_step(adversary, generator_optimizer, data, images, captions, config, epoch)
+            generator_total += generator_loss * len(images)
+    losses = {"train_loss": total / len(data.graphs)}
+    if adversary is not None:
+        losses["train_generator_loss"] = generator_total / len(data.graphs)
+    return losses
 
 
 @torch.no_grad()
@@ -233,7 +354,15 @@ def fit(
     """
     metric_ks = sorted({*ks, 1})
     model.to(config.device.value)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
+    optimizer = torch.optim.AdamW(
+        _encoder_parameters(model), lr=config.learning_rate, weight_decay=config.weight_decay
+    )
+    adversary = _adversary(model)
+    generator_optimizer = (
+        torch.optim.AdamW(adversary.generator_parameters(), lr=adversary.generator_learning_rate, weight_decay=0.0)
+        if adversary is not None
+        else None
+    )
     history: list[dict[str, Any]] = []
     best_key: tuple[float, float] | None = None
     best_epoch = 0
@@ -243,6 +372,8 @@ def fit(
             raise TrainingError(f"checkpoint was trained with seed {state['seed']}, not {seed}")
         model.load_state_dict(state["model"])
         optimizer.load_state_dict(state["optimizer"])
+        if generator_optimizer is not None:
+            generator_optimizer.load_state_dict(state["generator_optimizer"])
         history, best_epoch = state["history"], state["best_epoch"]
         torch.set_rng_state(state["rng_state"])
         # `best.pt` is written before `last.pt`; a crash in between leaves them out of step.
@@ -261,7 +392,11 @@ def fit(
             stop_reason = StopReason.NO_IMPROVEMENT
             break
         started = time.monotonic()
-        train_loss = train_epoch(model, optimizer, train, config, seed, epoch, show_progress=show_progress)
+        losses = train_epoch(
+            model, optimizer, train, config, seed, epoch,
+            show_progress=show_progress, generator_optimizer=generator_optimizer,
+        )
+        train_loss = losses["train_loss"]
         metrics = evaluate(model, val, config, metric_ks)
         key = selection_key(metrics, config.selection_metric)
         is_best = best_key is None or key > best_key
@@ -269,7 +404,7 @@ def fit(
             best_key, best_epoch = key, epoch
         history.append({
             "epoch": epoch,
-            "train_loss": train_loss,
+            **losses,
             "val_loss": metrics["loss"],
             **{f"val_{name}": value for name, value in metrics.items() if name != "loss"},
             "learning_rate": optimizer.param_groups[0]["lr"],
@@ -282,6 +417,7 @@ def fit(
         run.save_last({
             "model": model_state,
             "optimizer": optimizer.state_dict(),
+            **({"generator_optimizer": generator_optimizer.state_dict()} if generator_optimizer is not None else {}),
             "seed": seed,
             "history": history,
             "best_epoch": best_epoch,

@@ -10,6 +10,7 @@ from src.connectors.wandb_tracker import WandbConfig, WandbMode
 from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.embeddings.device import Device
+from src.models.adamf_mat import MODALITIES, AdamfMatConfig
 from src.models.graphsage import GraphSageConfig, ImageNodeFeature
 from src.models.train import SelectionMetric, TrainingConfig
 
@@ -49,6 +50,7 @@ class RetrievalConfig:
     benchmark: BenchmarkConfig
     runs_dir: Path
     graphsage: GraphSageConfig
+    adamf_mat: AdamfMatConfig
     training: TrainingConfig
     wandb: WandbConfig
 
@@ -78,6 +80,7 @@ class RetrievalConfig:
             benchmark=_benchmark_config(raw),
             runs_dir=Path(require_field(raw, "runs_dir", str)),
             graphsage=_graphsage_config(raw),
+            adamf_mat=_adamf_mat_config(raw),
             training=_training_config(raw),
             wandb=_wandb_config(raw),
         )
@@ -129,6 +132,33 @@ def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
     )
 
 
+def _adamf_mat_config(raw: dict[str, Any]) -> AdamfMatConfig:
+    adamf_raw = require_section(raw, "adamf_mat")
+    for key in ("adaptive_fusion", "mat"):
+        if not isinstance(adamf_raw.get(key), bool):
+            raise ConfigError(f"adamf_mat.{key} must be true or false, got {adamf_raw.get(key)!r}")
+    # Optional: older run snapshots predate them and used every modality, unnormalized.
+    modalities = adamf_raw.get("modalities", list(MODALITIES))
+    if not isinstance(modalities, list) or not all(isinstance(m, str) for m in modalities):
+        raise ConfigError(f"adamf_mat.modalities must be a list of names, got {modalities!r}")
+    normalize = adamf_raw.get("normalize_modalities", False)
+    if not isinstance(normalize, bool):
+        raise ConfigError(f"adamf_mat.normalize_modalities must be true or false, got {normalize!r}")
+    number = (int, float)
+    return AdamfMatConfig(
+        dim=require_field(adamf_raw, "dim", int),
+        adaptive_fusion=adamf_raw["adaptive_fusion"],
+        mat=adamf_raw["mat"],
+        mu=float(require_field(adamf_raw, "mu", number)),
+        noise_dim=require_field(adamf_raw, "noise_dim", int),
+        generator_hidden_dim=require_field(adamf_raw, "generator_hidden_dim", int),
+        generator_learning_rate=float(require_field(adamf_raw, "generator_learning_rate", number)),
+        modalities=tuple(modalities),
+        normalize_modalities=normalize,
+        structure_only_rate=float(adamf_raw.get("structure_only_rate", 0.0)),
+    )
+
+
 def _choice[Choice: StrEnum](raw: dict[str, Any], key: str, kind: type[Choice], section: str) -> Choice:
     """Read a string field that must be one of the values of a StrEnum."""
     value = require_field(raw, key, str)
@@ -154,6 +184,7 @@ def _training_config(raw: dict[str, Any]) -> TrainingConfig:
         temperature=float(require_field(training_raw, "temperature", number)),
         grad_clip_norm=float(require_field(training_raw, "grad_clip_norm", number)),
         selection_metric=_choice(training_raw, "selection_metric", SelectionMetric, "training"),
+        hard_negative_group=int(training_raw.get("hard_negative_group", 1)),
     )
 
 

@@ -458,3 +458,13 @@ def test_changed_settings_lists_what_would_break_a_resumed_run():
         "training.learning_rate",
         "training.temperature",
     ]
+
+
+def test_hard_negative_groups_keep_each_image_once_and_put_partners_together():
+    partners = [(1, 2, 3), (0,), (0,), (0,), (), (), (), ()]
+    batches = epoch_batches(8, 2, 8, seed=1, epoch=0, partners=partners, group_size=4)
+    order = batches[0][0].tolist()
+    assert sorted(order) == list(range(8))
+    start = order.index(0)
+    if start + 1 < len(order) and order[start + 1] in (1, 2, 3):
+        assert set(order[start:start + 4]) == {0, 1, 2, 3}

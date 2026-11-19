@@ -46,3 +46,17 @@ runs/graphsage/**/wandb/
 runs/graphsage/**/train.log
 wandb/
 runs/graphsage/**/tracker_run_id.txt
+runs/adamf_mat/**/*.pt
+runs/adamf_mat/**/graph_vectors.*
+runs/adamf_mat/**/wandb/
+runs/adamf_mat/**/train.log
+runs/adamf_mat/**/tracker_run_id.txt
+runs/graphsage_label_text/**/*.pt
+runs/graphsage_label_text/**/graph_vectors.*
+runs/graphsage_label_text/**/wandb/
+runs/graphsage_label_text/**/train.log
+runs/graphsage_label_text/**/tracker_run_id.txt
+# Training-queue console logs (progress bars); results live in each run's history.json.
+runs/adamf_mat/*.log
+# A worktree links the embeddings of the main checkout; the trailing-slash rule above misses a symlink.
+data/processed/vg_coco/embeddings
