@@ -62,3 +62,7 @@ data/processed/vg_coco_full/images/
 data/interim
 # Full variant outputs are large (scene_graphs.json ~270 MB); rebuild with scripts.make_full_split + build_vg_coco --stage export.
 data/processed/vg_coco_full/
+# KG variant: CLIP tables and copies of the base images/queries files are rebuilt by scripts.build_kg_variant.
+data/processed/vg_coco_kg/embeddings/
+data/processed/vg_coco_kg/images.json
+data/processed/vg_coco_kg/queries.json
