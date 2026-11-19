@@ -30,6 +30,19 @@ _RUN_ENTRIES = (
 _PROGRESS_FILES = (LAST_FILE, BEST_FILE, HISTORY_FILE, RESULT_FILE)
 # Settings that may change between a run and its continuation without changing its results so far.
 RESUMABLE_TRAINING_KEYS = frozenset({"max_epochs", "patience", "seeds"})
+# Settings added after some runs were trained, with the value those older runs implicitly used.
+LEGACY_ADAMF_MAT = {
+    "modalities": ["structure", "image", "text"],
+    "normalize_modalities": False,
+    "structure_only_rate": 0.0,
+    "structure_loss_weight": 0.0,
+}
+LEGACY_TRAINING = {
+    "hard_negative_group": 1,
+    "predicate_swap_weight": 0.0,
+    "predicate_swap_pool": 50,
+    "train_fraction": 1.0,
+}
 
 
 class RunDirectory:
@@ -139,10 +152,13 @@ def changed_settings(saved: Mapping[str, Any], current: Mapping[str, Any]) -> li
         value = settings.get(key)
         if key == "graphsage" and isinstance(value, dict):
             return {"ablation": "full", "ablation_seed": 0, **value}
+        if key == "adamf_mat" and isinstance(value, dict):
+            return {**LEGACY_ADAMF_MAT, **value}
         return value
 
     changed = [key for key in top_level if normalized(key, saved) != normalized(key, current)]
-    saved_training, current_training = saved.get("training", {}), current.get("training", {})
+    saved_training = {**LEGACY_TRAINING, **saved.get("training", {})}
+    current_training = {**LEGACY_TRAINING, **current.get("training", {})}
     changed += [
         f"training.{key}"
         for key in sorted(set(saved_training) | set(current_training))

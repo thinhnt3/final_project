@@ -503,3 +503,17 @@ def test_train_subset_is_fixed_and_keeps_order():
     assert first_ids == again_ids and len(first_ids) == 5 and list(first_ids) == sorted(first_ids)
     assert len(first.graphs) == 5 and first.caption_vectors.shape[0] == 5
     assert subset_retrieval_set(data, ids, 1.0, seed=7)[1] == ids
+
+
+def test_legacy_snapshots_match_runs_with_the_newer_default_settings():
+    from src.models.checkpoint import changed_settings
+
+    old = {"adamf_mat": {"dim": 4}, "training": {"batch_size": 8}}
+    new = {
+        "adamf_mat": {"dim": 4, "structure_loss_weight": 0.0, "structure_only_rate": 0.0},
+        "training": {"batch_size": 8, "train_fraction": 1.0, "predicate_swap_weight": 0.0},
+    }
+    assert changed_settings(old, new) == []
+    assert changed_settings(old, {**new, "training": {"batch_size": 8, "train_fraction": 0.5}}) == [
+        "training.train_fraction"
+    ]
