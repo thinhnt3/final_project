@@ -63,6 +63,18 @@ GRID = (
     Corruption(flip_label=0.2),
 )
 
+# Stand-in for predicted scene graphs (no scene-graph generator here): each kind of noise at
+# several levels, and combinations where a detector misses objects, mislabels some and
+# misses relations at the same time.
+WIDE_GRID = (
+    Corruption(),
+    Corruption(drop_node=0.1), Corruption(drop_node=0.3), Corruption(drop_node=0.5),
+    Corruption(flip_label=0.1), Corruption(flip_label=0.2), Corruption(flip_label=0.4),
+    Corruption(drop_edge=0.5), Corruption(drop_edge=1.0),
+    Corruption(drop_edge=0.3, drop_node=0.2, flip_label=0.1),
+    Corruption(drop_edge=0.5, drop_node=0.4, flip_label=0.3),
+)
+
 
 def corrupt_graph(graph: dict[str, Any], noise: Corruption, n_concepts: int) -> dict[str, Any]:
     """A corrupted copy of one image graph; the same image and setting always give the same copy."""
@@ -92,6 +104,7 @@ def main() -> int:
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--method", required=True, choices=["graphsage", "adamf_mat", "graphsage_label_text"])
     parser.add_argument("--run", required=True)
+    parser.add_argument("--grid", choices=["brief", "wide"], default="brief", help="wide: C4 stand-in for SGG noise")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     try:
@@ -110,7 +123,7 @@ def main() -> int:
             choice = selected[str(seed)]["selected_on_validation"]
             run_dir = config.runs_dir / args.method / args.run / f"seed{seed}"
             model = load_trained_encoder(run_dir, args.method, inputs)
-            for noise in GRID:
+            for noise in WIDE_GRID if args.grid == "wide" else GRID:
                 graphs = [
                     image_graph_to_data(corrupt_graph(graph_of[i], noise, n_concepts), image_row[i])
                     for i in test.image_ids
@@ -143,7 +156,8 @@ def main() -> int:
         for name, kinds in report["settings"].items():
             log.info("%-14s graph only R@1 %s  clip + graph R@1 %s", name,
                      kinds["graph_only"]["recall@1"], kinds["reranked"]["recall@1"])
-        out = config.runs_dir / "analysis" / f"graph_noise-{args.method}-{args.run}.json"
+        suffix = "-wide" if args.grid == "wide" else ""
+        out = config.runs_dir / "analysis" / f"graph_noise-{args.method}-{args.run}{suffix}.json"
         write_json(out, report)
         log.info("wrote %s", out)
     except AppError:
