@@ -53,3 +53,14 @@ def test_confuser_ranks_ignore_other_images_and_count_ties_against() -> None:
     ranks = confuser_ranks(scores, [0, 0], [[1, 3], [1]])
     assert ranks.tolist() == [1, 2]
     assert chance_accuracy([[1, 3], [1]]) == pytest.approx((1 / 3 + 1 / 2) / 2)
+
+
+def test_contrast_confusers_keep_images_joining_the_pair_by_another_relation():
+    from src.evaluation.relation_queries import contrast_confusers
+
+    graph_of = {
+        2: {"triplets": [[1, 1, 0]]},  # horse near man: the pair, reversed, another relation
+        3: {"triplets": [[0, 1, 2]]},  # man near dog: not the pair
+    }
+    query = {"triplet": [0, 0, 1], "confuser_ids": [2, 3]}
+    assert contrast_confusers(query, graph_of) == [2]

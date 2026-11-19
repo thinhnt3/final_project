@@ -121,3 +121,17 @@ def confuser_ranks(
 def chance_accuracy(confuser_columns: Sequence[Sequence[int]]) -> float:
     """Expected top-1 accuracy among confusers of a random ranking."""
     return float(np.mean([1.0 / (1 + len(c)) for c in confuser_columns]))
+
+
+def contrast_confusers(query: Mapping[str, Any], graph_of: Mapping[int, Mapping[str, Any]]) -> list[int]:
+    """Confusers of a relation query that link its two objects by another relation, in either direction.
+
+    Against these, the graph differs from the relevant image only in which relation joins the
+    pair; the other confusers have no annotated relation between the pair at all.
+    """
+    subject, _, obj = (int(x) for x in query["triplet"])
+    pair = {subject, obj}
+    return [
+        image_id for image_id in query["confuser_ids"]
+        if any({int(s), int(o)} == pair for s, _, o in graph_of[int(image_id)]["triplets"])
+    ]

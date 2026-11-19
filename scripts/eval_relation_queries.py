@@ -34,7 +34,13 @@ from src.data.schemas import Split
 from src.embeddings.store import EmbeddingTable, load_table
 from src.evaluation.benchmark import SplitData, aggregate_runs, build_split_data, clip_scores, graph_vector_scores
 from src.evaluation.metrics import ranks_of_relevant, retrieval_metrics
-from src.evaluation.relation_queries import QueryKind, chance_accuracy, confuser_ranks, without_triplet
+from src.evaluation.relation_queries import (
+    QueryKind,
+    chance_accuracy,
+    confuser_ranks,
+    contrast_confusers,
+    without_triplet,
+)
 from src.models.graph_data import image_graph_to_data
 from src.models.run_loading import GraphInputs, load_graph_inputs, load_trained_encoder
 from src.models.train import encode_graphs
@@ -60,6 +66,9 @@ TRAINED = (
 _DECIMALS = 4
 
 
+Group = tuple[np.ndarray, Sequence[Sequence[int]]]  # query rows, and the confuser columns of every query
+
+
 def _metrics(scores: np.ndarray, data: SplitData, confusers: Sequence[Sequence[int]], rows: np.ndarray,
              ks: Sequence[int]) -> dict[str, float]:
     """Full-gallery and confuser metrics of the given query rows."""
@@ -68,10 +77,25 @@ def _metrics(scores: np.ndarray, data: SplitData, confusers: Sequence[Sequence[i
     return {**full, "confuser_acc@1": float((among == 1).mean()), "confuser_mrr": float((1.0 / among).mean())}
 
 
-def _groups(queries: Sequence[dict[str, Any]], predicate_text: dict[int, str]) -> dict[str, np.ndarray]:
-    """Row indices of all queries, generic-predicate queries and specific-predicate queries."""
+def _groups(
+    queries: Sequence[dict[str, Any]],
+    predicate_text: dict[int, str],
+    confusers: Sequence[Sequence[int]],
+    contrast: Sequence[Sequence[int]],
+) -> dict[str, Group]:
+    """Query groups: all, generic and specific predicates, and `contrast`.
+
+    `contrast` keeps the queries with a confuser joining the same two objects by another
+    relation, and scores them against those confusers only: relation A against relation B.
+    """
     generic = np.asarray([predicate_text[q["triplet"][1]] in GENERIC_PREDICATES for q in queries], dtype=bool)
-    return {"all": np.arange(len(queries)), "generic": np.flatnonzero(generic), "specific": np.flatnonzero(~generic)}
+    has_contrast = np.asarray([bool(c) for c in contrast], dtype=bool)
+    return {
+        "all": (np.arange(len(queries)), confusers),
+        "generic": (np.flatnonzero(generic), confusers),
+        "specific": (np.flatnonzero(~generic), confusers),
+        "contrast": (np.flatnonzero(has_contrast), contrast),
+    }
 
 
 def main() -> int:
@@ -104,15 +128,17 @@ def main() -> int:
             data = build_split_data(Split.TEST, inputs.images, queries, inputs.image_table, table)
             column = {image_id: c for c, image_id in enumerate(data.image_ids)}
             confusers = [[column[i] for i in q["confuser_ids"]] for q in queries]
-            kinds[kind] = (queries, data, confusers, _groups(queries, predicate_text))
+            # Objects twins share the triplet of their relation query, so the same contrast set.
+            contrast = [[column[i] for i in contrast_confusers(q, graph_of)] for q in queries]
+            kinds[kind] = (queries, data, _groups(queries, predicate_text, confusers, contrast))
 
         # results[method][setting][kind][group] -> list of per-seed metric dicts
         results: dict[str, dict[str, dict[str, dict[str, list[dict[str, float]]]]]] = {}
 
         def record(method: str, setting: str, kind: QueryKind, scores: np.ndarray) -> None:
-            _, data, confusers, groups = kinds[kind]
+            _, data, groups = kinds[kind]
             slot = results.setdefault(method, {}).setdefault(setting, {}).setdefault(kind.value, {})
-            for group, rows in groups.items():
+            for group, (rows, confusers) in groups.items():
                 slot.setdefault(group, []).append(_metrics(scores, data, confusers, rows, ks))
 
         for kind in QueryKind:
@@ -129,7 +155,7 @@ def main() -> int:
                 vectors = encode_graphs(model, graphs, config.training).numpy()
                 graph_table = EmbeddingTable(ids=test_ids, vectors=vectors)
                 for kind in QueryKind:
-                    queries, data, _, _ = kinds[kind]
+                    queries, data, _ = kinds[kind]
                     graph = graph_vector_scores(data, graph_table)
                     clip = clip_scores(data)
                     record(name, "graph_only", kind, graph)
@@ -155,10 +181,10 @@ def main() -> int:
         report = {
             "split": Split.TEST.value,
             "queries": {k.value: len(v[0]) for k, v in kinds.items()},
-            "groups": {g: len(rows) for g, rows in kinds[QueryKind.RELATION][3].items()},
+            "groups": {g: len(rows) for g, (rows, _) in kinds[QueryKind.RELATION][2].items()},
             "confuser_chance_acc@1": {
-                g: round(chance_accuracy([kinds[QueryKind.RELATION][2][r] for r in rows]), _DECIMALS)
-                for g, rows in kinds[QueryKind.RELATION][3].items()
+                g: round(chance_accuracy([confusers[r] for r in rows]), _DECIMALS)
+                for g, (rows, confusers) in kinds[QueryKind.RELATION][2].items()
             },
             "generic_predicates": sorted(GENERIC_PREDICATES),
             "methods": {

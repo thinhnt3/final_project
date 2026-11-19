@@ -1,0 +1,895 @@
+{
+  "split": "test",
+  "queries": {
+    "relation": 1408,
+    "objects": 1408
+  },
+  "groups": {
+    "all": 1408,
+    "generic": 829,
+    "specific": 579,
+    "contrast": 734
+  },
+  "confuser_chance_acc@1": {
+    "all": 0.2142,
+    "generic": 0.2376,
+    "specific": 0.1806,
+    "contrast": 0.3144
+  },
+  "generic_predicates": [
+    "and",
+    "at",
+    "by",
+    "has",
+    "in",
+    "near",
+    "next to",
+    "of",
+    "on",
+    "with"
+  ],
+  "methods": {
+    "clip": {
+      "clip": {
+        "relation": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.2876,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.4788,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1457,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0703,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2869,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.2067,
+              "std": 0.0
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3136,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.5141,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1437,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0639,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2955,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.2075,
+              "std": 0.0
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2504,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.4282,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1486,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0794,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2746,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.2055,
+              "std": 0.0
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3256,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.5573,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1389,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0627,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2847,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.2003,
+              "std": 0.0
+            }
+          }
+        },
+        "objects": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.2692,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.4652,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1331,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0575,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2884,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.1925,
+              "std": 0.0
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.304,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.5065,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1352,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0531,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2955,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.2027,
+              "std": 0.0
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2193,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.4061,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1302,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.0639,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2781,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.1779,
+              "std": 0.0
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3147,
+              "std": 0.0
+            },
+            "confuser_mrr": {
+              "mean": 0.5539,
+              "std": 0.0
+            },
+            "mrr": {
+              "mean": 0.1223,
+              "std": 0.0
+            },
+            "recall@1": {
+              "mean": 0.045,
+              "std": 0.0
+            },
+            "recall@10": {
+              "mean": 0.2752,
+              "std": 0.0
+            },
+            "recall@5": {
+              "mean": 0.1771,
+              "std": 0.0
+            }
+          }
+        }
+      }
+    },
+    "graphsage/directed-learned-l3-h512": {
+      "graph_only": {
+        "relation": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.325,
+              "std": 0.0011
+            },
+            "confuser_mrr": {
+              "mean": 0.511,
+              "std": 0.0023
+            },
+            "mrr": {
+              "mean": 0.201,
+              "std": 0.0035
+            },
+            "recall@1": {
+              "mean": 0.1051,
+              "std": 0.0033
+            },
+            "recall@10": {
+              "mean": 0.4048,
+              "std": 0.0075
+            },
+            "recall@5": {
+              "mean": 0.2884,
+              "std": 0.0113
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3506,
+              "std": 0.0018
+            },
+            "confuser_mrr": {
+              "mean": 0.5392,
+              "std": 0.001
+            },
+            "mrr": {
+              "mean": 0.1938,
+              "std": 0.0024
+            },
+            "recall@1": {
+              "mean": 0.1025,
+              "std": 0.0048
+            },
+            "recall@10": {
+              "mean": 0.39,
+              "std": 0.0056
+            },
+            "recall@5": {
+              "mean": 0.2746,
+              "std": 0.0116
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2884,
+              "std": 0.0046
+            },
+            "confuser_mrr": {
+              "mean": 0.4706,
+              "std": 0.0042
+            },
+            "mrr": {
+              "mean": 0.2112,
+              "std": 0.0069
+            },
+            "recall@1": {
+              "mean": 0.1088,
+              "std": 0.0086
+            },
+            "recall@10": {
+              "mean": 0.426,
+              "std": 0.0144
+            },
+            "recall@5": {
+              "mean": 0.308,
+              "std": 0.0115
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3769,
+              "std": 0.0034
+            },
+            "confuser_mrr": {
+              "mean": 0.5955,
+              "std": 0.0026
+            },
+            "mrr": {
+              "mean": 0.1988,
+              "std": 0.0061
+            },
+            "recall@1": {
+              "mean": 0.1008,
+              "std": 0.0049
+            },
+            "recall@10": {
+              "mean": 0.4096,
+              "std": 0.0147
+            },
+            "recall@5": {
+              "mean": 0.2866,
+              "std": 0.0157
+            }
+          }
+        },
+        "objects": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.3056,
+              "std": 0.0016
+            },
+            "confuser_mrr": {
+              "mean": 0.4985,
+              "std": 0.0028
+            },
+            "mrr": {
+              "mean": 0.1879,
+              "std": 0.0035
+            },
+            "recall@1": {
+              "mean": 0.0928,
+              "std": 0.003
+            },
+            "recall@10": {
+              "mean": 0.3999,
+              "std": 0.0036
+            },
+            "recall@5": {
+              "mean": 0.2741,
+              "std": 0.0044
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3341,
+              "std": 0.0067
+            },
+            "confuser_mrr": {
+              "mean": 0.5299,
+              "std": 0.0035
+            },
+            "mrr": {
+              "mean": 0.1886,
+              "std": 0.0009
+            },
+            "recall@1": {
+              "mean": 0.0957,
+              "std": 0.003
+            },
+            "recall@10": {
+              "mean": 0.3928,
+              "std": 0.0073
+            },
+            "recall@5": {
+              "mean": 0.2738,
+              "std": 0.0111
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2648,
+              "std": 0.007
+            },
+            "confuser_mrr": {
+              "mean": 0.4537,
+              "std": 0.0076
+            },
+            "mrr": {
+              "mean": 0.1868,
+              "std": 0.0072
+            },
+            "recall@1": {
+              "mean": 0.0887,
+              "std": 0.0089
+            },
+            "recall@10": {
+              "mean": 0.4099,
+              "std": 0.0104
+            },
+            "recall@5": {
+              "mean": 0.2746,
+              "std": 0.0052
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3615,
+              "std": 0.0119
+            },
+            "confuser_mrr": {
+              "mean": 0.5863,
+              "std": 0.0056
+            },
+            "mrr": {
+              "mean": 0.1846,
+              "std": 0.0056
+            },
+            "recall@1": {
+              "mean": 0.0863,
+              "std": 0.0061
+            },
+            "recall@10": {
+              "mean": 0.406,
+              "std": 0.0082
+            },
+            "recall@5": {
+              "mean": 0.272,
+              "std": 0.0042
+            }
+          }
+        }
+      },
+      "reranked": {
+        "relation": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.2969,
+              "std": 0.0123
+            },
+            "confuser_mrr": {
+              "mean": 0.4871,
+              "std": 0.0124
+            },
+            "mrr": {
+              "mean": 0.181,
+              "std": 0.0145
+            },
+            "recall@1": {
+              "mean": 0.0992,
+              "std": 0.0075
+            },
+            "recall@10": {
+              "mean": 0.3222,
+              "std": 0.0611
+            },
+            "recall@5": {
+              "mean": 0.2493,
+              "std": 0.0136
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3237,
+              "std": 0.0135
+            },
+            "confuser_mrr": {
+              "mean": 0.5227,
+              "std": 0.0123
+            },
+            "mrr": {
+              "mean": 0.185,
+              "std": 0.0146
+            },
+            "recall@1": {
+              "mean": 0.1009,
+              "std": 0.01
+            },
+            "recall@10": {
+              "mean": 0.3273,
+              "std": 0.055
+            },
+            "recall@5": {
+              "mean": 0.2585,
+              "std": 0.0122
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2585,
+              "std": 0.0115
+            },
+            "confuser_mrr": {
+              "mean": 0.436,
+              "std": 0.0126
+            },
+            "mrr": {
+              "mean": 0.1753,
+              "std": 0.0144
+            },
+            "recall@1": {
+              "mean": 0.0967,
+              "std": 0.0046
+            },
+            "recall@10": {
+              "mean": 0.3149,
+              "std": 0.0698
+            },
+            "recall@5": {
+              "mean": 0.236,
+              "std": 0.0155
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3351,
+              "std": 0.0108
+            },
+            "confuser_mrr": {
+              "mean": 0.5638,
+              "std": 0.0087
+            },
+            "mrr": {
+              "mean": 0.17,
+              "std": 0.0138
+            },
+            "recall@1": {
+              "mean": 0.0849,
+              "std": 0.0069
+            },
+            "recall@10": {
+              "mean": 0.3197,
+              "std": 0.0606
+            },
+            "recall@5": {
+              "mean": 0.2402,
+              "std": 0.0083
+            }
+          }
+        },
+        "objects": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.286,
+              "std": 0.0157
+            },
+            "confuser_mrr": {
+              "mean": 0.4788,
+              "std": 0.0127
+            },
+            "mrr": {
+              "mean": 0.1726,
+              "std": 0.0109
+            },
+            "recall@1": {
+              "mean": 0.0914,
+              "std": 0.0036
+            },
+            "recall@10": {
+              "mean": 0.3179,
+              "std": 0.0513
+            },
+            "recall@5": {
+              "mean": 0.2505,
+              "std": 0.0117
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3136,
+              "std": 0.0105
+            },
+            "confuser_mrr": {
+              "mean": 0.515,
+              "std": 0.0098
+            },
+            "mrr": {
+              "mean": 0.1779,
+              "std": 0.0113
+            },
+            "recall@1": {
+              "mean": 0.0953,
+              "std": 0.0024
+            },
+            "recall@10": {
+              "mean": 0.3245,
+              "std": 0.0501
+            },
+            "recall@5": {
+              "mean": 0.2553,
+              "std": 0.0124
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2464,
+              "std": 0.024
+            },
+            "confuser_mrr": {
+              "mean": 0.4269,
+              "std": 0.0171
+            },
+            "mrr": {
+              "mean": 0.1651,
+              "std": 0.0108
+            },
+            "recall@1": {
+              "mean": 0.0858,
+              "std": 0.007
+            },
+            "recall@10": {
+              "mean": 0.3086,
+              "std": 0.0528
+            },
+            "recall@5": {
+              "mean": 0.2435,
+              "std": 0.0108
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3274,
+              "std": 0.0075
+            },
+            "confuser_mrr": {
+              "mean": 0.5633,
+              "std": 0.0052
+            },
+            "mrr": {
+              "mean": 0.1571,
+              "std": 0.0127
+            },
+            "recall@1": {
+              "mean": 0.0713,
+              "std": 0.0052
+            },
+            "recall@10": {
+              "mean": 0.3052,
+              "std": 0.0519
+            },
+            "recall@5": {
+              "mean": 0.2452,
+              "std": 0.0177
+            }
+          }
+        }
+      },
+      "graph_only_masked": {
+        "relation": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.2855,
+              "std": 0.0033
+            },
+            "confuser_mrr": {
+              "mean": 0.4796,
+              "std": 0.0035
+            },
+            "mrr": {
+              "mean": 0.1713,
+              "std": 0.0011
+            },
+            "recall@1": {
+              "mean": 0.0824,
+              "std": 0.0021
+            },
+            "recall@10": {
+              "mean": 0.3636,
+              "std": 0.0093
+            },
+            "recall@5": {
+              "mean": 0.2429,
+              "std": 0.0071
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3128,
+              "std": 0.0089
+            },
+            "confuser_mrr": {
+              "mean": 0.5108,
+              "std": 0.0047
+            },
+            "mrr": {
+              "mean": 0.1691,
+              "std": 0.0018
+            },
+            "recall@1": {
+              "mean": 0.084,
+              "std": 0.0049
+            },
+            "recall@10": {
+              "mean": 0.3587,
+              "std": 0.0061
+            },
+            "recall@5": {
+              "mean": 0.2348,
+              "std": 0.0018
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.2464,
+              "std": 0.005
+            },
+            "confuser_mrr": {
+              "mean": 0.4348,
+              "std": 0.0026
+            },
+            "mrr": {
+              "mean": 0.1743,
+              "std": 0.0047
+            },
+            "recall@1": {
+              "mean": 0.08,
+              "std": 0.002
+            },
+            "recall@10": {
+              "mean": 0.3708,
+              "std": 0.0157
+            },
+            "recall@5": {
+              "mean": 0.2545,
+              "std": 0.0157
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3361,
+              "std": 0.0055
+            },
+            "confuser_mrr": {
+              "mean": 0.5672,
+              "std": 0.0022
+            },
+            "mrr": {
+              "mean": 0.1708,
+              "std": 0.0043
+            },
+            "recall@1": {
+              "mean": 0.0822,
+              "std": 0.0034
+            },
+            "recall@10": {
+              "mean": 0.3633,
+              "std": 0.0158
+            },
+            "recall@5": {
+              "mean": 0.2352,
+              "std": 0.0129
+            }
+          }
+        }
+      },
+      "reranked_masked": {
+        "relation": {
+          "all": {
+            "confuser_acc@1": {
+              "mean": 0.2902,
+              "std": 0.0068
+            },
+            "confuser_mrr": {
+              "mean": 0.4816,
+              "std": 0.007
+            },
+            "mrr": {
+              "mean": 0.1743,
+              "std": 0.0103
+            },
+            "recall@1": {
+              "mean": 0.0938,
+              "std": 0.0038
+            },
+            "recall@10": {
+              "mean": 0.3165,
+              "std": 0.0513
+            },
+            "recall@5": {
+              "mean": 0.2405,
+              "std": 0.0101
+            }
+          },
+          "generic": {
+            "confuser_acc@1": {
+              "mean": 0.3177,
+              "std": 0.0103
+            },
+            "confuser_mrr": {
+              "mean": 0.518,
+              "std": 0.0085
+            },
+            "mrr": {
+              "mean": 0.179,
+              "std": 0.0106
+            },
+            "recall@1": {
+              "mean": 0.0965,
+              "std": 0.0053
+            },
+            "recall@10": {
+              "mean": 0.3233,
+              "std": 0.0481
+            },
+            "recall@5": {
+              "mean": 0.2501,
+              "std": 0.0111
+            }
+          },
+          "specific": {
+            "confuser_acc@1": {
+              "mean": 0.251,
+              "std": 0.0026
+            },
+            "confuser_mrr": {
+              "mean": 0.4296,
+              "std": 0.0049
+            },
+            "mrr": {
+              "mean": 0.1675,
+              "std": 0.0101
+            },
+            "recall@1": {
+              "mean": 0.0898,
+              "std": 0.003
+            },
+            "recall@10": {
+              "mean": 0.3069,
+              "std": 0.0558
+            },
+            "recall@5": {
+              "mean": 0.2268,
+              "std": 0.0085
+            }
+          },
+          "contrast": {
+            "confuser_acc@1": {
+              "mean": 0.3283,
+              "std": 0.0047
+            },
+            "confuser_mrr": {
+              "mean": 0.5589,
+              "std": 0.0038
+            },
+            "mrr": {
+              "mean": 0.1635,
+              "std": 0.0098
+            },
+            "recall@1": {
+              "mean": 0.0808,
+              "std": 0.0031
+            },
+            "recall@10": {
+              "mean": 0.3134,
+              "std": 0.0496
+            },
+            "recall@5": {
+              "mean": 0.2302,
+              "std": 0.0062
+            }
+          }
+        }
+      }
+    }
+  }
+}
