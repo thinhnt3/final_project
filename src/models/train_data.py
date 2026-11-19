@@ -9,6 +9,7 @@ import torch
 
 from src.core.exceptions import DataError
 from src.data.schemas import Split
+from src.data.text_match import names, names_any
 from src.embeddings.store import EmbeddingTable
 from src.models.graph_data import image_graph_to_data
 from src.models.train import RetrievalSet
@@ -84,3 +85,54 @@ def hard_negative_partners(
                 break
         partners.append(tuple(chosen))
     return tuple(partners)
+
+
+def relation_mentions(
+    image_graphs: Sequence[Mapping[str, Any]],
+    image_ids: Sequence[int],
+    queries: Sequence[Mapping[str, Any]],
+    concept_names: Mapping[int, Sequence[str]],
+    predicate_text: Mapping[int, str],
+) -> tuple[tuple[tuple[int, ...], ...], ...]:
+    """Per image (in `image_ids` order), per caption (by query id), the relation nodes it names.
+
+    A caption names a triplet when it contains the predicate and one name of each object.
+    Node indices follow `image_graph_to_data`: image, objects, then one node per triplet.
+    """
+    graph_of = {int(g["vg_image_id"]): g for g in image_graphs}
+    captions: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    for query in queries:
+        captions[int(query["relevant_ids"][0])].append((query["query_id"], query["text"]))
+    result = []
+    for image_id in image_ids:
+        graph = graph_of[image_id]
+        first_relation = 1 + len(graph["concept_ids"])
+        per_caption = []
+        for _, text in sorted(captions[image_id]):
+            named = tuple(
+                first_relation + position
+                for position, (s, p, o) in enumerate(graph["triplets"])
+                if int(s) != int(o)
+                and names(text, predicate_text[int(p)])
+                and names_any(text, concept_names[int(s)])
+                and names_any(text, concept_names[int(o)])
+            )
+            per_caption.append(named)
+        result.append(tuple(per_caption))
+    return tuple(result)
+
+
+def subset_retrieval_set(
+    data: RetrievalSet, image_ids: Sequence[int], fraction: float, seed: int
+) -> tuple[RetrievalSet, tuple[int, ...]]:
+    """A fixed random share of the images, in their original order; the draw ignores the training seed."""
+    if not 0 < fraction <= 1:
+        raise DataError(f"train fraction must lie in (0, 1], got {fraction}")
+    if fraction == 1:
+        return data, tuple(image_ids)
+    keep = max(2, round(len(image_ids) * fraction))
+    chosen = sorted(torch.randperm(len(image_ids), generator=torch.Generator().manual_seed(seed))[:keep].tolist())
+    return (
+        RetrievalSet(graphs=[data.graphs[i] for i in chosen], caption_vectors=data.caption_vectors[chosen]),
+        tuple(image_ids[i] for i in chosen),
+    )

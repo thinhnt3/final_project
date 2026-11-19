@@ -234,3 +234,27 @@ def test_structure_only_rate_is_rejected_with_mat_or_without_structure():
         _config(structure_only_rate=0.5)  # mat is on
     with pytest.raises(ConfigError):
         _config(mat=False, structure_only_rate=0.5, modalities=("image", "text"))
+
+
+def test_structure_vectors_use_the_structure_modality_alone_and_name_the_run():
+    encoder = _encoder(mat=False, structure_loss_weight=0.5).eval()
+    batch = _batch(*[({"vg_image_id": i, "concept_ids": [i, i + 1], "triplets": [[i, 0, i + 1]]}, i) for i in range(3)])
+    embeddings = encoder.modality_embeddings(batch)
+    alone = encoder.fuse(*embeddings, present=torch.tensor([[True, False, False]] * 3))
+    assert torch.allclose(encoder.structure_vectors(batch), alone)
+    assert torch.allclose(encoder.fused_vectors(batch), encoder(batch))
+    assert encoder.structure_loss_weight == 0.5
+    assert encoder.config.run_name() == "adamf-d12-sl0.5"
+
+
+def test_structure_and_swap_terms_train_without_error(tmp_path):
+    train = _dataset()
+    # Each image's first caption names its only relation (the last node); the second names none.
+    mentions = tuple(((graph.num_nodes - 1,), ()) for graph in train.graphs)
+    train = RetrievalSet(graphs=train.graphs, caption_vectors=train.caption_vectors, relation_mentions=mentions)
+    run = RunDirectory(tmp_path / "aux")
+    run.prepare(resume=False, overwrite=False)
+    model = _encoder(mat=False, structure_loss_weight=0.3)
+    config = _training(predicate_swap_weight=1.0, predicate_swap_pool=5)
+    result = fit(model, train, _dataset(8, seed=2), config, 0, run, KS)
+    assert all(torch.isfinite(torch.tensor(row["train_loss"])) for row in result.history)

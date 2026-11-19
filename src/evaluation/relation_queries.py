@@ -47,16 +47,17 @@ def build_relation_queries(
     concept_text: Mapping[int, str],
     predicate_text: Mapping[int, str],
     seed: int,
+    split: Split = Split.TEST,
 ) -> list[dict[str, Any]]:
-    """One relation query and its objects twin per test image that has an eligible triplet.
+    """One relation query and its objects twin per image of `split` that has an eligible triplet.
 
-    Eligible: subject and object are different concepts, the triplet occurs in no other test
-    image, and at least one other test image holds both concepts. The triplet of an image is
+    Eligible: subject and object are different concepts, the triplet occurs in no other image
+    of the split, and at least one other image of the split holds both concepts. The triplet of an image is
     drawn with `seed`, so the same inputs always give the same queries.
     """
-    test = sorted((g for g in graphs if g["split"] == Split.TEST.value), key=lambda g: int(g["vg_image_id"]))
+    test = sorted((g for g in graphs if g["split"] == split.value), key=lambda g: int(g["vg_image_id"]))
     if not test:
-        raise DataError("no test image graphs")
+        raise DataError(f"no {split.value} image graphs")
     occurrences: Counter[Triplet] = Counter(t for g in test for t in _triplets(g))
     concepts_of = {int(g["vg_image_id"]): {int(c) for c in g["concept_ids"]} for g in test}
     rng = random.Random(seed)
@@ -84,7 +85,7 @@ def build_relation_queries(
                 "query_id": f"{kind.value}-{image_id}",
                 "kind": kind.value,
                 "text": TEMPLATES[kind].format(**words),
-                "split": Split.TEST.value,
+                "split": split.value,
                 "relevant_ids": [image_id],
                 "confuser_ids": confusers,
                 "triplet": list(triplet),

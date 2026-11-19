@@ -39,6 +39,7 @@ from src.data.schemas import Split
 from src.data.sources import sha256_of
 from src.data.yaml_io import write_yaml
 from src.embeddings.store import META_FILE, EmbeddingTable, load_table, save_table, verify_inputs_unchanged
+from src.evaluation.relation_queries import QueryKind
 from src.models.ablations import Ablation, ablate_graph
 from src.models.adamf_mat import MODALITIES, AdamfMatImageEncoder
 from src.models.checkpoint import (
@@ -53,8 +54,14 @@ from src.models.checkpoint import (
 from src.models.graph_data import image_graph_to_data
 from src.models.graphsage import GraphImageEncoder, ImageNodeFeature
 from src.models.graphsage_label_text import LabelTextGraphEncoder
-from src.models.train import RetrievalSet, encode_graphs, fit, info_nce, seed_everything
-from src.models.train_data import build_retrieval_set, hard_negative_partners
+from src.models.relation_validation import RelationValidator
+from src.models.train import RetrievalSet, SelectionMetric, encode_graphs, fit, info_nce, seed_everything
+from src.models.train_data import (
+    build_retrieval_set,
+    hard_negative_partners,
+    relation_mentions,
+    subset_retrieval_set,
+)
 from src.retrieval.config import RetrievalConfig
 
 log = logging.getLogger("train_graphsage")
@@ -69,6 +76,9 @@ INTERRUPTED_EXIT_CODE = 130
 _METRIC_DECIMALS = 4
 # Hard-negative candidates kept per train image; a group draws from them.
 HARD_NEGATIVE_PARTNERS = 32
+# Draw of the train subset for --train-fraction; fixed so every seed and model sees the same images.
+TRAIN_SUBSET_SEED = 20261120
+RELATION_QUERIES_DIR = "relation_queries"
 
 
 class Encoder(StrEnum):
@@ -87,8 +97,16 @@ class Encoder(StrEnum):
             name = f"{config.graphsage.run_name()}-labeltext-d{config.adamf_mat.dim}"
         else:
             name = config.graphsage.run_name()
-        group = config.training.hard_negative_group
-        return f"{name}-hn{group}" if group > 1 else name
+        training = config.training
+        if training.hard_negative_group > 1:
+            name += f"-hn{training.hard_negative_group}"
+        if training.predicate_swap_weight > 0:
+            name += f"-ps{training.predicate_swap_weight:g}"
+        if training.train_fraction < 1:
+            name += f"-tf{training.train_fraction:g}"
+        if training.selection_metric is SelectionMetric.RELATION:
+            name += "-selrel"
+        return name
 
 
 def _git_state() -> dict[str, Any]:
@@ -222,6 +240,7 @@ def _train_seed(
             resume=resume,
             show_progress=True,
             on_epoch=tracker.log_epoch,
+            extra_validation=data["relation_validator"],
         )
         best = run.load_best()
         model.load_state_dict(best["model"])
@@ -287,6 +306,18 @@ def run(
     image_table, query_table = load_table(embeddings_dir, "images"), load_table(embeddings_dir, "queries")
 
     train, train_ids = build_retrieval_set(Split.TRAIN, images, queries, image_graphs, image_table, query_table)
+    train, train_ids = subset_retrieval_set(train, train_ids, config.training.train_fraction, TRAIN_SUBSET_SEED)
+    if config.training.predicate_swap_weight > 0:
+        concepts = read_json(processed / "graph" / "concepts.json")
+        predicate_text = {int(p["predicate_id"]): p["text"] for p in read_json(processed / "graph" / "predicates.json")}
+        mentions = relation_mentions(
+            image_graphs, train_ids, [q for q in queries if q["split"] == Split.TRAIN.value],
+            {int(c["concept_id"]): (c["text"],) for c in concepts}, predicate_text,
+        )
+        train = replace(train, relation_mentions=mentions)
+        named = sum(1 for per_image in mentions for per_caption in per_image if per_caption)
+        log.info("predicate swap: %d of %d train captions name a triplet of their image",
+                 named, sum(len(per_image) for per_image in mentions))
     if config.training.hard_negative_group > 1:
         partners = hard_negative_partners(image_graphs, train_ids, HARD_NEGATIVE_PARTNERS)
         train = replace(train, partners=partners)
@@ -294,6 +325,18 @@ def run(
                  sum(1 for p in partners if p), len(partners))
     val, _ = build_retrieval_set(Split.VAL, images, queries, image_graphs, image_table, query_table)
     graph_of = {int(g["vg_image_id"]): g for g in image_graphs}
+    relation_file = processed / RELATION_QUERIES_DIR / "queries_val.json"
+    relation_validator = None
+    if relation_file.is_file():
+        relation_table = load_table(embeddings_dir / RELATION_QUERIES_DIR, "queries_val")
+        relation_queries = [q for q in read_json(relation_file) if q["kind"] == QueryKind.RELATION.value]
+        relation_validator = RelationValidator(
+            relation_queries, relation_table.select([q["query_id"] for q in relation_queries]),
+            graph_of, image_table.row_of(), config.training,
+        )
+        log.info("relation validation: %d queries", len(relation_queries))
+    elif config.training.selection_metric is SelectionMetric.RELATION:
+        raise DataError(f"{relation_file} not found; run scripts.build_relation_queries --split val")
     without_graph = [image_id for image_id in image_table.ids if int(image_id) not in graph_of]
     if without_graph:
         raise DataError(f"{len(without_graph)} embedded images have no graph, e.g. {without_graph[:5]}")
@@ -304,6 +347,7 @@ def run(
         # Sub-graphs of every image, in the order of the image table, to export graph vectors.
         "all_graphs": [image_graph_to_data(graph_of[int(i)], row) for row, i in enumerate(image_table.ids)],
         "all_image_ids": image_table.ids,
+        "relation_validator": relation_validator,
         "concepts": _dense_table(load_table(embeddings_dir, "concepts"), "concepts"),
         "predicates": _dense_table(load_table(embeddings_dir, "predicates"), "predicates"),
         "images": torch.from_numpy(image_table.vectors),
@@ -374,6 +418,12 @@ def main() -> int:
     parser.add_argument(
         "--hard-negative-group", type=int, help="images per hard-negative group in a batch; overrides the config"
     )
+    parser.add_argument("--structure-loss-weight", type=float, help="adamf_mat: weight of the structure-only loss")
+    parser.add_argument("--predicate-swap-weight", type=float, help="weight of the predicate-swap negatives")
+    parser.add_argument("--train-fraction", type=float, help="share of the train images to use")
+    parser.add_argument(
+        "--selection-metric", choices=[m.value for m in SelectionMetric], help="overrides training.selection_metric"
+    )
     parser.add_argument("--wandb-mode", choices=[m.value for m in WandbMode], help="overrides wandb.mode")
     parser.add_argument("--ablation", choices=[v.value for v in Ablation])
     parser.add_argument(
@@ -402,10 +452,22 @@ def main() -> int:
             structure_only_rate=(
                 config.adamf_mat.structure_only_rate if args.structure_only_rate is None else args.structure_only_rate
             ),
+            structure_loss_weight=(
+                config.adamf_mat.structure_loss_weight
+                if args.structure_loss_weight is None
+                else args.structure_loss_weight
+            ),
         )
         config = replace(config, adamf_mat=adamf_mat)
-        if args.hard_negative_group is not None:
-            config = replace(config, training=replace(config.training, hard_negative_group=args.hard_negative_group))
+        overrides: dict[str, Any] = {
+            "hard_negative_group": args.hard_negative_group,
+            "predicate_swap_weight": args.predicate_swap_weight,
+            "train_fraction": args.train_fraction,
+            "selection_metric": SelectionMetric(args.selection_metric) if args.selection_metric else None,
+        }
+        config = replace(
+            config, training=replace(config.training, **{k: v for k, v in overrides.items() if v is not None})
+        )
         if args.wandb_mode:
             config = replace(config, wandb=replace(config.wandb, mode=WandbMode(args.wandb_mode)))
         encoder = Encoder(args.model)

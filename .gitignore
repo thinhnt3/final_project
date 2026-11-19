@@ -55,3 +55,10 @@ runs/graphsage/**/tracker_run_id.txt
 /private/
 # A worktree links the embeddings of the main checkout; the trailing-slash rule above misses a symlink.
 data/processed/vg_coco/embeddings
+
+# Full VG ∩ COCO variant: image files (~6 GB) are downloaded by build_vg_coco --stage images.
+data/processed/vg_coco_full/images/
+# Worktree links to the main checkout's interim build outputs.
+data/interim
+# Full variant outputs are large (scene_graphs.json ~270 MB); rebuild with scripts.make_full_split + build_vg_coco --stage export.
+data/processed/vg_coco_full/

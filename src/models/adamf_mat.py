@@ -73,6 +73,9 @@ class AdamfMatConfig:
     # Training only: share of images whose image and text modalities are hidden from the
     # fusion, so the structure modality alone must match the caption. 0 switches it off.
     structure_only_rate: float = 0.0
+    # Weight of an extra InfoNCE term on the structure modality alone, for every image, so
+    # the graph branch always has to match the caption by itself. 0 switches it off.
+    structure_loss_weight: float = 0.0
 
     def __post_init__(self) -> None:
         if min(self.dim, self.noise_dim, self.generator_hidden_dim) < 1:
@@ -89,6 +92,8 @@ class AdamfMatConfig:
             raise ConfigError("adamf_mat.mat needs all three modalities; drop a modality with mat: false")
         if not 0.0 <= self.structure_only_rate < 1.0:
             raise ConfigError(f"adamf_mat.structure_only_rate must lie in [0, 1), got {self.structure_only_rate}")
+        if self.structure_loss_weight < 0 or (self.structure_loss_weight > 0 and "structure" not in self.modalities):
+            raise ConfigError("adamf_mat.structure_loss_weight must be >= 0 and needs the structure modality")
         alone = "structure" not in self.modalities or len(self.modalities) < 2
         if self.structure_only_rate > 0 and (self.mat or alone):
             raise ConfigError("adamf_mat.structure_only_rate needs mat: false, the structure modality and another one")
@@ -101,7 +106,8 @@ class AdamfMatConfig:
             name += "-l2"
         dropped = [m for m in MODALITIES if m not in self.modalities]
         name += "".join(f"-no-{m}" for m in dropped)
-        return name + (f"-so{self.structure_only_rate:g}" if self.structure_only_rate > 0 else "")
+        name += f"-so{self.structure_only_rate:g}" if self.structure_only_rate > 0 else ""
+        return name + (f"-sl{self.structure_loss_weight:g}" if self.structure_loss_weight > 0 else "")
 
 
 class ModalityGenerator(nn.Module):
@@ -140,6 +146,7 @@ class AdamfMatImageEncoder(nn.Module):
         super().__init__()
         self.config = config
         self.adversarial = config.mat
+        self.structure_loss_weight = config.structure_loss_weight
         self.generator_learning_rate = config.generator_learning_rate
         clip_dim = concept_vectors.shape[1]
         # Frozen lookup tables; restored from the embedding store, not saved in checkpoints.
@@ -213,6 +220,17 @@ class AdamfMatImageEncoder(nn.Module):
             present = self.structure_only_mask(embeddings[0].shape[0], embeddings[0].device)
             return self.fuse(*embeddings, present=present)
         return self.fuse(*embeddings)
+
+    def fused_vectors(self, batch: Batch) -> torch.Tensor:
+        """Joint vector with every modality, also in training mode (no structure-only rows)."""
+        return self.fuse(*self.modality_embeddings(batch))
+
+    def structure_vectors(self, batch: Batch) -> torch.Tensor:
+        """Unit vector in the CLIP space from the structure modality alone."""
+        embeddings = self.modality_embeddings(batch)
+        present = torch.zeros(embeddings[0].shape[0], len(embeddings), dtype=torch.bool, device=embeddings[0].device)
+        present[:, self.config.modalities.index("structure")] = True
+        return self.fuse(*embeddings, present=present)
 
     def generator_parameters(self) -> Iterator[nn.Parameter]:
         """Parameters of the two modality generators; none when MAT is off."""

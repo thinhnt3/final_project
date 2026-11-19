@@ -468,3 +468,38 @@ def test_hard_negative_groups_keep_each_image_once_and_put_partners_together():
     start = order.index(0)
     if start + 1 < len(order) and order[start + 1] in (1, 2, 3):
         assert set(order[start:start + 4]) == {0, 1, 2, 3}
+
+
+def test_swapped_graphs_change_one_named_predicate_and_never_keep_it():
+    data = _dataset(4)
+    mentions = tuple(((data.graphs[i].num_nodes - 1,), ()) for i in range(4))
+    data = RetrievalSet(graphs=data.graphs, caption_vectors=data.caption_vectors, relation_mentions=mentions)
+    images, captions = torch.tensor([0, 1, 2, 3]), torch.tensor([0, 1, 0, 1])
+    torch.manual_seed(0)
+    rows, swapped = train_module._swapped_graphs(data, images, captions, _config(predicate_swap_pool=2))
+    assert rows == [0, 2]
+    for row, graph in zip(rows, swapped, strict=True):
+        original = data.graphs[int(images[row])]
+        changed = (graph.feature_row != original.feature_row).nonzero().flatten().tolist()
+        assert changed == [original.num_nodes - 1]
+        assert int(graph.feature_row[-1]) in (0, 1)
+    assert torch.equal(data.graphs[0].feature_row, _dataset(4).graphs[0].feature_row)  # originals untouched
+
+
+def test_relation_selection_adds_relation_accuracy_and_needs_it():
+    key = train_module.selection_key({"recall@1": 0.4, "relation_acc": 0.3, "mrr": 0.5}, SelectionMetric.RELATION)
+    assert key == (0.7, 0.5)
+    with pytest.raises(TrainingError):
+        train_module.selection_key({"recall@1": 0.4, "mrr": 0.5}, SelectionMetric.RELATION)
+
+
+def test_train_subset_is_fixed_and_keeps_order():
+    from src.models.train_data import subset_retrieval_set
+
+    data = _dataset(10)
+    ids = tuple(range(100, 110))
+    first, first_ids = subset_retrieval_set(data, ids, 0.5, seed=7)
+    again, again_ids = subset_retrieval_set(data, ids, 0.5, seed=7)
+    assert first_ids == again_ids and len(first_ids) == 5 and list(first_ids) == sorted(first_ids)
+    assert len(first.graphs) == 5 and first.caption_vectors.shape[0] == 5
+    assert subset_retrieval_set(data, ids, 1.0, seed=7)[1] == ids

@@ -7,7 +7,7 @@ import time
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Protocol, cast, runtime_checkable
 
 import numpy as np
 import torch
@@ -34,6 +34,8 @@ class SelectionMetric(StrEnum):
 
     RECALL_AT_1 = "recall@1"
     MRR = "mrr"
+    # Caption recall@1 plus validation relation accuracy; needs the relation validator.
+    RELATION = "recall@1+relation"
 
 
 class StopReason(StrEnum):
@@ -60,6 +62,13 @@ class TrainingConfig:
     # Images per hard-negative group: an image and partners sharing an object pair with it
     # (see `RetrievalSet.partners`) are put in the same batch. 1 switches it off.
     hard_negative_group: int = 1
+    # Weight of the predicate-swap term: for a caption that names a triplet of its image, the
+    # same graph with that predicate swapped must score below the real one. 0 switches it off.
+    predicate_swap_weight: float = 0.0
+    # Replacement predicates are drawn from the this many most frequent ones (ids 0..n-1).
+    predicate_swap_pool: int = 50
+    # Share of the train images used, drawn once with a fixed seed; 1 uses them all.
+    train_fraction: float = 1.0
 
     def __post_init__(self) -> None:
         if not self.seeds or len(set(self.seeds)) != len(self.seeds):
@@ -68,6 +77,8 @@ class TrainingConfig:
             raise ConfigError("training.device must name a device; 'auto' would make runs differ between machines")
         if min(self.batch_size, self.max_epochs, self.patience, self.hard_negative_group) < 1:
             raise ConfigError("training.batch_size, max_epochs and patience must be >= 1")
+        if self.predicate_swap_weight < 0 or self.predicate_swap_pool < 2 or not 0 < self.train_fraction <= 1:
+            raise ConfigError("training.predicate_swap_weight >= 0, predicate_swap_pool >= 2, train_fraction in (0, 1]")
         if min(self.learning_rate, self.temperature, self.grad_clip_norm) <= 0 or self.weight_decay < 0:
             raise ConfigError("training.learning_rate, temperature and grad_clip_norm must be > 0, weight_decay >= 0")
 
@@ -80,6 +91,9 @@ class RetrievalSet:
     caption_vectors: torch.Tensor  # (images, captions per image, dim), unit length
     # For hard-negative batches: per image position, positions of other images to batch it with.
     partners: Sequence[Sequence[int]] | None = None
+    # For predicate-swap negatives: per image, per caption, the relation nodes (local indices)
+    # whose triplet the caption names.
+    relation_mentions: Sequence[Sequence[Sequence[int]]] | None = None
 
     def __post_init__(self) -> None:
         if self.caption_vectors.ndim != 3 or self.caption_vectors.shape[0] != len(self.graphs):
@@ -215,6 +229,38 @@ def _pair_inputs(
     return batch, data.caption_vectors[images, captions].to(device)
 
 
+def _swapped_graphs(
+    data: RetrievalSet, images: torch.Tensor, captions: torch.Tensor, config: TrainingConfig
+) -> tuple[list[int], list[Data]]:
+    """Batch rows whose caption names a triplet, and their graphs with that predicate swapped.
+
+    One named relation per row is swapped for another predicate of the pool; the draw uses
+    the global generator, which training seeds and checkpoints.
+    """
+    if data.relation_mentions is None:
+        return [], []
+    rows, graphs = [], []
+    for row, (image, caption) in enumerate(zip(images.tolist(), captions.tolist(), strict=True)):
+        named = data.relation_mentions[image][caption]
+        if not named:
+            continue
+        node = named[int(torch.randint(len(named), (1,)))]
+        graph = data.graphs[image].clone()
+        graph.feature_row = graph.feature_row.clone()
+        current = int(graph.feature_row[node])
+        replacement = int(torch.randint(config.predicate_swap_pool - 1, (1,)))
+        graph.feature_row[node] = replacement + (replacement >= current)  # never the current predicate
+        rows.append(row)
+        graphs.append(graph)
+    return rows, graphs
+
+
+def _clean_vectors(model: nn.Module, batch: Batch) -> torch.Tensor:
+    """Vectors without training-time modality dropout, so two graphs are compared like for like."""
+    fused = getattr(model, "fused_vectors", None)
+    return fused(batch) if callable(fused) else model(batch)
+
+
 def _pair_loss(
     model: nn.Module, data: RetrievalSet, images: torch.Tensor, captions: torch.Tensor, config: TrainingConfig
 ) -> torch.Tensor:
@@ -222,7 +268,22 @@ def _pair_loss(
     adversary = _adversary(model)
     if adversary is not None:
         return adversary.discriminator_loss(batch, texts, config.temperature)
-    return info_nce(model(batch), texts, config.temperature)
+    loss = info_nce(model(batch), texts, config.temperature)
+    structure_weight = float(getattr(model, "structure_loss_weight", 0.0))
+    if structure_weight > 0:
+        # nn.Module's __getattr__ types attributes as Tensor | Module; this one is a method.
+        structure_vectors = cast(Callable[[Batch], torch.Tensor], model.structure_vectors)
+        loss = loss + structure_weight * info_nce(structure_vectors(batch), texts, config.temperature)
+    if config.predicate_swap_weight > 0:
+        rows, swapped = _swapped_graphs(data, images, captions, config)
+        if rows:
+            device = config.device.value
+            originals = Batch.from_data_list([data.graphs[i] for i in images[rows].tolist()])
+            real = _clean_vectors(model, originals.to(device))
+            fake = _clean_vectors(model, Batch.from_data_list(swapped).to(device))
+            gap = ((fake - real) * texts[rows]).sum(dim=-1) / config.temperature
+            loss = loss + config.predicate_swap_weight * nn.functional.softplus(gap).mean()
+    return loss
 
 
 def _generator_step(
@@ -326,6 +387,11 @@ def evaluate(model: nn.Module, data: RetrievalSet, config: TrainingConfig, ks: S
 
 def selection_key(metrics: dict[str, float], selection_metric: SelectionMetric) -> tuple[float, float]:
     """Higher is better: the selection metric first, the other one to break ties."""
+    if selection_metric is SelectionMetric.RELATION:
+        if "relation_acc" not in metrics:
+            raise TrainingError("selection on recall@1+relation needs the relation validator")
+        combined = metrics[SelectionMetric.RECALL_AT_1.value] + metrics["relation_acc"]
+        return round(combined, _SELECTION_DECIMALS), round(metrics[SelectionMetric.MRR.value], _SELECTION_DECIMALS)
     other = SelectionMetric.MRR if selection_metric is SelectionMetric.RECALL_AT_1 else SelectionMetric.RECALL_AT_1
     return (
         round(metrics[selection_metric.value], _SELECTION_DECIMALS),
@@ -345,12 +411,14 @@ def fit(
     resume: bool = False,
     show_progress: bool = False,
     on_epoch: Callable[[dict[str, Any]], None] | None = None,
+    extra_validation: Callable[[nn.Module], dict[str, float]] | None = None,
 ) -> TrainingResult:
     """Train until validation stops improving; checkpoint after every epoch.
 
     `last.pt` always holds the last finished epoch, so an interrupted run loses at most the
     epoch in progress. `best.pt` holds the epoch with the best validation selection metric.
     `on_epoch` receives each finished epoch's history row (used to report to a tracker).
+    `extra_validation` adds metrics to each epoch's validation (e.g. the relation validator).
     """
     metric_ks = sorted({*ks, 1})
     model.to(config.device.value)
@@ -398,6 +466,8 @@ def fit(
         )
         train_loss = losses["train_loss"]
         metrics = evaluate(model, val, config, metric_ks)
+        if extra_validation is not None:
+            metrics.update(extra_validation(model))
         key = selection_key(metrics, config.selection_metric)
         is_best = best_key is None or key > best_key
         if is_best:

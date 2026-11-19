@@ -173,6 +173,7 @@ def _adamf_mat_config(raw: dict[str, Any]) -> AdamfMatConfig:
         modalities=tuple(modalities),
         normalize_modalities=normalize,
         structure_only_rate=float(adamf_raw.get("structure_only_rate", 0.0)),
+        structure_loss_weight=float(adamf_raw.get("structure_loss_weight", 0.0)),
     )
 
 
@@ -202,6 +203,9 @@ def _training_config(raw: dict[str, Any]) -> TrainingConfig:
         grad_clip_norm=float(require_field(training_raw, "grad_clip_norm", number)),
         selection_metric=_choice(training_raw, "selection_metric", SelectionMetric, "training"),
         hard_negative_group=int(training_raw.get("hard_negative_group", 1)),
+        predicate_swap_weight=float(training_raw.get("predicate_swap_weight", 0.0)),
+        predicate_swap_pool=int(training_raw.get("predicate_swap_pool", 50)),
+        train_fraction=float(training_raw.get("train_fraction", 1.0)),
     )
 
 
