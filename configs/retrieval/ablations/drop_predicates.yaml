@@ -1,0 +1,47 @@
+# Same protocol as main; fixed intervention seed; tracking disabled.
+benchmark:
+  alpha_step: 0.01
+  recall_ks:
+  - 1
+  - 5
+  - 10
+  top_k_grid:
+  - 10
+  - 20
+  - 50
+  - 100
+  - 200
+  - 500
+  - 1500
+clip:
+  device: auto
+  image_batch_size: 64
+  model_name: openai/clip-vit-base-patch32
+  text_batch_size: 256
+data_config: configs/data/vg_coco.yaml
+embeddings_dir: data/processed/vg_coco/embeddings
+graphsage:
+  directed: true
+  hidden_dim: 512
+  image_node: learned
+  num_layers: 3
+  ablation: drop_predicates
+  ablation_seed: 0
+runs_dir: runs
+training:
+  batch_size: 256
+  device: cpu
+  grad_clip_norm: 1.0
+  learning_rate: 0.001
+  max_epochs: 50
+  patience: 5
+  seeds:
+  - 13
+  - 37
+  - 97
+  selection_metric: recall@1
+  temperature: 0.07
+  weight_decay: 0.0001
+wandb:
+  mode: disabled
+  project: vg-coco-graph-retrieval

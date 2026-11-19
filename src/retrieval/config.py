@@ -10,6 +10,7 @@ from src.connectors.wandb_tracker import WandbConfig, WandbMode
 from src.core.config_parsing import read_mapping, require_field, require_section
 from src.core.exceptions import ConfigError
 from src.embeddings.device import Device
+from src.models.ablations import Ablation
 from src.models.adamf_mat import MODALITIES, AdamfMatConfig
 from src.models.graphsage import GraphSageConfig, ImageNodeFeature
 from src.models.train import SelectionMetric, TrainingConfig
@@ -125,6 +126,14 @@ def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
     if not isinstance(directed, bool):
         raise ConfigError(f"graphsage.directed must be true or false, got {directed!r}")
     return GraphSageConfig(
+        # Old YAML files keep the full-graph default.
+        ablation=_choice(
+            {"ablation": graphsage_raw.get("ablation", "full")},
+            "ablation",
+            Ablation,
+            "graphsage",
+        ),
+        ablation_seed=require_field({"ablation_seed": graphsage_raw.get("ablation_seed", 0)}, "ablation_seed", int),
         hidden_dim=require_field(graphsage_raw, "hidden_dim", int),
         num_layers=require_field(graphsage_raw, "num_layers", int),
         directed=directed,
@@ -132,8 +141,16 @@ def _graphsage_config(raw: dict[str, Any]) -> GraphSageConfig:
     )
 
 
+# Used when a config has no adamf_mat section (the GraphSAGE-only ablation configs);
+# the same values as configs/retrieval/vg_coco.yaml.
+DEFAULT_ADAMF_MAT: dict[str, Any] = {
+    "dim": 256, "adaptive_fusion": True, "mat": True, "mu": 1.0,
+    "noise_dim": 64, "generator_hidden_dim": 512, "generator_learning_rate": 0.0001,
+}
+
+
 def _adamf_mat_config(raw: dict[str, Any]) -> AdamfMatConfig:
-    adamf_raw = require_section(raw, "adamf_mat")
+    adamf_raw = require_section(raw, "adamf_mat") if "adamf_mat" in raw else DEFAULT_ADAMF_MAT
     for key in ("adaptive_fusion", "mat"):
         if not isinstance(adamf_raw.get(key), bool):
             raise ConfigError(f"adamf_mat.{key} must be true or false, got {adamf_raw.get(key)!r}")

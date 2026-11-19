@@ -9,11 +9,11 @@ status: in-progress
 
 Một pipeline chạy đầu-cuối trên VG ∩ COCO (10.000 ảnh): CLIP đóng băng → top-k cosine → điểm đồ thị từ nhúng GraphSAGE → xếp hạng lại theo α → relation giải thích.
 
-Quyết định thiết kế (G1–G10) và lý do: `docs/graphsage-design-decisions.md`. Bản thử 40 ảnh cũ bị xoá và viết lại (G10). Làm tuần tự, mỗi bước có input/output kiểm được; bộ đo dùng chung nằm ở Phase 3.
+Quyết định thiết kế (G1–G10) và lý do: `docs/graphsage-design-decisions.md`. Bản thử 40 ảnh cũ bị xoá và viết lại (G10). Làm tuần tự, mỗi bước có input/output kiểm được; bộ đo dùng chung nằm ở Giai đoạn 3.
 
 ## Thứ tự làm (user duyệt 17/11)
 
-1.0 → 1.1 → Phase 3 (bộ đo + baseline CLIP) → B4 (Phase 4) → 1.2 → 1.3 → 1.4 → 1.5 → 1.6
+1.0 → 1.1 → Giai đoạn 3 (bộ đo + baseline CLIP) → B4 (Giai đoạn 4) → 1.2 → 1.3 → 1.4 → 1.5 → 1.6
 
 B4 đi trước GraphSAGE: nếu riêng đồ thị xếp hạng gần mức ngẫu nhiên thì xem lại đồ thị trước khi huấn luyện GNN.
 
@@ -36,7 +36,7 @@ scripts/embed_vg_coco.py · run_benchmark.py · train_graphsage.py
 tests/embeddings · tests/retrieval · tests/evaluation · tests/models
 ```
 
-Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code đường dẫn hay ngưỡng; mọi thứ chọn trên validation; log, tên, comment bằng tiếng Anh.
+Quy ước như Giai đoạn 2: hàm thuần không đọc/ghi file; không hard-code đường dẫn hay ngưỡng; mọi thứ chọn trên validation; log, tên, comment bằng tiếng Anh.
 
 ## Các bước
 
@@ -98,7 +98,7 @@ Quy ước như Phase 2: hàm thuần không đọc/ghi file; không hard-code �
 ### 1.5 Xếp hạng lại
 
 - **Mục tiêu:** điểm cuối theo đề bài, α và k chọn trên validation.
-- **Output:** bảng CLIP so với CLIP + Graph trên test, cả hai biến thể đỉnh ảnh, qua bộ đo của Phase 3.
+- **Output:** bảng CLIP so với CLIP + Graph trên test, cả hai biến thể đỉnh ảnh, qua bộ đo của Giai đoạn 3.
 - **Xong khi:** α = 1 cho đúng kết quả của baseline CLIP; α và k chỉ được chọn trên validation; kết quả test chạy một lần sau khi đã chốt tham số.
 
 ### 1.6 Giải thích
@@ -183,4 +183,4 @@ Bổ sung 1.5 (17/11):
 
 Biến thể mang CLIP hơn mô hình chính 1,2 điểm R@1 nhưng dao động giữa các seed lớn hơn (0,46 so với 0,05), và điểm đồ thị của nó đã chứa thông tin CLIP của ảnh (riêng nó đạt 42,25, gần bằng CLIP thuần 43,89), nên không tách được phần đóng góp của cấu trúc. α chọn được: 0,66 / 0,63 / 0,68.
 
-Kết quả 1.6: với mỗi kết quả trả về, lần lượt bỏ từng relation của ảnh (giữ hai đối tượng), tính lại điểm đồ thị, xếp relation theo mức giảm. Chạy thử trên 4 truy vấn test: relation liên quan đứng đầu (`woman cutting cake` cho truy vấn "about to cut birthday cake"). Mức giảm nhỏ, khoảng 0,005–0,045 trên điểm đồ thị 0,3–0,5: gợi ý phần lớn điểm đồ thị đến từ đối tượng, chưa phải từ quan hệ; cần ablation ở Phase 5 để kết luận. Test dùng bộ mã hoá giả có kết quả tính tay được.
+Kết quả 1.6: với mỗi kết quả trả về, lần lượt bỏ từng relation của ảnh (giữ hai đối tượng), tính lại điểm đồ thị, xếp relation theo mức giảm. Chạy thử trên 4 truy vấn test: relation liên quan đứng đầu (`woman cutting cake` cho truy vấn "about to cut birthday cake"). Mức giảm nhỏ, khoảng 0,005–0,045 trên điểm đồ thị 0,3–0,5: gợi ý phần lớn điểm đồ thị đến từ đối tượng, chưa phải từ quan hệ; cần ablation ở Giai đoạn 5 để kết luận. Test dùng bộ mã hoá giả có kết quả tính tay được.

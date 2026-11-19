@@ -8,6 +8,7 @@ from typing import Any
 
 import torch
 
+from src.core.config_parsing import read_mapping
 from src.core.exceptions import TrainingError
 from src.data.json_io import read_json, write_json
 
@@ -44,6 +45,25 @@ class RunDirectory:
     def is_finished(self) -> bool:
         """True if the run wrote its final result."""
         return (self.path / RESULT_FILE).is_file()
+
+    def validate_finished(
+        self,
+        settings: Mapping[str, Any],
+    ) -> None:
+        """A result marker alone does not make a finished run reusable."""
+        if not self.is_finished():
+            raise TrainingError(f"{self.path}: no completed result")
+
+        # Validate the snapshot before trusting the completed-run marker.
+        changed = changed_settings(read_mapping(self.path / SETTINGS_FILE), settings)
+        if changed:
+            raise TrainingError(f"cannot skip finished run {self.path}: settings changed: {changed}")
+
+        # Check that local checkpoints and exported vectors still exist.
+        required = (BEST_FILE, LAST_FILE, f"{GRAPH_VECTORS}.npy", f"{GRAPH_VECTORS}.ids.json")
+        missing = [entry for entry in required if not (self.path / entry).is_file()]
+        if missing:
+            raise TrainingError(f"finished run {self.path} is missing {missing}; restore artifacts or use --overwrite")
 
     def prepare(self, *, resume: bool, overwrite: bool) -> None:
         """Create the directory for a new run, clear it for a restart, or check it can be resumed."""
@@ -110,7 +130,18 @@ def changed_settings(saved: Mapping[str, Any], current: Mapping[str, Any]) -> li
     would not reproduce an uninterrupted run.
     """
     top_level = ("graphsage", "adamf_mat", "clip_model", "inputs_sha256", "seed")
-    changed = [key for key in top_level if saved.get(key) != current.get(key)]
+
+    # Legacy snapshots implicitly used the full graph and topology seed zero.
+    def normalized(
+        key: str,
+        settings: Mapping[str, Any],
+    ) -> Any:
+        value = settings.get(key)
+        if key == "graphsage" and isinstance(value, dict):
+            return {"ablation": "full", "ablation_seed": 0, **value}
+        return value
+
+    changed = [key for key in top_level if normalized(key, saved) != normalized(key, current)]
     saved_training, current_training = saved.get("training", {}), current.get("training", {})
     changed += [
         f"training.{key}"

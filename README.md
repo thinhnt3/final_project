@@ -10,13 +10,19 @@ Cho một câu mô tả, hệ thống tìm ảnh khớp nhất. CLIP chọn ra c
 
 ## Kết quả
 
+Bảng dưới là lượt chạy ban đầu ngày 17/11. Lượt khôi phục local ngày 18/11
+đã chạy lại full và ablation; full R@1 mới là 48,12 ± 0,23%. Xem
+[ablation và fidelity](docs/graphsage-design-decisions.md#ablation-và-fidelity) để đọc giao thức và kết quả mới.
+
 Tập test: 1.500 ảnh, 7.500 câu truy vấn (caption COCO), mỗi câu có đúng một ảnh đúng. α và số ứng viên k được chọn trên tập validation; tập test chỉ được chấm sau khi đã chốt tham số.
 
-| Phương pháp | R@1 | R@5 | R@10 | MRR |
-|---|---|---|---|---|
-| CLIP ViT-B/32 | 43,89 | 72,19 | 82,64 | 56,76 |
-| **CLIP + GraphSAGE** (mô hình chính) | **48,20 ± 0,05** | 75,87 ± 0,18 | 86,39 ± 0,14 | 60,75 ± 0,10 |
-| CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP (lúc khởi tạo) | 49,43 ± 0,46 | 77,90 ± 0,47 | 87,52 ± 0,69 | 62,22 ± 0,37 |
+| Phương pháp | R@1 | R@5 | R@10 | MRR | α | k |
+|---|---|---|---|---|---|---|
+| CLIP ViT-B/32 | 43,89 | 72,19 | 82,64 | 56,76 | 1 | không dùng |
+| **CLIP + GraphSAGE** (mô hình chính) | **48,20 ± 0,05** | 75,87 ± 0,18 | 86,39 ± 0,14 | 60,75 ± 0,10 | 0,81 / 0,83 / 0,78 | 1.500 / 1.500 / 500 |
+| CLIP + GraphSAGE, đỉnh ảnh mang vector CLIP (lúc khởi tạo) | 49,43 ± 0,46 | 77,90 ± 0,47 | 87,52 ± 0,69 | 62,22 ± 0,37 | 0,66 / 0,63 / 0,68 | 500 / 500 / 20 |
+
+Cột α và k ghi giá trị được chọn trên validation cho từng seed, theo thứ tự 13 / 37 / 97. α là trọng số của điểm CLIP trong điểm cuối, nên α càng thấp thì điểm đồ thị càng được tin: mô hình chính dành khoảng 19% cho điểm đồ thị, biến thể đỉnh ảnh mang CLIP khoảng 34%. Ở lượt khôi phục ngày 18/11, mô hình chính chọn α = 0,78 / 0,84 / 0,78 và k = 500 / 10 / 10.
 
 Các dòng GraphSAGE là trung bình ± độ lệch chuẩn qua 3 seed (13, 37, 97). Đơn vị: %.
 
@@ -39,7 +45,7 @@ File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng see
 
 ### Chưa có
 
-- Ablation (chỉ đối tượng, bỏ vị từ, cạnh ngẫu nhiên, tắt hướng) và đo fidelity của phần giải thích.
+- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi và fidelity perturbation đã có (xem tài liệu bên dưới).
 - Backbone thứ hai (OpenCLIP) và tập dữ liệu công khai thứ hai.
 - Phân tích 5 truy vấn thành công và 5 truy vấn thất bại.
 
@@ -104,3 +110,21 @@ docs/           quyết định thiết kế và sơ đồ
 plans/          kế hoạch theo phase và nhật ký công việc
 tests/          test tự động
 ```
+
+## Ablation và fidelity
+
+Hướng dẫn chạy, định nghĩa phép can thiệp và giới hạn kết luận:
+[docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#ablation-và-fidelity).
+
+```bash
+python -m scripts.train_graphsage --config configs/retrieval/ablations/objects_only.yaml --resume
+python -m scripts.run_benchmark --method graphsage --config configs/retrieval/ablations/objects_only.yaml
+python -m scripts.analyze_ablation
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+```
+
+Report giải thích tương tác là tài liệu local trong `private/`, không thuộc repository.
+
+Các output mới trong `runs/` và report local trong `private/` được Git-ignore.
+Những file lịch sử đã tracked trong `runs/` vẫn được Git theo dõi.
+Tiến độ nghiệm thu hiện tại: [requirements checklist](plan-task/requirements-checklist.md).

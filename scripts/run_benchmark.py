@@ -38,6 +38,7 @@ from src.evaluation.benchmark import (
     score_method,
 )
 from src.models.checkpoint import GRAPH_VECTORS, RESULT_FILE
+from src.models.run_validation import validate_run
 from src.retrieval.config import RetrievalConfig
 from src.retrieval.lexical import lexical_graph_scores
 from src.retrieval.rerank import RerankEvaluation, evaluate_reranking
@@ -119,10 +120,19 @@ def _trained_seeds(
         run_dir = config.runs_dir / method.value / name / f"seed{seed}"
         if not (run_dir / RESULT_FILE).is_file():
             raise DataError(f"seed {seed} of run '{name}' has not finished training: {run_dir / RESULT_FILE} not found")
+
+        # Reject a run with another intervention or stale training inputs.
+        validate_run(
+            run_dir,
+            config,
+            seed,
+        )
         graph_table = load_table(run_dir, GRAPH_VECTORS)
         graph = {split: graph_vector_scores(split_data, graph_table) for split, split_data in data.items()}
         evaluations[seed] = evaluate_reranking(clip, graph, data, *sweep)
-        inputs.append(run_dir / RESULT_FILE)
+        inputs.extend(
+            run_dir / entry for entry in (RESULT_FILE, "config.yaml", "graph_vectors.npy", "graph_vectors.ids.json")
+        )
         _log_evaluation(f"seed {seed}: ", evaluations[seed])
 
     def summary(kind: str) -> dict[str, Any]:

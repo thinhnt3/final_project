@@ -49,10 +49,14 @@ def explain_graph_score(
         {**image_graph, "triplets": triplets[:position] + triplets[position + 1:]}
         for position in range(len(triplets))
     ]
-    model.eval()
-    device = next(model.parameters()).device
-    batch = Batch.from_data_list([image_graph_to_data(variant, image_row) for variant in variants]).to(device)
-    scores = (model(batch) @ query_vector.to(device)).cpu()
+
+    # Share the same chunked scorer with the fidelity interventions.
+    scores = score_graph_variants(
+        model,
+        variants,
+        image_row,
+        query_vector,
+    )
     full_score = float(scores[0])
     contributions = [
         RelationContribution(
@@ -65,3 +69,36 @@ def explain_graph_score(
     ]
     # Largest contribution first; equal drops keep the order of the image graph.
     return full_score, sorted(contributions, key=lambda c: -c.score_drop)
+
+
+@torch.no_grad()
+def score_graph_variants(
+    model: nn.Module,
+    variants: list[Mapping[str, Any]],
+    image_row: int,
+    query_vector: torch.Tensor,
+    batch_size: int = 64,
+) -> torch.Tensor:
+    """Graph cosine for each supplied intervention, chunked to bound batch memory."""
+    if batch_size < 1 or query_vector.ndim != 1 or not variants:
+        raise DataError("need non-empty variants, batch_size >= 1 and a one-dimensional query")
+    model.eval()
+    device = next(model.parameters()).device
+
+    # Bound memory by evaluating graph variants in small batches.
+    outputs = []
+    for start in range(
+        0,
+        len(variants),
+        batch_size,
+    ):
+        batch = Batch.from_data_list(
+            [image_graph_to_data(graph, image_row) for graph in variants[start : start + batch_size]]
+        ).to(device)
+        outputs.append((model(batch) @ query_vector.to(device)).cpu())
+
+    # Fail explicitly instead of writing NaN scores into explanations.
+    scores = torch.cat(outputs)
+    if not torch.isfinite(scores).all():
+        raise DataError("graph intervention produced non-finite scores")
+    return scores
