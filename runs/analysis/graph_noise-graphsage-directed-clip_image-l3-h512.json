@@ -1,0 +1,198 @@
+{
+  "method": "graphsage",
+  "run_name": "directed-clip_image-l3-h512",
+  "split": "test",
+  "noise_seed": 20261119,
+  "settings": {
+    "clean": {
+      "graph_only": {
+        "mrr": {
+          "mean": 0.5639,
+          "std": 0.0031
+        },
+        "recall@1": {
+          "mean": 0.4225,
+          "std": 0.0048
+        },
+        "recall@10": {
+          "mean": 0.8473,
+          "std": 0.0024
+        },
+        "recall@5": {
+          "mean": 0.7379,
+          "std": 0.0016
+        }
+      },
+      "reranked": {
+        "mrr": {
+          "mean": 0.6222,
+          "std": 0.0037
+        },
+        "recall@1": {
+          "mean": 0.4943,
+          "std": 0.0046
+        },
+        "recall@10": {
+          "mean": 0.8752,
+          "std": 0.0069
+        },
+        "recall@5": {
+          "mean": 0.779,
+          "std": 0.0047
+        }
+      }
+    },
+    "drop_edge=0.3": {
+      "graph_only": {
+        "mrr": {
+          "mean": 0.5641,
+          "std": 0.0024
+        },
+        "recall@1": {
+          "mean": 0.4226,
+          "std": 0.0031
+        },
+        "recall@10": {
+          "mean": 0.8476,
+          "std": 0.0032
+        },
+        "recall@5": {
+          "mean": 0.7377,
+          "std": 0.0011
+        }
+      },
+      "reranked": {
+        "mrr": {
+          "mean": 0.6217,
+          "std": 0.0036
+        },
+        "recall@1": {
+          "mean": 0.4936,
+          "std": 0.0041
+        },
+        "recall@10": {
+          "mean": 0.8749,
+          "std": 0.007
+        },
+        "recall@5": {
+          "mean": 0.7792,
+          "std": 0.004
+        }
+      }
+    },
+    "drop_edge=0.5": {
+      "graph_only": {
+        "mrr": {
+          "mean": 0.5643,
+          "std": 0.0023
+        },
+        "recall@1": {
+          "mean": 0.4236,
+          "std": 0.0034
+        },
+        "recall@10": {
+          "mean": 0.8477,
+          "std": 0.0039
+        },
+        "recall@5": {
+          "mean": 0.7384,
+          "std": 0.0005
+        }
+      },
+      "reranked": {
+        "mrr": {
+          "mean": 0.6213,
+          "std": 0.003
+        },
+        "recall@1": {
+          "mean": 0.4929,
+          "std": 0.0035
+        },
+        "recall@10": {
+          "mean": 0.8747,
+          "std": 0.0067
+        },
+        "recall@5": {
+          "mean": 0.779,
+          "std": 0.0048
+        }
+      }
+    },
+    "drop_node=0.3": {
+      "graph_only": {
+        "mrr": {
+          "mean": 0.5604,
+          "std": 0.0025
+        },
+        "recall@1": {
+          "mean": 0.4195,
+          "std": 0.0028
+        },
+        "recall@10": {
+          "mean": 0.8444,
+          "std": 0.0031
+        },
+        "recall@5": {
+          "mean": 0.7338,
+          "std": 0.001
+        }
+      },
+      "reranked": {
+        "mrr": {
+          "mean": 0.6201,
+          "std": 0.0031
+        },
+        "recall@1": {
+          "mean": 0.4921,
+          "std": 0.0037
+        },
+        "recall@10": {
+          "mean": 0.8736,
+          "std": 0.006
+        },
+        "recall@5": {
+          "mean": 0.777,
+          "std": 0.0037
+        }
+      }
+    },
+    "flip_label=0.2": {
+      "graph_only": {
+        "mrr": {
+          "mean": 0.5575,
+          "std": 0.0034
+        },
+        "recall@1": {
+          "mean": 0.416,
+          "std": 0.0042
+        },
+        "recall@10": {
+          "mean": 0.8449,
+          "std": 0.0023
+        },
+        "recall@5": {
+          "mean": 0.7309,
+          "std": 0.004
+        }
+      },
+      "reranked": {
+        "mrr": {
+          "mean": 0.6188,
+          "std": 0.0026
+        },
+        "recall@1": {
+          "mean": 0.4903,
+          "std": 0.0045
+        },
+        "recall@10": {
+          "mean": 0.8739,
+          "std": 0.0055
+        },
+        "recall@5": {
+          "mean": 0.7767,
+          "std": 0.0052
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "run_name": "adamf-d256-l2-hn4",
+  "split": "val",
+  "images": 1500,
+  "seeds": {
+    "13": {
+      "structure": {
+        "weight_mean": 0.1333,
+        "weight_std": 0.00831,
+        "weight_cv": 0.06236,
+        "weight_min": 0.10637,
+        "weight_max": 0.16323,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.1333
+      },
+      "image": {
+        "weight_mean": 0.59315,
+        "weight_std": 0.03268,
+        "weight_cv": 0.05509,
+        "weight_min": 0.48681,
+        "weight_max": 0.68613,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.59315
+      },
+      "text": {
+        "weight_mean": 0.27355,
+        "weight_std": 0.03068,
+        "weight_cv": 0.11217,
+        "weight_min": 0.18644,
+        "weight_max": 0.37438,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.27355
+      }
+    },
+    "37": {
+      "structure": {
+        "weight_mean": 0.14214,
+        "weight_std": 0.00841,
+        "weight_cv": 0.05919,
+        "weight_min": 0.11907,
+        "weight_max": 0.17228,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.14214
+      },
+      "image": {
+        "weight_mean": 0.58656,
+        "weight_std": 0.02942,
+        "weight_cv": 0.05015,
+        "weight_min": 0.48842,
+        "weight_max": 0.68065,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.58656
+      },
+      "text": {
+        "weight_mean": 0.2713,
+        "weight_std": 0.02725,
+        "weight_cv": 0.10043,
+        "weight_min": 0.18996,
+        "weight_max": 0.38305,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.2713
+      }
+    },
+    "97": {
+      "structure": {
+        "weight_mean": 0.14526,
+        "weight_std": 0.00775,
+        "weight_cv": 0.05336,
+        "weight_min": 0.11994,
+        "weight_max": 0.17377,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.14526
+      },
+      "image": {
+        "weight_mean": 0.58833,
+        "weight_std": 0.02582,
+        "weight_cv": 0.04388,
+        "weight_min": 0.49688,
+        "weight_max": 0.65448,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.58833
+      },
+      "text": {
+        "weight_mean": 0.2664,
+        "weight_std": 0.02408,
+        "weight_cv": 0.09041,
+        "weight_min": 0.21023,
+        "weight_max": 0.36677,
+        "norm_mean": 1.0,
+        "effective_share_mean": 0.2664
+      }
+    }
+  }
+}

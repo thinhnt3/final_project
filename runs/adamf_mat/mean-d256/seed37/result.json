@@ -1,0 +1,12 @@
+{
+  "best_epoch": 25,
+  "epochs_run": 30,
+  "stop_reason": "no_improvement",
+  "best_validation": {
+    "loss": 1.5259,
+    "recall@1": 0.4831,
+    "recall@5": 0.7744,
+    "recall@10": 0.8713,
+    "mrr": 0.6126
+  }
+}

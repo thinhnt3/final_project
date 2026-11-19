@@ -1,0 +1,52 @@
+# Settings of this training run. Written by train_graphsage.
+adamf_mat:
+  dim: 256
+  adaptive_fusion: true
+  mat: false
+  mu: 1.0
+  noise_dim: 64
+  generator_hidden_dim: 512
+  generator_learning_rate: 0.0001
+  modalities:
+  - structure
+  - image
+  - text
+  normalize_modalities: true
+  structure_only_rate: 0.3
+run_name: adamf-d256-l2-so0.3
+seed: 13
+config_file: configs/retrieval/vg_coco.yaml
+git:
+  commit: 2f493476294a971890cae4cf07e9b09a4dc5dd52
+  dirty: true
+clip_model: openai/clip-vit-base-patch32
+graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  directed: true
+  image_node: learned
+training:
+  seeds:
+  - 13
+  - 37
+  - 97
+  device: cpu
+  batch_size: 256
+  max_epochs: 50
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+  hard_negative_group: 1
+recall_ks:
+- 1
+- 5
+- 10
+train_images: 7000
+val_images: 1500
+inputs_sha256:
+  data/processed/vg_coco/embeddings/openai--clip-vit-base-patch32/meta.json: ce3df1bd96e999ac052ecf715a40bc97c86ed5c93537566d5764da0b90d42902
+  data/processed/vg_coco/graph/image_graphs.json: 3102673586f0b97632142ee70638ccc0d9899c3883df2d74702a6e970359c836
+  data/splits/vg_coco.json: c20951270f42b7451af64618e3d5bd8a065292b79f9b194edd5ac617c27cbc57
