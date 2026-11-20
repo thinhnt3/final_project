@@ -211,8 +211,12 @@ def _summary(per_seed: Sequence[Mapping[str, Mapping[str, float]]]) -> dict[str,
     }
 
 
-def run_graphsage(config: MkgwRetrievalConfig, data: QueryConfig, graph_name: str) -> None:
-    """Train one encoder per seed on one graph variant; score it alone and fused with CLIP."""
+def run_graphsage(config: MkgwRetrievalConfig, data: QueryConfig, graph_name: str, reuse_vectors: bool) -> None:
+    """Train one encoder per seed on one graph variant; score it alone and fused with CLIP.
+
+    With `reuse_vectors` the entity vectors of an earlier run are scored again instead of
+    training, e.g. after a report segment was added.
+    """
     if config.training.device.value != "cpu":
         raise ConfigError("the encoder is trained on cpu so that runs match across machines")
     entities, relations, queries, splits = _load_splits(config, data)
@@ -234,24 +238,30 @@ def run_graphsage(config: MkgwRetrievalConfig, data: QueryConfig, graph_name: st
              len(train.relevant), sum(bool(rows) for rows in train.own_triples), len(gallery))
 
     out_dir = config.runs_dir / "graphsage" / graph_name
+    previous = read_json(out_dir / "benchmark.json")["seeds"] if reuse_vectors else {}
     seeds: dict[str, Any] = {}
     reranked: dict[Split, list[dict[str, dict[str, float]]]] = {s: [] for s in splits}
     graph_only: dict[Split, list[dict[str, dict[str, float]]]] = {s: [] for s in splits}
     for seed in config.training.seeds:
-        seed_everything(seed)  # weights are drawn when the model is built
-        model = KgEntityEncoder(config.graphsage, entity_features, len(relations))
-        result = fit(model, triples, gallery, train, val, config.training, seed, config.recall_ks)
         seed_dir = out_dir / f"seed-{seed}"
-        seed_dir.mkdir(parents=True, exist_ok=True)
-        np.save(seed_dir / "entity_vectors.npy", result.entity_vectors)
-        write_json(seed_dir / "history.json", result.history)
-        gallery_vectors = result.entity_vectors[gallery.numpy()]
+        if reuse_vectors:
+            entity_vectors = np.load(seed_dir / "entity_vectors.npy")
+            trained = {key: previous[str(seed)][key] for key in ("best_epoch", "stop_reason")}
+        else:
+            seed_everything(seed)  # weights are drawn when the model is built
+            model = KgEntityEncoder(config.graphsage, entity_features, len(relations))
+            result = fit(model, triples, gallery, train, val, config.training, seed, config.recall_ks)
+            seed_dir.mkdir(parents=True, exist_ok=True)
+            np.save(seed_dir / "entity_vectors.npy", result.entity_vectors)
+            write_json(seed_dir / "history.json", result.history)
+            entity_vectors = result.entity_vectors
+            trained = {"best_epoch": result.best_epoch, "stop_reason": result.stop_reason.value}
+        gallery_vectors = entity_vectors[gallery.numpy()]
         scores = {s: query_table.select([q["query_id"] for q in d.queries]) @ gallery_vectors.T
                   for s, d in splits.items()}
         selected = select_alpha_top_k(val_data, scores[Split.VAL], config.alpha_grid, config.top_k_grid)
-        seeds[str(seed)] = {"best_epoch": result.best_epoch, "stop_reason": result.stop_reason.value,
-                            "selected": selected}
-        log.info("seed %d best epoch %d, selected on val: %s", seed, result.best_epoch, selected)
+        seeds[str(seed)] = {**trained, "selected": selected}
+        log.info("seed %d best epoch %d, selected on val: %s", seed, trained["best_epoch"], selected)
         for split, split_data in splits.items():
             fused = rerank_scores(split_data.clip_scores, scores[split], selected["alpha"], int(selected["top_k"]))
             reranked[split].append(_segments(split_data, fused, relations, data, config.recall_ks))
@@ -283,6 +293,8 @@ def main() -> int:
     parser.add_argument("--stage", required=True, choices=["embed", "clip", "graphsage"])
     parser.add_argument("--graphs", nargs="+", default=[_CLAIMS], help="graph variants for --stage graphsage")
     parser.add_argument("--image-dir", help="override paths.image_dir of the query config")
+    parser.add_argument("--reuse-vectors", action="store_true",
+                        help="graphsage stage: score the saved entity vectors again instead of training")
     parser.add_argument("--split-seed", type=int, help="use the task built with the same --split-seed")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -301,7 +313,7 @@ def main() -> int:
             run_clip(config, data)
         else:
             for graph_name in args.graphs:
-                run_graphsage(config, data, graph_name)
+                run_graphsage(config, data, graph_name, args.reuse_vectors)
     except AppError:
         log.exception("%s failed", args.stage)
         return 1
