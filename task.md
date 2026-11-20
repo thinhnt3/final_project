@@ -15,7 +15,7 @@ Cập nhật: 18/11/2026.
 
 ## Mức 2
 
-- Thuật toán từ 2024 trở về sau - investigate - Thịnh
+- Thuật toán từ 2024 trở về sau: AdaMF-MAT - đang làm - Thịnh
 - Bộ 20 truy vấn, tách nhóm trực tiếp và gián tiếp - chưa ai nhận
 - Ablation - Nghị
 
