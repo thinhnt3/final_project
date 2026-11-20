@@ -125,6 +125,35 @@ Cách đọc:
 - Ép modality structure tự gánh việc (so0.3 hoặc sl0.1) làm mô hình **bắt đầu đọc cạnh** (mức tụt có ý nghĩa thống kê), đồng thời R@1 caption tăng khoảng 1 điểm.
 - Việc **phân biệt quan hệ A với quan hệ B** giữa cùng hai vật thể chưa tốt hơn mốc một cách có ý nghĩa thống kê, và cũng chỉ ngang CLIP. Kết quả 3 seed (CI [0,3; 4,0]) không còn đứng vững ở 5 seed.
 
+#### Indirect queries: hỏi bằng khái niệm cha (WordNet IsA)
+
+Thử thêm một loại cạnh khác: cạnh **IsA** nối mỗi object với khái niệm cha của nó trong WordNet (tối đa 2 tầng, ví dụ `cat → feline → carnivore`). Bộ test tương ứng (`src/data/kg_edges.py`, `scripts/build_kg_variant.py`):
+
+- **Indirect query:** câu từ một triplet của ảnh test, nhưng subject được gọi bằng khái niệm cha, ví dụ `carnivore sitting in chair` cho ảnh có `cat sitting in chair`. Chỉ đúng một ảnh test khớp câu này.
+- **Direct twin:** cùng câu nhưng gọi đúng tên gốc (`cat sitting in chair`), để so độ khó.
+- **Confuser:** ảnh test khác có object (`chair`) và một vật thuộc khái niệm cha (một `carnivore` nào đó) nhưng không có quan hệ được hỏi.
+- 1.387 cặp indirect/direct; chọn ngẫu nhiên trong nhóm {ảnh đúng + confuser} đúng 17,2%.
+- **KG graph:** đồ thị thêm cạnh IsA, mô hình train lại trên đó. **IsA masking:** xoá cạnh IsA của ảnh đúng rồi chấm lại.
+
+Graph-only score, 3 seed, đơn vị %. **R@1** tính trên cả 1.500 ảnh test; **confuser acc@1** là tỉ lệ ảnh đúng đứng đầu trong nhóm {ảnh đúng + confuser}.
+
+| Model | Graph | Indirect R@1 | Indirect confuser acc@1 | Direct R@1 | Direct confuser acc@1 |
+|---|---|---|---|---|---|
+| CLIP (reference) | không dùng | 3,8 | 23,9 | 7,6 | 27,3 |
+| AdaMF L2 | base | **5,3** | 24,2 | 9,1 | 27,2 |
+| AdaMF L2 | KG (+ IsA) | 5,0 | 25,0 | 8,4 | 26,7 |
+| AdaMF L2 | KG, IsA masked | 4,1 | 24,3 | 8,4 | 26,9 |
+| AdaMF so0.3 | base | **5,3** | 24,7 | 9,5 | 28,6 |
+| AdaMF so0.3 | KG (+ IsA) | **5,3** | 25,2 | 9,1 | 27,7 |
+| AdaMF so0.3 | KG, IsA masked | 4,7 | 25,8 | 9,2 | 28,3 |
+
+Cách đọc:
+
+- **Mô hình có dùng cạnh IsA:** IsA masking làm indirect R@1 tụt (5,0 → 4,1 với L2; 5,3 → 4,7 với so0.3), còn direct R@1 không đổi.
+- **Nhưng cạnh IsA không giúp:** model train trên KG graph không hơn model train trên base graph (5,0–5,3 so với 5,3). Vector CLIP text của tên object đã đủ gần khái niệm cha (`cat` gần `carnivore`), nên mô hình không cần cạnh để nối hai từ.
+- **Bộ này khó với mọi cấu hình, kể cả CLIP:** R@1 dưới 10% vì câu sinh từ một triplet ngắn và mơ hồ hơn caption; confuser acc@1 chỉ cao hơn ngẫu nhiên 7–11 điểm.
+- R@1 caption của model train trên KG graph: L2 51,45, so0.3 52,96, tức không tốt hơn base graph.
+
 ### Ablation khác (3 seed nếu không ghi khác)
 
 | Thí nghiệm | Kết quả |
@@ -136,7 +165,6 @@ Cách đọc:
 | Batch gom ảnh cùng cặp vật thể | Không đọc cạnh; CLIP ảnh vẫn đủ để tách các ảnh |
 | Dữ liệu train 25 / 50 / 100% (7k ảnh) | Mốc không đọc cạnh ở mọi mức; so0.3 đọc cạnh ở mọi mức, độ đúng 28,2 → 29,5 → 30,2 |
 | Toàn bộ VG ∩ COCO (45.817 ảnh train, giữ nguyên val/test) | Mốc đạt R@1 55,8 (+3,7) và **tự đọc cạnh** (30,6 → 29,4 khi che); so0.3 đạt 56,0, mất lợi thế so với mốc |
-| Thêm cạnh IsA WordNet (2 tầng) + 1.387 truy vấn gọi tên khái niệm cha | Mô hình có dùng cạnh IsA (che thì tụt 5,0 → 4,1) nhưng không hơn bản không có IsA (5,3); CLIP 3,8 |
 | Nhiễu đồ thị mô phỏng (bỏ đỉnh, đổi nhãn, bỏ cạnh) | Nhiễu nặng: mốc 48,1, so0.3 45,5, sl0.1 45,6. Mô hình đọc cạnh chịu nhiễu kém hơn |
 | Caption nhắc tới triplet của ảnh | Khớp chính xác 17,9%; thêm từ đồng nghĩa WordNet 19,3%; thêm khái niệm cha 22,0% |
 
@@ -155,7 +183,7 @@ Cách đọc:
 - Bộ dữ liệu đầy đủ với 5 seed, kèm so/sl và nhiễu.
 - Nhiễu từ bộ sinh scene graph thật (cần GPU), thay cho nhiễu mô phỏng.
 
-Số liệu R@K, MRR, α, k: `runs/benchmark/adamf_mat-*.json`. Các bảng truy vấn quan hệ, ablation khác và bootstrap lấy từ báo cáo [plans/reports/ablation-261120-0650-relation-suite.md](plans/reports/ablation-261120-0650-relation-suite.md); file kết quả thô của chúng không được lưu trong repo.
+Số liệu R@K, MRR, α, k: `runs/benchmark/adamf_mat-*.json`. Các bảng relation queries, ablation khác và bootstrap lấy từ báo cáo [plans/reports/ablation-261120-0650-relation-suite.md](plans/reports/ablation-261120-0650-relation-suite.md); file kết quả thô của chúng không được lưu trong repo. Bảng indirect queries lấy từ output của `scripts/eval_indirect_queries.py` lúc chạy; file kết quả thô cũng không được lưu.
 
 ## Dữ liệu
 
