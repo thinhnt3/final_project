@@ -238,7 +238,8 @@ Theo `task.md` và `plan-task/requirements-checklist.md`:
 | Validity: thu nhãn của người chấm và đối chiếu với nhãn AI | Đang làm |
 | Tập dữ liệu công khai thứ hai | Đang tìm hiểu, chưa có người nhận |
 | Bộ 20 truy vấn, tách nhóm trực tiếp và gián tiếp | Chưa có người nhận |
-| Thuật toán mới (từ 2024 trở đi), mô hình trên đồ thị dị thể | Đang tìm hiểu |
+| Thuật toán mới (từ 2024 trở đi): tái hiện AdaMF-MAT | Đang làm, trên branch `feat/reproduce-adamf-mat`, chưa merge vào `main` |
+| Mô hình trên đồ thị dị thể (R-GCN hoặc HGT) | Chưa làm |
 | MMKG tiếng Việt (xem `docs/build_MMKG.md`) | Đang làm |
 | Ablation xử lý hub; ablation bỏ hướng với số tham số khớp bản đầy đủ | Chưa làm |
 | Backbone thứ hai (OpenCLIP) | Chưa làm |
