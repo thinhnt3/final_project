@@ -95,17 +95,20 @@ R@1 sau khi xếp hạng lại, 3 seed:
 
 ### Mô hình có đọc cạnh không
 
-Caption COCO hiếm khi nhắc đúng quan hệ (chỉ 17,9% caption train chứa một triplet của ảnh), nên R@1 theo caption không cho biết mô hình có dùng cạnh hay không. Vì vậy dựng thêm bộ truy vấn quan hệ (`src/evaluation/relation_queries.py`):
+Caption COCO hiếm khi nhắc đúng quan hệ (chỉ 17,9% caption train chứa một triplet của ảnh), nên R@1 theo caption không cho biết mô hình có dùng cạnh hay không. Vì vậy dựng thêm bộ **relation queries** (`src/evaluation/relation_queries.py`):
 
-- Mỗi truy vấn là câu sinh từ một triplet chỉ có ở đúng một ảnh test ("a man riding a horse").
-- Ảnh gây nhiễu: các ảnh có cả hai vật thể nhưng không có triplet đó.
-- Đo tỉ lệ ảnh đúng đứng đầu trong nhóm {ảnh đúng + ảnh gây nhiễu}.
-- Bộ 1.408 truy vấn (mức ngẫu nhiên 21,4%); bộ con 734 truy vấn mà ảnh gây nhiễu có quan hệ khác giữa đúng hai vật thể đó (mức ngẫu nhiên 31,4%).
-- "Che cạnh": xoá cạnh được hỏi khỏi đồ thị ảnh đúng rồi chấm lại. Độ đúng tụt nghĩa là mô hình có đọc cạnh.
+- **Relation query:** câu sinh từ một triplet chỉ có ở đúng một ảnh test, ví dụ `man riding horse`.
+- **Confuser:** ảnh test khác có **đủ cả hai object** của câu (`man` và `horse`) nhưng **không có quan hệ** được hỏi, ví dụ ảnh người đứng cạnh ngựa (`man next to horse`) hoặc người và ngựa đứng xa nhau.
+- **Confuser acc@1:** chỉ xếp hạng ảnh đúng cùng các confuser của nó, rồi đếm tỉ lệ ảnh đúng đứng đầu. Chọn ngẫu nhiên thì đúng 1 / (số confuser + 1), trung bình 21,4%.
 
-Điểm chỉ dùng mô hình, không cộng CLIP, 5 seed:
+Vì sao cần confuser: nếu xếp hạng trên cả 1.500 ảnh, mô hình chỉ cần tìm ảnh có người và ngựa là đã loại được gần hết, không cần hiểu `riding`. Confuser đều có người và ngựa, nên cách duy nhất để chọn đúng là đọc quan hệ. Đây là phép thử trực tiếp cho câu hỏi "mô hình có dùng cạnh không".
 
-| Cấu hình | 1.408 truy vấn | → che cạnh | 734 truy vấn | → che cạnh |
+- Bộ **all** có 1.408 query. Bộ con **contrast** có 734 query và chỉ giữ những confuser có một quan hệ **khác** giữa đúng hai object đó (như `man next to horse`), bỏ các ảnh người và ngựa không liên quan nhau; mức ngẫu nhiên 31,4%. Bộ này đo việc phân biệt quan hệ A với quan hệ B.
+- **Edge masking:** xoá cạnh được hỏi khỏi đồ thị của ảnh đúng rồi chấm lại. Confuser acc@1 tụt nghĩa là mô hình có đọc cạnh đó.
+
+Confuser acc@1, graph-only score (không cộng CLIP), 5 seed, đơn vị %:
+
+| Cấu hình | all (1.408) | → edge masking | contrast (734) | → edge masking |
 |---|---|---|---|---|
 | CLIP (tham chiếu) | 28,8 | | 32,6 | |
 | AdaMF không MAT, L2 (mốc) | 27,7 | 27,7 | 33,6 | 33,7 |
@@ -115,13 +118,13 @@ Caption COCO hiếm khi nhắc đúng quan hệ (chỉ 17,9% caption train chứ
 
 Bootstrap ghép cặp theo cụm ảnh, so với mốc, CI 95%:
 
-- 1.408 truy vấn: +2,3 điểm [1,2; 3,4] cho cả ba cấu hình.
-- 734 truy vấn: +1,3 đến +1,4 điểm, CI chứa 0 (ví dụ so0.3 +1,42 [−0,14; 3,08]).
-- Mức tụt khi che cạnh trên 734 truy vấn: mốc −0,05 [−0,14; 0]; so0.3 +1,83 [1,28; 2,43]; sl0.1 +1,74; so0.3 + sl0.1 +1,93.
+- all: +2,3 điểm [1,2; 3,4] cho cả ba cấu hình.
+- contrast: +1,3 đến +1,4 điểm, CI chứa 0 (ví dụ so0.3 +1,42 [−0,14; 3,08]).
+- Mức tụt khi edge masking trên contrast: mốc −0,05 [−0,14; 0]; so0.3 +1,83 [1,28; 2,43]; sl0.1 +1,74; so0.3 + sl0.1 +1,93.
 
 Cách đọc:
 
-- AdaMF mốc **không đọc cạnh**: che cạnh không đổi gì, điểm còn thấp hơn CLIP. Mô hình đi đường tắt qua vector CLIP ảnh ở modality image.
+- AdaMF mốc **không đọc cạnh**: edge masking không đổi gì, điểm còn thấp hơn CLIP. Mô hình đi đường tắt qua vector CLIP ảnh ở modality image.
 - Ép modality structure tự gánh việc (so0.3 hoặc sl0.1) làm mô hình **bắt đầu đọc cạnh** (mức tụt có ý nghĩa thống kê), đồng thời R@1 caption tăng khoảng 1 điểm.
 - Việc **phân biệt quan hệ A với quan hệ B** giữa cùng hai vật thể chưa tốt hơn mốc một cách có ý nghĩa thống kê, và cũng chỉ ngang CLIP. Kết quả 3 seed (CI [0,3; 4,0]) không còn đứng vững ở 5 seed.
 
@@ -131,7 +134,7 @@ Thử thêm một loại cạnh khác: cạnh **IsA** nối mỗi object với k
 
 - **Indirect query:** câu từ một triplet của ảnh test, nhưng subject được gọi bằng khái niệm cha, ví dụ `carnivore sitting in chair` cho ảnh có `cat sitting in chair`. Chỉ đúng một ảnh test khớp câu này.
 - **Direct twin:** cùng câu nhưng gọi đúng tên gốc (`cat sitting in chair`), để so độ khó.
-- **Confuser:** ảnh test khác có object (`chair`) và một vật thuộc khái niệm cha (một `carnivore` nào đó) nhưng không có quan hệ được hỏi.
+- **Confuser:** cùng ý như ở trên, ảnh test khác có object (`chair`) và một vật thuộc khái niệm cha (một `carnivore` nào đó, ví dụ chó) nhưng không có quan hệ được hỏi.
 - 1.387 cặp indirect/direct; chọn ngẫu nhiên trong nhóm {ảnh đúng + confuser} đúng 17,2%.
 - **KG graph:** đồ thị thêm cạnh IsA, mô hình train lại trên đó. **IsA masking:** xoá cạnh IsA của ảnh đúng rồi chấm lại.
 
@@ -239,8 +242,8 @@ python -m scripts.run_benchmark --method adamf_mat --run adamf-mat-d256-mu1
 python -m scripts.train_graphsage --model adamf_mat --no-mat --normalize-modalities \
     --structure-only-rate 0.3 --config configs/retrieval/vg_coco_5seeds.yaml          # so0.3, 5 seed
 python -m scripts.run_benchmark --method adamf_mat --run adamf-d256-l2-so0.3 --config configs/retrieval/vg_coco_5seeds.yaml
-python -m scripts.build_relation_queries                                              # bộ truy vấn quan hệ
-python -m scripts.eval_relation_queries                                               # độ đúng trong nhóm gây nhiễu + che cạnh
+python -m scripts.build_relation_queries                                              # bộ relation queries
+python -m scripts.eval_relation_queries                                               # confuser acc@1 + edge masking
 python -m scripts.adamf_weight_stats --run adamf-mat-d256-mu1                         # trọng số và phần đóng góp từng modality
 ```
 
