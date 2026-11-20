@@ -1,0 +1,29 @@
+# Query-adaptive fusion: a separate validation-selected (alpha, top_k) per bucket of queries.
+# Run: python -m scripts.evaluate_adaptive_fusion
+# All paths are relative to the repository root.
+
+# Retrieval config of the trained run to fuse: gives the CLIP model, the run name and seeds,
+# and the alpha / top_k grids. Its benchmark file must exist (run_benchmark --method graphsage).
+retrieval_config: configs/retrieval/ablations/full.yaml
+
+# Label-free feature that puts each query in a bucket.
+# clip_margin: CLIP top-1 minus top-2 score (small = CLIP is unsure; the hypothesis under test).
+# random: control with the same bucket sizes and the same number of selected parameters.
+features: [clip_margin, random]
+
+# Buckets are cut at quantiles of the validation feature. 1 is the official fixed-alpha
+# reranker; it must reproduce the benchmark's selection and is the baseline of every comparison.
+n_buckets: [1, 2, 3, 4]
+
+# A bucket needs this many validation queries to select its own (alpha, top_k).
+min_bucket_queries: 500
+
+# Seed of the random control only; clip_margin buckets do not depend on it.
+feature_seed: 2026
+
+# Paired bootstrap against the fixed-alpha baseline on test, clustered by true image
+# (the same procedure as scripts/analyze_ablation.py).
+bootstrap_repeats: 2000
+bootstrap_seed: 310
+
+output: runs/analysis/adaptive_fusion.json

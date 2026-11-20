@@ -125,6 +125,16 @@ python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
 
 Report giải thích tương tác là tài liệu local trong `private/`, không thuộc repository.
 
+## Kết hợp điểm thích nghi
+
+Mỗi nhóm truy vấn, chia theo độ tự tin của CLIP (điểm hạng 1 − điểm hạng 2), được chọn (α, k) riêng trên validation;
+chia ngẫu nhiên là đối chứng. Cần chạy trước `train_graphsage` và `run_benchmark --method graphsage` cho config
+ghi ở `retrieval_config`. Giả thuyết, cách đọc kết quả và giới hạn: [docs/adaptive-fusion.md](docs/adaptive-fusion.md).
+
+```bash
+python -m scripts.evaluate_adaptive_fusion --config configs/evaluation/adaptive_fusion.yaml
+```
+
 Các output mới trong `runs/` và report local trong `private/` được Git-ignore.
 Những file lịch sử đã tracked trong `runs/` vẫn được Git theo dõi.
 Tiến độ nghiệm thu hiện tại: [requirements checklist](plan-task/requirements-checklist.md).
