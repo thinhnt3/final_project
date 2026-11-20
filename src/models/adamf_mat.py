@@ -187,23 +187,37 @@ class AdamfMatImageEncoder(nn.Module):
         return tuple(embeddings)
 
     def modality_weights(self, *embeddings: torch.Tensor, present: torch.Tensor | None = None) -> torch.Tensor:
-        """Weight of each modality per entity, shape (batch, modalities), in the order given.
+        """Weight of each modality per image, shape (batch, modalities), in the order given; rows sum to 1.
 
-        `present` (batch, modalities, bool) hides modalities: their weight is 0 and the others share 1.
+        This is the adaptive fusion of AdaMF: u_m = aᵀ·tanh(e_m), w = softmax(u). Weights are computed
+        per image, so the mix can differ from one image to the next.
+        `present` (batch, modalities, bool) hides modalities, as structure-only dropout does: a hidden
+        modality gets weight 0 and the visible ones share the whole weight.
         """
-        stacked = torch.stack(embeddings, dim=1)
+        stacked = torch.stack(embeddings, dim=1)  # (batch, modalities, dim)
         if present is None:
             present = torch.ones(stacked.shape[:2], dtype=torch.bool, device=stacked.device)
         if not self.config.adaptive_fusion:
+            # "w/o AdaMF" ablation: plain mean over the visible modalities.
             return present.float() / present.sum(dim=1, keepdim=True)
-        logits = self.attention(torch.tanh(stacked)).squeeze(-1)
+        # One score per modality from a shared vector `a` (Linear dim→1, no bias). tanh bounds each
+        # component, so a long embedding cannot raise its own score; without L2 normalization it still
+        # dominates the fused sum through its length, which these weights alone do not show.
+        logits = self.attention(torch.tanh(stacked)).squeeze(-1)  # (batch, modalities)
+        # -inf before softmax gives hidden modalities exactly 0 and renormalizes over the rest.
         return torch.softmax(logits.masked_fill(~present, float("-inf")), dim=-1)
 
     def structure_only_mask(self, rows: int, device: torch.device) -> torch.Tensor:
-        """Modalities present per row: every one, except on a random `structure_only_rate` of rows."""
+        """Modalities present per row: every one, except on a random `structure_only_rate` of rows.
+
+        On those rows only the structure modality stays visible, so the fused vector, and the loss,
+        depend on the scene graph alone; the image and text shortcuts cannot answer the caption.
+        """
         present = torch.ones(rows, len(self.config.modalities), dtype=torch.bool, device=device)
+        # A fresh Bernoulli draw per row and per batch: about `structure_only_rate` of rows are picked.
         hidden = torch.rand(rows, device=device) < self.config.structure_only_rate
         others = [i for i, m in enumerate(self.config.modalities) if m != "structure"]
+        # Picked rows × non-structure columns are set to False (hidden).
         present[hidden.nonzero(as_tuple=True)[0].unsqueeze(1), torch.tensor(others, device=device)] = False
         return present
 

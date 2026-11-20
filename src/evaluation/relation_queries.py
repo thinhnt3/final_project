@@ -93,15 +93,6 @@ def build_relation_queries(
     return queries
 
 
-def without_triplet(graph: Mapping[str, Any], triplet: Sequence[int]) -> dict[str, Any]:
-    """Copy of an image graph with one triplet removed, its objects kept."""
-    target = tuple(int(x) for x in triplet)
-    kept = [list(t) for t in graph["triplets"] if tuple(int(x) for x in t) != target]
-    if len(kept) == len(graph["triplets"]):
-        raise DataError(f"image {graph['vg_image_id']} has no triplet {list(target)}")
-    return {**graph, "triplets": kept}
-
-
 def confuser_ranks(
     scores: np.ndarray, relevant_columns: Sequence[int], confuser_columns: Sequence[Sequence[int]]
 ) -> np.ndarray:

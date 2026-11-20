@@ -17,16 +17,14 @@ from __future__ import annotations
 
 import argparse
 import logging
-import random
 import sys
-from dataclasses import dataclass
-from typing import Any
 
 from src.core.exceptions import AppError, DataError
 from src.data.json_io import read_json, write_json
 from src.data.schemas import Split
 from src.embeddings.store import EmbeddingTable
 from src.evaluation.benchmark import aggregate_runs, build_split_data, clip_scores, graph_vector_scores, score_method
+from src.models.ablations import Corruption, corrupt_graph
 from src.models.graph_data import image_graph_to_data
 from src.models.run_loading import load_graph_inputs, load_trained_encoder
 from src.models.train import encode_graphs
@@ -38,20 +36,6 @@ log = logging.getLogger("eval_graph_noise")
 DEFAULT_CONFIG = "configs/retrieval/vg_coco.yaml"
 NOISE_SEED = 20261119
 _DECIMALS = 4
-
-
-@dataclass(frozen=True)
-class Corruption:
-    """Probabilities of the three kinds of scene-graph noise."""
-
-    drop_edge: float = 0.0
-    drop_node: float = 0.0
-    flip_label: float = 0.0
-
-    def name(self) -> str:
-        """Short label, e.g. `clean` or `drop_edge=0.3`."""
-        parts = [f"{k}={v:g}" for k, v in vars(self).items() if v > 0]
-        return ",".join(parts) or "clean"
 
 
 # The grid of the experiment brief: edges, nodes, labels, one kind of noise at a time.
@@ -74,28 +58,6 @@ WIDE_GRID = (
     Corruption(drop_edge=0.3, drop_node=0.2, flip_label=0.1),
     Corruption(drop_edge=0.5, drop_node=0.4, flip_label=0.3),
 )
-
-
-def corrupt_graph(graph: dict[str, Any], noise: Corruption, n_concepts: int) -> dict[str, Any]:
-    """A corrupted copy of one image graph; the same image and setting always give the same copy."""
-    rng = random.Random(f"{NOISE_SEED}-{graph['vg_image_id']}-{noise.name()}")
-    concepts = [int(c) for c in graph["concept_ids"]]
-    triplets = [tuple(int(x) for x in t) for t in graph["triplets"]]
-    kept = [c for c in concepts if rng.random() >= noise.drop_node]
-    triplets = [t for t in triplets if t[0] in kept and t[2] in kept]
-    triplets = [t for t in triplets if rng.random() >= noise.drop_edge]
-    if noise.flip_label > 0:
-        present, mapping = set(kept), {}
-        for concept in kept:
-            if rng.random() < noise.flip_label:
-                replacement = rng.randrange(n_concepts)
-                while replacement in present:
-                    replacement = rng.randrange(n_concepts)
-                present.add(replacement)
-                mapping[concept] = replacement
-        kept = [mapping.get(c, c) for c in kept]
-        triplets = [(mapping.get(s, s), p, mapping.get(o, o)) for s, p, o in triplets]
-    return {**graph, "concept_ids": kept, "triplets": [list(t) for t in triplets]}
 
 
 def main() -> int:
@@ -125,7 +87,7 @@ def main() -> int:
             model = load_trained_encoder(run_dir, args.method, inputs)
             for noise in WIDE_GRID if args.grid == "wide" else GRID:
                 graphs = [
-                    image_graph_to_data(corrupt_graph(graph_of[i], noise, n_concepts), image_row[i])
+                    image_graph_to_data(corrupt_graph(graph_of[i], noise, n_concepts, NOISE_SEED), image_row[i])
                     for i in test.image_ids
                 ]
                 vectors = encode_graphs(model, graphs, config.training).numpy()

@@ -16,7 +16,8 @@ import torch
 from torch import nn
 
 from src.core.exceptions import DataError
-from src.evaluation.relation_queries import QueryKind, confuser_ranks, contrast_confusers, without_triplet
+from src.evaluation.relation_queries import QueryKind, confuser_ranks, contrast_confusers
+from src.models.ablations import remove_triplet
 from src.models.graph_data import image_graph_to_data
 from src.models.train import TrainingConfig, encode_graphs
 
@@ -44,10 +45,8 @@ class RelationValidator:
         self.confusers = [[column[int(i)] for i in q["confuser_ids"]] for q in relation]
         self.contrast = [[column[i] for i in contrast_confusers(q, image_graphs)] for q in relation]
         self.masked_graphs = [
-            image_graph_to_data(
-                without_triplet(image_graphs[int(q["relevant_ids"][0])], q["triplet"]),
-                image_row[int(q["relevant_ids"][0])],
-            )
+            image_graph_to_data(remove_triplet(image_graphs[int(q["relevant_ids"][0])], q["triplet"]),
+                                image_row[int(q["relevant_ids"][0])])
             for q in relation
         ]
 

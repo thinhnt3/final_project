@@ -39,8 +39,8 @@ from src.evaluation.relation_queries import (
     chance_accuracy,
     confuser_ranks,
     contrast_confusers,
-    without_triplet,
 )
+from src.models.ablations import remove_triplet
 from src.models.graph_data import image_graph_to_data
 from src.models.run_loading import GraphInputs, load_graph_inputs, load_trained_encoder
 from src.models.train import encode_graphs
@@ -173,7 +173,7 @@ def main() -> int:
                     if kind is not QueryKind.RELATION:
                         continue
                     masked_graphs = [
-                        image_graph_to_data(without_triplet(graph_of[q["relevant_ids"][0]], q["triplet"]),
+                        image_graph_to_data(remove_triplet(graph_of[q["relevant_ids"][0]], q["triplet"]),
                                             image_row[q["relevant_ids"][0]])
                         for q in queries
                     ]

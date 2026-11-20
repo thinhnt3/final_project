@@ -1,12 +1,10 @@
 import numpy as np
 import pytest
 
-from src.core.exceptions import DataError
 from src.evaluation.relation_queries import (
     build_relation_queries,
     chance_accuracy,
     confuser_ranks,
-    without_triplet,
 )
 
 CONCEPTS = {0: "man", 1: "horse", 2: "dog"}
@@ -36,15 +34,6 @@ def test_relation_query_needs_a_unique_triplet_and_a_confuser() -> None:
 def test_shared_triplet_is_not_a_query() -> None:
     graphs = [_graph(1, [0, 1], [[0, 0, 1]]), _graph(2, [0, 1], [[0, 0, 1]])]
     assert build_relation_queries(graphs, CONCEPTS, PREDICATES, seed=0) == []
-
-
-def test_without_triplet_keeps_objects() -> None:
-    graph = _graph(1, [0, 1], [[0, 0, 1], [0, 1, 1]])
-    masked = without_triplet(graph, [0, 0, 1])
-    assert masked["triplets"] == [[0, 1, 1]]
-    assert masked["concept_ids"] == [0, 1]
-    with pytest.raises(DataError):
-        without_triplet(masked, [0, 0, 1])
 
 
 def test_confuser_ranks_ignore_other_images_and_count_ties_against() -> None:
