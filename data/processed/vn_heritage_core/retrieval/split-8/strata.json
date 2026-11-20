@@ -1,0 +1,2150 @@
+{
+  "rel-1-12-head-val": {
+    "triples_within_two_hops": 107,
+    "tier": "dense"
+  },
+  "rel-1-15-head-val": {
+    "triples_within_two_hops": 107,
+    "tier": "dense"
+  },
+  "rel-9-5-tail-val": {
+    "triples_within_two_hops": 83,
+    "tier": "dense"
+  },
+  "rel-9-12-head-val": {
+    "triples_within_two_hops": 83,
+    "tier": "dense"
+  },
+  "rel-15-5-head-test": {
+    "triples_within_two_hops": 135,
+    "tier": "dense"
+  },
+  "rel-15-15-head-train": {
+    "triples_within_two_hops": 135,
+    "tier": "dense"
+  },
+  "rel-15-15-head-val": {
+    "triples_within_two_hops": 135,
+    "tier": "dense"
+  },
+  "rel-15-15-head-test": {
+    "triples_within_two_hops": 135,
+    "tier": "dense"
+  },
+  "rel-19-15-tail-val": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-38-15-tail-test": {
+    "triples_within_two_hops": 119,
+    "tier": "dense"
+  },
+  "rel-49-5-head-train": {
+    "triples_within_two_hops": 41,
+    "tier": "medium"
+  },
+  "rel-49-12-tail-train": {
+    "triples_within_two_hops": 41,
+    "tier": "medium"
+  },
+  "rel-49-15-tail-train": {
+    "triples_within_two_hops": 41,
+    "tier": "medium"
+  },
+  "rel-50-5-head-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-50-12-tail-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-50-15-tail-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-51-5-head-test": {
+    "triples_within_two_hops": 34,
+    "tier": "medium"
+  },
+  "rel-51-12-tail-test": {
+    "triples_within_two_hops": 34,
+    "tier": "medium"
+  },
+  "rel-51-15-tail-test": {
+    "triples_within_two_hops": 34,
+    "tier": "medium"
+  },
+  "rel-52-5-head-train": {
+    "triples_within_two_hops": 42,
+    "tier": "medium"
+  },
+  "rel-52-12-tail-train": {
+    "triples_within_two_hops": 42,
+    "tier": "medium"
+  },
+  "rel-52-15-tail-train": {
+    "triples_within_two_hops": 42,
+    "tier": "medium"
+  },
+  "rel-53-5-head-val": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-53-12-tail-val": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-60-5-tail-train": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-60-5-tail-test": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-60-12-head-train": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-60-12-head-test": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-60-15-head-train": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-60-15-head-test": {
+    "triples_within_two_hops": 169,
+    "tier": "dense"
+  },
+  "rel-64-5-head-test": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-64-15-tail-test": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-71-12-tail-train": {
+    "triples_within_two_hops": 41,
+    "tier": "medium"
+  },
+  "rel-79-15-tail-train": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-90-15-head-train": {
+    "triples_within_two_hops": 166,
+    "tier": "dense"
+  },
+  "rel-100-5-tail-val": {
+    "triples_within_two_hops": 200,
+    "tier": "dense"
+  },
+  "rel-100-15-head-val": {
+    "triples_within_two_hops": 200,
+    "tier": "dense"
+  },
+  "rel-114-5-tail-test": {
+    "triples_within_two_hops": 143,
+    "tier": "dense"
+  },
+  "rel-114-15-head-test": {
+    "triples_within_two_hops": 143,
+    "tier": "dense"
+  },
+  "rel-138-15-tail-val": {
+    "triples_within_two_hops": 49,
+    "tier": "medium"
+  },
+  "rel-141-15-tail-train": {
+    "triples_within_two_hops": 70,
+    "tier": "dense"
+  },
+  "rel-142-15-tail-train": {
+    "triples_within_two_hops": 58,
+    "tier": "dense"
+  },
+  "rel-146-15-tail-train": {
+    "triples_within_two_hops": 66,
+    "tier": "dense"
+  },
+  "rel-147-15-tail-train": {
+    "triples_within_two_hops": 91,
+    "tier": "dense"
+  },
+  "rel-150-5-head-val": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-150-12-tail-val": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-150-15-tail-val": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-154-5-tail-test": {
+    "triples_within_two_hops": 131,
+    "tier": "dense"
+  },
+  "rel-156-15-tail-train": {
+    "triples_within_two_hops": 134,
+    "tier": "dense"
+  },
+  "rel-158-12-head-train": {
+    "triples_within_two_hops": 61,
+    "tier": "dense"
+  },
+  "rel-160-5-head-train": {
+    "triples_within_two_hops": 82,
+    "tier": "dense"
+  },
+  "rel-163-14-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-168-2-head-train": {
+    "triples_within_two_hops": 37,
+    "tier": "medium"
+  },
+  "rel-168-2-head-test": {
+    "triples_within_two_hops": 37,
+    "tier": "medium"
+  },
+  "rel-173-17-head-train": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-174-5-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-175-10-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-176-17-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-176-17-head-val": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-177-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-178-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-185-10-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-185-12-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-185-14-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-190-9-head-train": {
+    "triples_within_two_hops": 79,
+    "tier": "dense"
+  },
+  "rel-190-9-head-test": {
+    "triples_within_two_hops": 79,
+    "tier": "dense"
+  },
+  "rel-196-7-head-train": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-197-7-head-train": {
+    "triples_within_two_hops": 71,
+    "tier": "dense"
+  },
+  "rel-197-7-head-test": {
+    "triples_within_two_hops": 71,
+    "tier": "dense"
+  },
+  "rel-198-7-head-train": {
+    "triples_within_two_hops": 148,
+    "tier": "dense"
+  },
+  "rel-203-10-head-test": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-204-10-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-204-12-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-205-10-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-208-10-head-train": {
+    "triples_within_two_hops": 18,
+    "tier": "medium"
+  },
+  "rel-209-15-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-212-11-head-train": {
+    "triples_within_two_hops": 58,
+    "tier": "dense"
+  },
+  "rel-212-11-head-test": {
+    "triples_within_two_hops": 58,
+    "tier": "dense"
+  },
+  "rel-214-10-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-215-14-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-216-14-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-219-10-head-val": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-227-10-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-232-10-head-test": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-233-15-head-val": {
+    "triples_within_two_hops": 62,
+    "tier": "dense"
+  },
+  "rel-234-9-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-236-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-241-5-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-242-10-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-243-10-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-244-10-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-248-10-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-249-10-head-train": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-252-10-head-test": {
+    "triples_within_two_hops": 17,
+    "tier": "medium"
+  },
+  "rel-253-10-head-val": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-254-10-head-val": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-255-10-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-266-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-267-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-268-5-head-train": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-269-5-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-270-5-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-271-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-272-16-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-273-12-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-274-10-head-train": {
+    "triples_within_two_hops": 43,
+    "tier": "medium"
+  },
+  "rel-279-2-head-train": {
+    "triples_within_two_hops": 35,
+    "tier": "medium"
+  },
+  "rel-288-12-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-289-9-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-290-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-291-9-head-train": {
+    "triples_within_two_hops": 27,
+    "tier": "medium"
+  },
+  "rel-291-9-head-test": {
+    "triples_within_two_hops": 27,
+    "tier": "medium"
+  },
+  "rel-293-5-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-295-9-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-297-10-head-train": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-298-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-298-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-299-9-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-299-9-head-val": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-299-9-head-test": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-302-9-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-303-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-305-1-head-train": {
+    "triples_within_two_hops": 14,
+    "tier": "medium"
+  },
+  "rel-307-14-head-train": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-308-5-head-val": {
+    "triples_within_two_hops": 34,
+    "tier": "medium"
+  },
+  "rel-309-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-311-9-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-312-11-head-train": {
+    "triples_within_two_hops": 100,
+    "tier": "dense"
+  },
+  "rel-312-11-head-val": {
+    "triples_within_two_hops": 100,
+    "tier": "dense"
+  },
+  "rel-312-11-head-test": {
+    "triples_within_two_hops": 100,
+    "tier": "dense"
+  },
+  "rel-316-5-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-318-5-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-319-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-322-10-head-val": {
+    "triples_within_two_hops": 42,
+    "tier": "medium"
+  },
+  "rel-325-10-head-test": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-326-2-head-train": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-327-5-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-328-5-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-329-5-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-330-5-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-331-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-332-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-333-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-334-5-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-335-5-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-336-5-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-337-5-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-338-5-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-340-10-head-val": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-341-17-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-344-10-head-train": {
+    "triples_within_two_hops": 83,
+    "tier": "dense"
+  },
+  "rel-344-10-head-val": {
+    "triples_within_two_hops": 83,
+    "tier": "dense"
+  },
+  "rel-344-10-head-test": {
+    "triples_within_two_hops": 83,
+    "tier": "dense"
+  },
+  "rel-346-5-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-347-4-head-train": {
+    "triples_within_two_hops": 24,
+    "tier": "medium"
+  },
+  "rel-347-4-head-test": {
+    "triples_within_two_hops": 24,
+    "tier": "medium"
+  },
+  "rel-348-10-head-train": {
+    "triples_within_two_hops": 43,
+    "tier": "medium"
+  },
+  "rel-350-17-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-351-9-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-351-9-head-test": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-353-1-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-354-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-355-9-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-356-15-head-train": {
+    "triples_within_two_hops": 35,
+    "tier": "medium"
+  },
+  "rel-357-1-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-358-7-head-train": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-358-7-head-val": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-360-17-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-360-17-head-val": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-362-9-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-363-14-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-365-14-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-366-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-367-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-368-9-head-train": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-369-9-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-370-9-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-371-9-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-371-9-head-test": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-372-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-372-9-head-val": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-373-10-head-train": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-374-9-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-374-9-head-val": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-374-9-head-test": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-375-14-head-train": {
+    "triples_within_two_hops": 14,
+    "tier": "medium"
+  },
+  "rel-378-10-head-train": {
+    "triples_within_two_hops": 31,
+    "tier": "medium"
+  },
+  "rel-383-9-head-train": {
+    "triples_within_two_hops": 48,
+    "tier": "medium"
+  },
+  "rel-383-9-head-test": {
+    "triples_within_two_hops": 48,
+    "tier": "medium"
+  },
+  "rel-384-14-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-385-9-head-train": {
+    "triples_within_two_hops": 115,
+    "tier": "dense"
+  },
+  "rel-385-9-head-test": {
+    "triples_within_two_hops": 115,
+    "tier": "dense"
+  },
+  "rel-386-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-387-9-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-389-1-head-train": {
+    "triples_within_two_hops": 21,
+    "tier": "medium"
+  },
+  "rel-390-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-391-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-391-9-head-test": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-392-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-393-1-head-test": {
+    "triples_within_two_hops": 117,
+    "tier": "dense"
+  },
+  "rel-395-9-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-396-9-head-train": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-398-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-399-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-401-9-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-403-11-head-train": {
+    "triples_within_two_hops": 204,
+    "tier": "dense"
+  },
+  "rel-403-11-head-val": {
+    "triples_within_two_hops": 204,
+    "tier": "dense"
+  },
+  "rel-403-11-head-test": {
+    "triples_within_two_hops": 204,
+    "tier": "dense"
+  },
+  "rel-403-12-head-train": {
+    "triples_within_two_hops": 204,
+    "tier": "dense"
+  },
+  "rel-403-12-head-test": {
+    "triples_within_two_hops": 204,
+    "tier": "dense"
+  },
+  "rel-405-11-head-train": {
+    "triples_within_two_hops": 159,
+    "tier": "dense"
+  },
+  "rel-405-11-head-val": {
+    "triples_within_two_hops": 159,
+    "tier": "dense"
+  },
+  "rel-405-11-head-test": {
+    "triples_within_two_hops": 159,
+    "tier": "dense"
+  },
+  "rel-406-1-head-train": {
+    "triples_within_two_hops": 47,
+    "tier": "medium"
+  },
+  "rel-407-10-head-train": {
+    "triples_within_two_hops": 31,
+    "tier": "medium"
+  },
+  "rel-408-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-413-10-head-train": {
+    "triples_within_two_hops": 47,
+    "tier": "medium"
+  },
+  "rel-414-10-head-train": {
+    "triples_within_two_hops": 15,
+    "tier": "medium"
+  },
+  "rel-418-2-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-419-10-head-train": {
+    "triples_within_two_hops": 76,
+    "tier": "dense"
+  },
+  "rel-422-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-423-10-head-test": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-424-7-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-424-7-head-val": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-424-9-head-val": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-425-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-426-9-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-426-9-head-val": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-426-9-head-test": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-428-2-head-train": {
+    "triples_within_two_hops": 85,
+    "tier": "dense"
+  },
+  "rel-429-9-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-431-10-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-432-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-433-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-433-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-435-17-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-435-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-436-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-437-15-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-437-15-head-test": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-439-10-head-test": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-439-11-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-439-12-head-test": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-442-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-443-10-head-test": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-444-10-head-train": {
+    "triples_within_two_hops": 41,
+    "tier": "medium"
+  },
+  "rel-445-10-head-train": {
+    "triples_within_two_hops": 46,
+    "tier": "medium"
+  },
+  "rel-447-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-454-9-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-455-15-head-train": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-456-9-head-train": {
+    "triples_within_two_hops": 14,
+    "tier": "medium"
+  },
+  "rel-459-15-head-train": {
+    "triples_within_two_hops": 51,
+    "tier": "dense"
+  },
+  "rel-460-10-head-test": {
+    "triples_within_two_hops": 51,
+    "tier": "dense"
+  },
+  "rel-462-6-head-train": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-462-6-head-val": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-462-6-head-test": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-463-6-head-train": {
+    "triples_within_two_hops": 50,
+    "tier": "medium"
+  },
+  "rel-463-6-head-test": {
+    "triples_within_two_hops": 50,
+    "tier": "medium"
+  },
+  "rel-464-6-head-train": {
+    "triples_within_two_hops": 17,
+    "tier": "medium"
+  },
+  "rel-465-6-head-train": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-466-6-head-train": {
+    "triples_within_two_hops": 50,
+    "tier": "medium"
+  },
+  "rel-467-6-head-train": {
+    "triples_within_two_hops": 64,
+    "tier": "dense"
+  },
+  "rel-468-6-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-469-6-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-470-6-head-train": {
+    "triples_within_two_hops": 33,
+    "tier": "medium"
+  },
+  "rel-470-6-head-test": {
+    "triples_within_two_hops": 33,
+    "tier": "medium"
+  },
+  "rel-471-1-head-train": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-472-2-head-val": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-473-9-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-473-9-head-val": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-473-9-head-test": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-474-10-head-train": {
+    "triples_within_two_hops": 44,
+    "tier": "medium"
+  },
+  "rel-474-11-head-train": {
+    "triples_within_two_hops": 44,
+    "tier": "medium"
+  },
+  "rel-474-12-head-train": {
+    "triples_within_two_hops": 44,
+    "tier": "medium"
+  },
+  "rel-477-15-head-train": {
+    "triples_within_two_hops": 84,
+    "tier": "dense"
+  },
+  "rel-479-9-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-480-10-head-test": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-481-10-head-train": {
+    "triples_within_two_hops": 43,
+    "tier": "medium"
+  },
+  "rel-482-17-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-483-1-head-train": {
+    "triples_within_two_hops": 26,
+    "tier": "medium"
+  },
+  "rel-484-10-head-train": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-485-1-head-val": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-486-10-head-val": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-487-10-head-train": {
+    "triples_within_two_hops": 62,
+    "tier": "dense"
+  },
+  "rel-487-10-head-test": {
+    "triples_within_two_hops": 62,
+    "tier": "dense"
+  },
+  "rel-488-10-head-val": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-488-10-head-test": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-488-11-head-train": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-488-12-head-train": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-489-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-490-17-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-493-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-498-14-head-test": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-500-9-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-501-2-head-train": {
+    "triples_within_two_hops": 17,
+    "tier": "medium"
+  },
+  "rel-505-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-506-9-head-train": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-506-9-head-val": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-506-9-head-test": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-507-17-head-train": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-507-17-head-test": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-517-1-head-test": {
+    "triples_within_two_hops": 37,
+    "tier": "medium"
+  },
+  "rel-521-15-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-525-2-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-530-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-533-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-534-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-536-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-537-10-head-train": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-537-11-head-train": {
+    "triples_within_two_hops": 99,
+    "tier": "dense"
+  },
+  "rel-540-10-head-train": {
+    "triples_within_two_hops": 110,
+    "tier": "dense"
+  },
+  "rel-540-11-head-train": {
+    "triples_within_two_hops": 110,
+    "tier": "dense"
+  },
+  "rel-540-11-head-test": {
+    "triples_within_two_hops": 110,
+    "tier": "dense"
+  },
+  "rel-541-11-head-val": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-542-10-head-test": {
+    "triples_within_two_hops": 21,
+    "tier": "medium"
+  },
+  "rel-542-11-head-train": {
+    "triples_within_two_hops": 21,
+    "tier": "medium"
+  },
+  "rel-543-10-head-test": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-545-10-head-train": {
+    "triples_within_two_hops": 24,
+    "tier": "medium"
+  },
+  "rel-547-10-head-val": {
+    "triples_within_two_hops": 66,
+    "tier": "dense"
+  },
+  "rel-547-11-head-train": {
+    "triples_within_two_hops": 66,
+    "tier": "dense"
+  },
+  "rel-547-11-head-test": {
+    "triples_within_two_hops": 66,
+    "tier": "dense"
+  },
+  "rel-548-10-head-test": {
+    "triples_within_two_hops": 78,
+    "tier": "dense"
+  },
+  "rel-548-11-head-test": {
+    "triples_within_two_hops": 78,
+    "tier": "dense"
+  },
+  "rel-549-10-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-550-10-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-551-10-head-test": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-552-9-head-train": {
+    "triples_within_two_hops": 47,
+    "tier": "medium"
+  },
+  "rel-552-9-head-test": {
+    "triples_within_two_hops": 47,
+    "tier": "medium"
+  },
+  "rel-558-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-561-10-head-train": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-563-5-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-564-10-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-565-9-head-train": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-567-10-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-568-10-head-test": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-570-10-head-train": {
+    "triples_within_two_hops": 59,
+    "tier": "dense"
+  },
+  "rel-570-10-head-test": {
+    "triples_within_two_hops": 59,
+    "tier": "dense"
+  },
+  "rel-571-10-head-train": {
+    "triples_within_two_hops": 72,
+    "tier": "dense"
+  },
+  "rel-571-10-head-val": {
+    "triples_within_two_hops": 72,
+    "tier": "dense"
+  },
+  "rel-571-10-head-test": {
+    "triples_within_two_hops": 72,
+    "tier": "dense"
+  },
+  "rel-572-10-head-train": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-572-12-head-train": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-574-10-head-train": {
+    "triples_within_two_hops": 62,
+    "tier": "dense"
+  },
+  "rel-575-11-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-576-10-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-577-10-head-val": {
+    "triples_within_two_hops": 289,
+    "tier": "dense"
+  },
+  "rel-577-10-head-test": {
+    "triples_within_two_hops": 289,
+    "tier": "dense"
+  },
+  "rel-578-10-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-578-12-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-580-10-head-val": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-580-11-head-val": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-581-10-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-581-11-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-582-10-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-583-10-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-584-11-head-train": {
+    "triples_within_two_hops": 95,
+    "tier": "dense"
+  },
+  "rel-585-11-head-test": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-586-10-head-train": {
+    "triples_within_two_hops": 71,
+    "tier": "dense"
+  },
+  "rel-586-11-head-train": {
+    "triples_within_two_hops": 71,
+    "tier": "dense"
+  },
+  "rel-586-11-head-test": {
+    "triples_within_two_hops": 71,
+    "tier": "dense"
+  },
+  "rel-588-11-head-train": {
+    "triples_within_two_hops": 29,
+    "tier": "medium"
+  },
+  "rel-589-10-head-train": {
+    "triples_within_two_hops": 38,
+    "tier": "medium"
+  },
+  "rel-591-10-head-val": {
+    "triples_within_two_hops": 2,
+    "tier": "sparse"
+  },
+  "rel-593-11-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-593-11-head-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-594-10-head-train": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-594-10-head-val": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-594-11-head-val": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-595-11-head-test": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-596-11-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-597-11-head-val": {
+    "triples_within_two_hops": 62,
+    "tier": "dense"
+  },
+  "rel-598-10-head-train": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-598-11-head-train": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-598-11-head-test": {
+    "triples_within_two_hops": 69,
+    "tier": "dense"
+  },
+  "rel-599-10-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-600-11-head-test": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-601-10-head-test": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-603-10-head-val": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-603-10-head-test": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-603-11-head-train": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-603-11-head-val": {
+    "triples_within_two_hops": 23,
+    "tier": "medium"
+  },
+  "rel-605-10-head-train": {
+    "triples_within_two_hops": 56,
+    "tier": "dense"
+  },
+  "rel-605-11-head-test": {
+    "triples_within_two_hops": 56,
+    "tier": "dense"
+  },
+  "rel-607-10-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-607-15-head-train": {
+    "triples_within_two_hops": 52,
+    "tier": "dense"
+  },
+  "rel-608-10-head-val": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-612-9-head-train": {
+    "triples_within_two_hops": 35,
+    "tier": "medium"
+  },
+  "rel-612-9-head-test": {
+    "triples_within_two_hops": 35,
+    "tier": "medium"
+  },
+  "rel-614-17-head-train": {
+    "triples_within_two_hops": 61,
+    "tier": "dense"
+  },
+  "rel-614-17-head-test": {
+    "triples_within_two_hops": 61,
+    "tier": "dense"
+  },
+  "rel-615-17-head-train": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-616-10-head-train": {
+    "triples_within_two_hops": 15,
+    "tier": "medium"
+  },
+  "rel-618-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-618-9-head-val": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-620-4-head-train": {
+    "triples_within_two_hops": 27,
+    "tier": "medium"
+  },
+  "rel-621-9-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-622-14-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-624-9-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-626-2-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-627-9-head-train": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-631-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-635-7-head-train": {
+    "triples_within_two_hops": 43,
+    "tier": "medium"
+  },
+  "rel-635-7-head-test": {
+    "triples_within_two_hops": 43,
+    "tier": "medium"
+  },
+  "rel-636-10-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-637-16-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-638-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-642-9-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-642-9-head-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-646-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-649-5-head-train": {
+    "triples_within_two_hops": 50,
+    "tier": "medium"
+  },
+  "rel-651-10-head-train": {
+    "triples_within_two_hops": 42,
+    "tier": "medium"
+  },
+  "rel-652-9-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-652-9-head-test": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-657-9-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-660-16-head-train": {
+    "triples_within_two_hops": 70,
+    "tier": "dense"
+  },
+  "rel-660-16-head-test": {
+    "triples_within_two_hops": 70,
+    "tier": "dense"
+  },
+  "rel-662-9-head-train": {
+    "triples_within_two_hops": 17,
+    "tier": "medium"
+  },
+  "rel-663-9-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-665-16-head-val": {
+    "triples_within_two_hops": 38,
+    "tier": "medium"
+  },
+  "rel-666-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-667-12-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-669-9-head-train": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-669-9-head-val": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-669-9-head-test": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-670-9-head-train": {
+    "triples_within_two_hops": 28,
+    "tier": "medium"
+  },
+  "rel-671-15-head-train": {
+    "triples_within_two_hops": 1,
+    "tier": "sparse"
+  },
+  "rel-672-2-head-train": {
+    "triples_within_two_hops": 29,
+    "tier": "medium"
+  },
+  "rel-673-10-head-test": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-674-10-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-674-10-head-test": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-675-10-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-678-10-head-train": {
+    "triples_within_two_hops": 38,
+    "tier": "medium"
+  },
+  "rel-679-10-head-test": {
+    "triples_within_two_hops": 36,
+    "tier": "medium"
+  },
+  "rel-680-9-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-680-9-head-test": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-683-10-head-val": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-685-9-head-train": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-685-9-head-test": {
+    "triples_within_two_hops": 22,
+    "tier": "medium"
+  },
+  "rel-686-9-head-train": {
+    "triples_within_two_hops": 64,
+    "tier": "dense"
+  },
+  "rel-686-9-head-val": {
+    "triples_within_two_hops": 64,
+    "tier": "dense"
+  },
+  "rel-686-9-head-test": {
+    "triples_within_two_hops": 64,
+    "tier": "dense"
+  },
+  "rel-688-15-head-train": {
+    "triples_within_two_hops": 18,
+    "tier": "medium"
+  },
+  "rel-689-1-head-train": {
+    "triples_within_two_hops": 31,
+    "tier": "medium"
+  },
+  "rel-691-1-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-693-9-head-train": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-693-9-head-val": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-693-9-head-test": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-696-10-head-val": {
+    "triples_within_two_hops": 14,
+    "tier": "medium"
+  },
+  "rel-698-10-head-val": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-699-15-head-train": {
+    "triples_within_two_hops": 44,
+    "tier": "medium"
+  },
+  "rel-706-17-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-707-17-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-708-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-709-9-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-709-9-head-val": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-712-10-head-val": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-714-10-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-720-14-head-train": {
+    "triples_within_two_hops": 4,
+    "tier": "sparse"
+  },
+  "rel-724-9-head-train": {
+    "triples_within_two_hops": 53,
+    "tier": "dense"
+  },
+  "rel-728-9-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-730-5-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-741-14-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-744-10-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-768-15-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-770-10-head-train": {
+    "triples_within_two_hops": 115,
+    "tier": "dense"
+  },
+  "rel-770-10-head-val": {
+    "triples_within_two_hops": 115,
+    "tier": "dense"
+  },
+  "rel-770-11-head-train": {
+    "triples_within_two_hops": 115,
+    "tier": "dense"
+  },
+  "rel-771-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-773-11-head-train": {
+    "triples_within_two_hops": 89,
+    "tier": "dense"
+  },
+  "rel-774-4-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-775-4-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-775-4-head-val": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-776-4-head-train": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-776-4-head-val": {
+    "triples_within_two_hops": 11,
+    "tier": "medium"
+  },
+  "rel-777-4-head-train": {
+    "triples_within_two_hops": 7,
+    "tier": "sparse"
+  },
+  "rel-778-4-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-778-4-head-val": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-779-4-head-train": {
+    "triples_within_two_hops": 20,
+    "tier": "medium"
+  },
+  "rel-780-4-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-781-4-head-test": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-782-4-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-783-4-head-test": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  },
+  "rel-784-4-head-train": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-784-4-head-test": {
+    "triples_within_two_hops": 5,
+    "tier": "sparse"
+  },
+  "rel-786-4-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-787-4-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-788-4-head-train": {
+    "triples_within_two_hops": 74,
+    "tier": "dense"
+  },
+  "rel-788-4-head-test": {
+    "triples_within_two_hops": 74,
+    "tier": "dense"
+  },
+  "rel-789-4-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-789-4-head-test": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-790-10-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-791-1-head-train": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-791-1-head-val": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-791-1-head-test": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-792-4-head-train": {
+    "triples_within_two_hops": 8,
+    "tier": "sparse"
+  },
+  "rel-793-9-head-test": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-793-16-head-train": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-793-16-head-val": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-793-16-head-test": {
+    "triples_within_two_hops": 13,
+    "tier": "medium"
+  },
+  "rel-796-5-head-train": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-797-2-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-797-2-head-test": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-798-10-head-train": {
+    "triples_within_two_hops": 12,
+    "tier": "medium"
+  },
+  "rel-807-10-head-train": {
+    "triples_within_two_hops": 10,
+    "tier": "sparse"
+  },
+  "rel-809-9-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-811-17-head-train": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-811-17-head-test": {
+    "triples_within_two_hops": 19,
+    "tier": "medium"
+  },
+  "rel-812-9-head-train": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-812-9-head-test": {
+    "triples_within_two_hops": 30,
+    "tier": "medium"
+  },
+  "rel-813-17-head-train": {
+    "triples_within_two_hops": 39,
+    "tier": "medium"
+  },
+  "rel-814-9-head-train": {
+    "triples_within_two_hops": 3,
+    "tier": "sparse"
+  },
+  "rel-822-15-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-825-9-head-train": {
+    "triples_within_two_hops": 112,
+    "tier": "dense"
+  },
+  "rel-825-9-head-val": {
+    "triples_within_two_hops": 112,
+    "tier": "dense"
+  },
+  "rel-826-10-head-train": {
+    "triples_within_two_hops": 24,
+    "tier": "medium"
+  },
+  "rel-827-7-head-train": {
+    "triples_within_two_hops": 155,
+    "tier": "dense"
+  },
+  "rel-827-7-head-val": {
+    "triples_within_two_hops": 155,
+    "tier": "dense"
+  },
+  "rel-827-7-head-test": {
+    "triples_within_two_hops": 155,
+    "tier": "dense"
+  },
+  "rel-830-16-head-train": {
+    "triples_within_two_hops": 101,
+    "tier": "dense"
+  },
+  "rel-831-9-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-834-2-head-train": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-834-2-head-val": {
+    "triples_within_two_hops": 9,
+    "tier": "sparse"
+  },
+  "rel-837-8-head-test": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-838-8-head-train": {
+    "triples_within_two_hops": 58,
+    "tier": "dense"
+  },
+  "rel-839-8-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-840-8-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-841-8-head-train": {
+    "triples_within_two_hops": 25,
+    "tier": "medium"
+  },
+  "rel-842-8-head-train": {
+    "triples_within_two_hops": 16,
+    "tier": "medium"
+  },
+  "rel-843-8-head-val": {
+    "triples_within_two_hops": 0,
+    "tier": "sparse"
+  },
+  "rel-844-8-head-train": {
+    "triples_within_two_hops": 21,
+    "tier": "medium"
+  },
+  "rel-845-8-head-train": {
+    "triples_within_two_hops": 127,
+    "tier": "dense"
+  },
+  "rel-845-8-head-val": {
+    "triples_within_two_hops": 127,
+    "tier": "dense"
+  },
+  "rel-845-8-head-test": {
+    "triples_within_two_hops": 127,
+    "tier": "dense"
+  },
+  "rel-847-8-head-train": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-847-8-head-val": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-847-8-head-test": {
+    "triples_within_two_hops": 45,
+    "tier": "medium"
+  },
+  "rel-848-8-head-train": {
+    "triples_within_two_hops": 6,
+    "tier": "sparse"
+  }
+}

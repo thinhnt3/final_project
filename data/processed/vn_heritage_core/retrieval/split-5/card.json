@@ -76,6 +76,17 @@
     "indirect/train": 487,
     "indirect/val": 104
   },
+  "indirect_density": {
+    "test/dense": 36,
+    "test/medium": 46,
+    "test/sparse": 63,
+    "train/dense": 76,
+    "train/medium": 149,
+    "train/sparse": 85,
+    "val/dense": 28,
+    "val/medium": 23,
+    "val/sparse": 43
+  },
   "indirect_hops": {
     "test/2": 48,
     "test/3": 41,
