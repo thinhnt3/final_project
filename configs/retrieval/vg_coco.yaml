@@ -37,6 +37,26 @@ graphsage:
   directed: true
   image_node: learned
 
+# AdaMF-MAT encoder (Zhang et al., COLING 2024): each image is an entity with three modalities
+# (structure = GraphSAGE above with a learned image node, image = CLIP image vector, text =
+# CLIP text of the labels), fused with one learned weight per modality and entity.
+# adaptive_fusion: false replaces the weights by a mean; mat: false trains without the generator.
+# mu: weight of the adversarial term. noise_dim, generator_hidden_dim and
+# generator_learning_rate are the values of the paper's code.
+# The defaults are the full model; the two switches are the paper's ablations.
+# modalities: drop one for a modality ablation (needs mat: false). normalize_modalities: true
+# L2-normalizes each modality before fusion, so fusion weights are not offset by vector norms.
+adamf_mat:
+  dim: 256
+  adaptive_fusion: true
+  mat: true
+  modalities: [structure, image, text]
+  normalize_modalities: false
+  mu: 1.0
+  noise_dim: 64
+  generator_hidden_dim: 512
+  generator_learning_rate: 0.0001
+
 # Training of the graph encoder. Starting values; tune on validation only.
 # device: cpu is faster than mps for these small sub-graphs, and identical across machines.
 # patience: stop after this many epochs in a row without a better validation result.

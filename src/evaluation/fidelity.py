@@ -16,19 +16,8 @@ import torch
 from torch import nn
 
 from src.core.exceptions import DataError
+from src.models.ablations import remove_relations
 from src.models.explain import score_graph_variants
-
-
-def remove_relations(
-    graph: Mapping[str, Any],
-    positions: Sequence[int],
-) -> dict[str, Any]:
-    """Remove entire triplets by position, preserving all concept nodes."""
-    # Remove relation positions only; object nodes stay available.
-    indices = set(positions)
-    if len(indices) != len(positions) or any(i < 0 or i >= len(graph["triplets"]) for i in indices):
-        raise DataError("relation indices must be distinct and in range")
-    return {**graph, "triplets": [t for i, t in enumerate(graph["triplets"]) if i not in indices]}
 
 
 def joint_relation_fidelity(

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Train the GraphSAGE graph encoder on VG ∩ COCO, one run per seed.
+"""Train a graph encoder (GraphSAGE or AdaMF-MAT) on VG ∩ COCO, one run per seed.
 
 Run from the repository root after `embed_vg_coco`:
     python -m scripts.train_graphsage                 # every seed in the config
     python -m scripts.train_graphsage --seed 13       # one seed
     python -m scripts.train_graphsage --resume        # finish what is unfinished
     python -m scripts.train_graphsage --image-node clip_image   # variant; overrides the config
+    python -m scripts.train_graphsage --model adamf_mat   # AdaMF-MAT encoder (Zhang et al., COLING 2024)
+    python -m scripts.train_graphsage --model adamf_mat --no-mat   # an ablation
 
-Each run writes to <runs_dir>/graphsage/<name>/seed<seed>/: config.yaml, train.log,
+Each run writes to <runs_dir>/<model>/<name>/seed<seed>/: config.yaml, train.log,
 history.json, last.pt, best.pt, result.json and the graph vectors of every image.
 With --resume a finished seed is skipped, an interrupted one continues from last.pt and
 one that never started begins from scratch. Only train and validation data are read; the
@@ -21,12 +23,14 @@ import logging
 import subprocess
 import sys
 from dataclasses import asdict, replace
+from enum import StrEnum
 from typing import Any
 
 import torch
+from torch import nn
 from torch_geometric.data import Batch
 
-from src.connectors.wandb_tracker import WandbTracker
+from src.connectors.wandb_tracker import WandbMode, WandbTracker
 from src.core.config_parsing import read_mapping
 from src.core.exceptions import AppError, DataError, TrainingError
 from src.data.config import DataConfig
@@ -35,7 +39,9 @@ from src.data.schemas import Split
 from src.data.sources import sha256_of
 from src.data.yaml_io import write_yaml
 from src.embeddings.store import META_FILE, EmbeddingTable, load_table, save_table, verify_inputs_unchanged
+from src.evaluation.relation_queries import QueryKind
 from src.models.ablations import Ablation, ablate_graph
+from src.models.adamf_mat import MODALITIES, AdamfMatImageEncoder
 from src.models.checkpoint import (
     GRAPH_VECTORS,
     LOG_FILE,
@@ -47,14 +53,20 @@ from src.models.checkpoint import (
 )
 from src.models.graph_data import image_graph_to_data
 from src.models.graphsage import GraphImageEncoder, ImageNodeFeature
-from src.models.train import RetrievalSet, encode_graphs, fit, info_nce, seed_everything
-from src.models.train_data import build_retrieval_set
+from src.models.graphsage_label_text import LabelTextGraphEncoder
+from src.models.relation_validation import RelationValidator
+from src.models.train import RetrievalSet, SelectionMetric, encode_graphs, fit, info_nce, seed_everything
+from src.models.train_data import (
+    build_retrieval_set,
+    hard_negative_partners,
+    relation_mentions,
+    subset_retrieval_set,
+)
 from src.retrieval.config import RetrievalConfig
 
 log = logging.getLogger("train_graphsage")
 
 DEFAULT_CONFIG = "configs/retrieval/vg_coco.yaml"
-RUNS_SUBDIR = "graphsage"
 GRAPH_FILE = "graph/image_graphs.json"
 LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 SETTINGS_HEADER = "Settings of this training run. Written by train_graphsage."
@@ -62,6 +74,39 @@ UNKNOWN_COMMIT = "unknown"
 FAILURE_EXIT_CODE = 1
 INTERRUPTED_EXIT_CODE = 130
 _METRIC_DECIMALS = 4
+# Hard-negative candidates kept per train image; a group draws from them.
+HARD_NEGATIVE_PARTNERS = 32
+# Draw of the train subset for --train-fraction; fixed so every seed and model sees the same images.
+TRAIN_SUBSET_SEED = 20261120
+RELATION_QUERIES_DIR = "relation_queries"
+
+
+class Encoder(StrEnum):
+    """Graph encoder to train; also the sub-directory of its runs."""
+
+    GRAPHSAGE = "graphsage"
+    ADAMF_MAT = "adamf_mat"
+    # GraphSAGE plus AdaMF-MAT's label-text modality, concatenated: a control for AdaMF-MAT.
+    GRAPHSAGE_LABEL_TEXT = "graphsage_label_text"
+
+    def default_run_name(self, config: RetrievalConfig) -> str:
+        """Run name derived from the configured architecture of this encoder and its batching."""
+        if self is Encoder.ADAMF_MAT:
+            name = config.adamf_mat.run_name()
+        elif self is Encoder.GRAPHSAGE_LABEL_TEXT:
+            name = f"{config.graphsage.run_name()}-labeltext-d{config.adamf_mat.dim}"
+        else:
+            name = config.graphsage.run_name()
+        training = config.training
+        if training.hard_negative_group > 1:
+            name += f"-hn{training.hard_negative_group}"
+        if training.predicate_swap_weight > 0:
+            name += f"-ps{training.predicate_swap_weight:g}"
+        if training.train_fraction < 1:
+            name += f"-tf{training.train_fraction:g}"
+        if training.selection_metric is SelectionMetric.RELATION:
+            name += "-selrel"
+        return name
 
 
 def _git_state() -> dict[str, Any]:
@@ -83,7 +128,7 @@ def _dense_table(table: EmbeddingTable, name: str) -> torch.Tensor:
     return torch.from_numpy(table.vectors)
 
 
-def _smoke_step(model: GraphImageEncoder, train: RetrievalSet, config: RetrievalConfig) -> None:
+def _smoke_step(model: nn.Module, train: RetrievalSet, config: RetrievalConfig) -> None:
     """One forward and backward pass on a single batch, without changing the weights."""
     size = min(config.training.batch_size, len(train.graphs))
     batch = Batch.from_data_list(list(train.graphs[:size])).to(config.training.device.value)
@@ -96,9 +141,33 @@ def _smoke_step(model: GraphImageEncoder, train: RetrievalSet, config: Retrieval
     log.info("smoke step ok: loss %.4f on %d images", loss.item(), size)
 
 
-def _settings(config: RetrievalConfig, config_path: str, name: str, seed: int, data: dict[str, Any]) -> dict[str, Any]:
+def build_model(config: RetrievalConfig, encoder: Encoder, data: dict[str, Any]) -> nn.Module:
+    """A freshly initialized encoder of the requested kind."""
+    tables = (data["concepts"], data["predicates"], data["images"])
+    if encoder is Encoder.ADAMF_MAT:
+        return AdamfMatImageEncoder(config.adamf_mat, config.graphsage, *tables)
+    if encoder is Encoder.GRAPHSAGE_LABEL_TEXT:
+        # Text branch of the same size as AdaMF-MAT's modalities, so the control matches it.
+        return LabelTextGraphEncoder(config.graphsage, config.adamf_mat.dim, *tables)
+    return GraphImageEncoder(config.graphsage, *tables)
+
+
+def _settings(
+    config: RetrievalConfig,
+    config_path: str,
+    name: str,
+    seed: int,
+    data: dict[str, Any],
+    encoder: Encoder = Encoder.GRAPHSAGE,
+) -> dict[str, Any]:
     """Everything that defines this run, for the snapshot file and the tracker."""
     return {
+        **(
+            {"adamf_mat": {**asdict(config.adamf_mat), "modalities": list(config.adamf_mat.modalities)}}
+            if encoder is Encoder.ADAMF_MAT
+            else {}
+        ),
+        **({"label_text_dim": config.adamf_mat.dim} if encoder is Encoder.GRAPHSAGE_LABEL_TEXT else {}),
         "run_name": name,
         "seed": seed,
         "config_file": config_path,
@@ -129,6 +198,7 @@ def _train_seed(
     data: dict[str, Any],
     settings: dict[str, Any],
     run: RunDirectory,
+    encoder: Encoder,
     *,
     resume: bool,
 ) -> None:
@@ -143,7 +213,7 @@ def _train_seed(
         write_yaml(run.path / SETTINGS_FILE, settings, header=SETTINGS_HEADER)
 
     seed_everything(seed)
-    model = GraphImageEncoder(config.graphsage, data["concepts"], data["predicates"], data["images"])
+    model = build_model(config, encoder, data)
     model.to(config.training.device.value)
     _smoke_step(model, data["train"], config)
 
@@ -170,6 +240,7 @@ def _train_seed(
             resume=resume,
             show_progress=True,
             on_epoch=tracker.log_epoch,
+            extra_validation=data["relation_validator"],
         )
         best = run.load_best()
         model.load_state_dict(best["model"])
@@ -206,6 +277,7 @@ def run(
     name: str,
     seeds: list[int],
     handlers: list[logging.Handler],
+    encoder: Encoder,
     *,
     resume: bool,
     overwrite: bool,
@@ -233,9 +305,38 @@ def run(
     ]
     image_table, query_table = load_table(embeddings_dir, "images"), load_table(embeddings_dir, "queries")
 
-    train, _ = build_retrieval_set(Split.TRAIN, images, queries, image_graphs, image_table, query_table)
+    train, train_ids = build_retrieval_set(Split.TRAIN, images, queries, image_graphs, image_table, query_table)
+    train, train_ids = subset_retrieval_set(train, train_ids, config.training.train_fraction, TRAIN_SUBSET_SEED)
+    if config.training.predicate_swap_weight > 0:
+        concepts = read_json(processed / "graph" / "concepts.json")
+        predicate_text = {int(p["predicate_id"]): p["text"] for p in read_json(processed / "graph" / "predicates.json")}
+        mentions = relation_mentions(
+            image_graphs, train_ids, [q for q in queries if q["split"] == Split.TRAIN.value],
+            {int(c["concept_id"]): (c["text"],) for c in concepts}, predicate_text,
+        )
+        train = replace(train, relation_mentions=mentions)
+        named = sum(1 for per_image in mentions for per_caption in per_image if per_caption)
+        log.info("predicate swap: %d of %d train captions name a triplet of their image",
+                 named, sum(len(per_image) for per_image in mentions))
+    if config.training.hard_negative_group > 1:
+        partners = hard_negative_partners(image_graphs, train_ids, HARD_NEGATIVE_PARTNERS)
+        train = replace(train, partners=partners)
+        log.info("hard negatives: %d of %d train images have partners",
+                 sum(1 for p in partners if p), len(partners))
     val, _ = build_retrieval_set(Split.VAL, images, queries, image_graphs, image_table, query_table)
     graph_of = {int(g["vg_image_id"]): g for g in image_graphs}
+    relation_file = processed / RELATION_QUERIES_DIR / "queries_val.json"
+    relation_validator = None
+    if relation_file.is_file():
+        relation_table = load_table(embeddings_dir / RELATION_QUERIES_DIR, "queries_val")
+        relation_queries = [q for q in read_json(relation_file) if q["kind"] == QueryKind.RELATION.value]
+        relation_validator = RelationValidator(
+            relation_queries, relation_table.select([q["query_id"] for q in relation_queries]),
+            graph_of, image_table.row_of(), config.training,
+        )
+        log.info("relation validation: %d queries", len(relation_queries))
+    elif config.training.selection_metric is SelectionMetric.RELATION:
+        raise DataError(f"{relation_file} not found; run scripts.build_relation_queries --split val")
     without_graph = [image_id for image_id in image_table.ids if int(image_id) not in graph_of]
     if without_graph:
         raise DataError(f"{len(without_graph)} embedded images have no graph, e.g. {without_graph[:5]}")
@@ -246,6 +347,7 @@ def run(
         # Sub-graphs of every image, in the order of the image table, to export graph vectors.
         "all_graphs": [image_graph_to_data(graph_of[int(i)], row) for row, i in enumerate(image_table.ids)],
         "all_image_ids": image_table.ids,
+        "relation_validator": relation_validator,
         "concepts": _dense_table(load_table(embeddings_dir, "concepts"), "concepts"),
         "predicates": _dense_table(load_table(embeddings_dir, "predicates"), "predicates"),
         "images": torch.from_numpy(image_table.vectors),
@@ -258,17 +360,11 @@ def run(
         train.caption_vectors.shape[1],
     )
     for seed in seeds:
-        run_dir = RunDirectory(config.runs_dir / RUNS_SUBDIR / name / f"seed{seed}")
+        run_dir = RunDirectory(config.runs_dir / encoder.value / name / f"seed{seed}")
         if resume and run_dir.is_finished():
             # A result marker alone does not guarantee reusable local artifacts.
             run_dir.validate_finished(
-                _settings(
-                    config,
-                    config_path,
-                    name,
-                    seed,
-                    data,
-                )
+                _settings(config, config_path, name, seed, data, encoder)
             )
             log.info("seed %d already finished in %s; skipped", seed, run_dir.path)
             continue
@@ -278,9 +374,8 @@ def run(
         handler.setFormatter(logging.Formatter(LOG_FORMAT))
         logging.getLogger().addHandler(handler)
         handlers.append(handler)
-        _train_seed(
-            config, name, seed, data, _settings(config, config_path, name, seed, data), run_dir, resume=resume_seed
-        )
+        settings = _settings(config, config_path, name, seed, data, encoder)
+        _train_seed(config, name, seed, data, settings, run_dir, encoder, resume=resume_seed)
         _close(handlers)
 
 
@@ -303,6 +398,33 @@ def main() -> int:
         choices=[v.value for v in ImageNodeFeature],
         help="initial feature of the image node; overrides graphsage.image_node of the config",
     )
+    parser.add_argument("--model", choices=[e.value for e in Encoder], default=Encoder.GRAPHSAGE.value)
+    parser.add_argument("--no-adaptive-fusion", action="store_true", help="adamf_mat: fuse the modalities by a mean")
+    parser.add_argument("--no-mat", action="store_true", help="adamf_mat: train without the generator")
+    parser.add_argument("--mu", type=float, help="overrides adamf_mat.mu")
+    parser.add_argument(
+        "--drop-modality",
+        action="append",
+        choices=list(MODALITIES),
+        default=[],
+        help="adamf_mat: leave this modality out of the fusion; repeatable; needs --no-mat",
+    )
+    parser.add_argument(
+        "--normalize-modalities", action="store_true", help="adamf_mat: L2-normalize each modality before fusion"
+    )
+    parser.add_argument(
+        "--structure-only-rate", type=float, help="adamf_mat: share of train images fused from structure alone"
+    )
+    parser.add_argument(
+        "--hard-negative-group", type=int, help="images per hard-negative group in a batch; overrides the config"
+    )
+    parser.add_argument("--structure-loss-weight", type=float, help="adamf_mat: weight of the structure-only loss")
+    parser.add_argument("--predicate-swap-weight", type=float, help="weight of the predicate-swap negatives")
+    parser.add_argument("--train-fraction", type=float, help="share of the train images to use")
+    parser.add_argument(
+        "--selection-metric", choices=[m.value for m in SelectionMetric], help="overrides training.selection_metric"
+    )
+    parser.add_argument("--wandb-mode", choices=[m.value for m in WandbMode], help="overrides wandb.mode")
     parser.add_argument("--ablation", choices=[v.value for v in Ablation])
     parser.add_argument(
         "--ablation-seed",
@@ -320,6 +442,35 @@ def main() -> int:
         if args.image_node:
             model_config = replace(config.graphsage, image_node=ImageNodeFeature(args.image_node))
             config = replace(config, graphsage=model_config)
+        adamf_mat = replace(
+            config.adamf_mat,
+            adaptive_fusion=config.adamf_mat.adaptive_fusion and not args.no_adaptive_fusion,
+            mat=config.adamf_mat.mat and not args.no_mat,
+            mu=config.adamf_mat.mu if args.mu is None else args.mu,
+            modalities=tuple(m for m in config.adamf_mat.modalities if m not in args.drop_modality),
+            normalize_modalities=config.adamf_mat.normalize_modalities or args.normalize_modalities,
+            structure_only_rate=(
+                config.adamf_mat.structure_only_rate if args.structure_only_rate is None else args.structure_only_rate
+            ),
+            structure_loss_weight=(
+                config.adamf_mat.structure_loss_weight
+                if args.structure_loss_weight is None
+                else args.structure_loss_weight
+            ),
+        )
+        config = replace(config, adamf_mat=adamf_mat)
+        overrides: dict[str, Any] = {
+            "hard_negative_group": args.hard_negative_group,
+            "predicate_swap_weight": args.predicate_swap_weight,
+            "train_fraction": args.train_fraction,
+            "selection_metric": SelectionMetric(args.selection_metric) if args.selection_metric else None,
+        }
+        config = replace(
+            config, training=replace(config.training, **{k: v for k, v in overrides.items() if v is not None})
+        )
+        if args.wandb_mode:
+            config = replace(config, wandb=replace(config.wandb, mode=WandbMode(args.wandb_mode)))
+        encoder = Encoder(args.model)
         if args.ablation:
             config = replace(
                 config,
@@ -337,8 +488,10 @@ def main() -> int:
                 ),
             )
         seeds = args.seed or list(config.training.seeds)
-        name = args.name or config.graphsage.run_name()
-        run(config, args.config, name, seeds, handlers, resume=args.resume, overwrite=args.overwrite)
+        run(
+            config, args.config, args.name or encoder.default_run_name(config), seeds, handlers, encoder,
+            resume=args.resume, overwrite=args.overwrite,
+        )
     except AppError:
         log.exception("training failed")
         return FAILURE_EXIT_CODE

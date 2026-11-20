@@ -48,8 +48,25 @@ wandb/
 runs/graphsage/**/tracker_run_id.txt
 
 # Generated experiment outputs stay local; reproduce them with scripts/.
-# Historical files already tracked by Git are still tracked.
+# Historical files already tracked by Git are still tracked; runs/benchmark/ keeps the per-method summaries.
 /runs/
+
+# Derived data rebuilt by scripts: relation queries (build_relation_queries) and the WordNet IsA variant (build_kg_variant).
+data/processed/vg_coco/relation_queries/
+data/processed/vg_coco_kg/
 
 # Private reports, local orchestration and verification logs.
 /private/
+# A worktree links the embeddings of the main checkout; the trailing-slash rule above misses a symlink.
+data/processed/vg_coco/embeddings
+
+# Full VG ∩ COCO variant: image files (~6 GB) are downloaded by build_vg_coco --stage images.
+data/processed/vg_coco_full/images/
+# Worktree links to the main checkout's interim build outputs.
+data/interim
+# Full variant outputs are large (scene_graphs.json ~270 MB); rebuild with scripts.make_full_split + build_vg_coco --stage export.
+data/processed/vg_coco_full/
+# KG variant: CLIP tables and copies of the base images/queries files are rebuilt by scripts.build_kg_variant.
+data/processed/vg_coco_kg/embeddings/
+data/processed/vg_coco_kg/images.json
+data/processed/vg_coco_kg/queries.json
