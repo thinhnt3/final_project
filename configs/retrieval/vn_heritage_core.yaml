@@ -1,0 +1,49 @@
+# Retrieval experiments on the VN heritage core (160 places, text query -> place).
+# All paths are relative to the repository root; run commands from there.
+
+# Query build config: gives the retrieval data directory and the image directory.
+data_config: configs/data/vn_heritage_queries.yaml
+
+# Same frozen CLIP as the other datasets, so results are comparable.
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+
+embeddings_dir: data/processed/vn_heritage_core/retrieval/embeddings
+
+benchmark:
+  recall_ks: [1, 5, 10]
+  # How often an answer is inside the top-k CLIP candidates (ceiling of a top-k reranker).
+  candidate_ks: [20, 40, 80]
+  # Reranking search, on validation only: alpha * CLIP + (1 - alpha) * graph over the top-k
+  # CLIP candidates. 160 is the whole gallery.
+  alpha_step: 0.05
+  top_k_grid: [10, 40, 160]
+
+# Only shuffle_seed is used here (control graph with re-paired tails); decay_grid is
+# required by the shared config class and belongs to the path-score benchmark.
+path_score:
+  decay_grid: [0.5]
+  shuffle_seed: 13
+
+# Same encoder as MKG-W: one layer reaches one hop further.
+kg_graphsage:
+  hidden_dim: 512
+  num_layers: 3
+
+# About 550 train queries, so batches are small and epochs many. Tune on validation only.
+training:
+  seeds: [13, 37, 97, 211, 503]
+  device: cpu
+  batch_size: 64
+  max_epochs: 200
+  patience: 20
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+
+runs_dir: runs/vn_heritage_core

@@ -53,3 +53,6 @@ runs/graphsage/**/tracker_run_id.txt
 
 # Private reports, local orchestration and verification logs.
 /private/
+
+# Per-split CLIP embeddings; regenerate with scripts/run_vn_heritage_retrieval.py.
+data/processed/*/retrieval/embeddings/

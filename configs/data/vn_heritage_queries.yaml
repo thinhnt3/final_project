@@ -1,0 +1,65 @@
+# Retrieval task on the VN heritage core: text query -> place that has photos.
+# Paths are relative to the repo root.
+
+paths:
+  core_dir: data/processed/vn_heritage_core      # output of scripts/build_vn_heritage_core.py
+  out_dir: data/processed/vn_heritage_core/retrieval
+  image_dir: data/raw/vn_heritage/images         # git-ignored; override with --image-dir
+
+# Entity names and query text use the first label available in this order. English first:
+# the frozen CLIP text encoder was trained on English.
+label_languages: [en, vi]
+
+# Relation name of the article edges in kg_triples_generic.tsv, and the prefix their
+# relation names get in the retrieval graph ("article:mentions", "article:worships", ...).
+article_relation: mentions
+article_prefix: "article:"
+# Naming of the article edges; each one is a graph variant of the experiment.
+article_schemes: [generic, kind, section, cue]
+
+# Claims of places are split by the pair of nodes they link (seeded hash). Train claims
+# are graph edges; val and test claims are asked as queries and are never in the graph.
+split:
+  seed: 13
+  val_fraction: 0.15
+  test_fraction: 0.25
+
+query_rules:
+  # A relation needs this many train claims to be asked.
+  min_train_triples: 8
+  # Drop a query whose target has more correct places than this (the gallery has 160):
+  # "a place of worship of Buddhism" is a class, nearly every temple is correct.
+  max_answers: 20
+  # Label only: shortest train-graph path from the entity the query names to an answer.
+  max_hops: 3
+
+# Report strata (the brief's "neighbourhood density"): the number of graph triples that touch
+# the entity a query names or one of its neighbours, in the train graph with article edges.
+# All queries are kept; results are reported per tier instead of sampling an equal number.
+strata:
+  sparse_max: 10    # sparse: 0-10 triples
+  medium_max: 50    # medium: 11-50, dense: above
+
+# Query wording per relation. `{anchor}` is the entity the query names.
+#   head: the query names the target, the answer is the place.
+#   tail: the query names the place, the answer is the target (asked only when it has photos).
+# A direction without wording is not asked.
+templates:
+  instance_of: {head: "a place that is a {anchor}"}
+  located_in_admin: {head: "a heritage site located in {anchor}"}
+  located_in_province: {head: "a heritage site in the province of {anchor}"}
+  inception_century: {head: "a site dating from {anchor}"}
+  religion: {head: "a place of worship of {anchor}"}
+  diocese: {head: "a church of the {anchor}"}
+  heritage_designation: {head: "a site designated as {anchor}"}
+  heritage_criterion: {head: "a World Heritage site that meets criterion {anchor}"}
+  significant_event: {head: "a site associated with {anchor}"}
+  architectural_style: {head: "a building in the style of {anchor}"}
+  crosses: {head: "a bridge that crosses {anchor}"}
+  named_after: {head: "a place named after {anchor}"}
+  made_from_material: {head: "a structure made of {anchor}"}
+  dedicated_to: {head: "a site dedicated to {anchor}"}
+  architect: {head: "a building designed by {anchor}"}
+  part_of: {head: "a part of {anchor}", tail: "the complex that {anchor} is part of"}
+  has_part: {head: "the complex that includes {anchor}", tail: "a part of {anchor}"}
+  location: {head: "a site located at {anchor}", tail: "the place where {anchor} is located"}

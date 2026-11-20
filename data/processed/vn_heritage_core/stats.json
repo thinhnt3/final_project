@@ -1,0 +1,104 @@
+{
+  "places": 160,
+  "knowledge_nodes": 689,
+  "entities": 849,
+  "images": 772,
+  "knowledge_triples": 1883,
+  "place_triples": 1791,
+  "hierarchy_triples": 92,
+  "hierarchy_parents_without_label": 1,
+  "extra_triples_without_label": 1,
+  "relations": {
+    "instance_of": 228,
+    "located_in_admin": 361,
+    "architectural_style": 21,
+    "religion": 47,
+    "heritage_designation": 32,
+    "named_after": 13,
+    "part_of": 32,
+    "located_in_province": 77,
+    "architect": 7,
+    "has_part": 37,
+    "significant_event": 30,
+    "location": 20,
+    "crosses": 17,
+    "diocese": 35,
+    "dedicated_to": 9,
+    "made_from_material": 10,
+    "heritage_criterion": 23,
+    "inception_century": 64,
+    "mentions_place": 201,
+    "mentions_admin_unit": 73,
+    "dated_to_period": 46,
+    "mentions_era": 74,
+    "mentions_person": 202,
+    "mentions_water": 15,
+    "worships": 81,
+    "mentions_material": 51,
+    "mentions_deity": 7,
+    "mentions_religion": 14,
+    "built_by": 13,
+    "restored_by": 2,
+    "mentions_style": 15,
+    "mentions_ethnic_group": 21,
+    "burial_of": 5
+  },
+  "places_by_split": {
+    "val": 22,
+    "train": 97,
+    "test": 41
+  },
+  "images_by_split": {
+    "val": 108,
+    "train": 464,
+    "test": 200
+  },
+  "places_by_group": {
+    "religious": 65,
+    "museum_culture": 12,
+    "nature": 20,
+    "historic": 36,
+    "landmark": 27
+  },
+  "triples_per_place_min": 4,
+  "triples_per_place_mean": 11.19,
+  "split_groups_with_several_places": 9,
+  "selection": {
+    "min_triples": 4,
+    "min_images": 3,
+    "label_language": "vi"
+  },
+  "claim_triples": 889,
+  "mentions": {
+    "total": 902,
+    "scheme": "cue",
+    "by_kind": {
+      "place": 201,
+      "admin_unit": 155,
+      "person": 315,
+      "era": 86,
+      "water": 15,
+      "deity": 29,
+      "material": 51,
+      "religion": 14,
+      "style": 15,
+      "ethnic_group": 21
+    },
+    "by_section": {
+      "architecture": 159,
+      "lead": 185,
+      "other": 221,
+      "history": 310,
+      "location": 27
+    },
+    "by_cue": {
+      "none": 673,
+      "located_in_admin": 82,
+      "dated_to_period": 46,
+      "worships": 81,
+      "built_by": 13,
+      "restored_by": 2,
+      "burial_of": 5
+    }
+  }
+}
