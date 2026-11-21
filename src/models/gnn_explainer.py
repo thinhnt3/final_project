@@ -1,7 +1,7 @@
 """Rank an image's relations with GNNExplainer (Ying et al., 2019) instead of single deletions.
 
 GNNExplainer learns a soft mask over the edges of the image's sub-graph so that the masked
-graph keeps the graph score while using as few edges as possible. The ranking it gives does
+graph keeps the graph score (as the training logit) while using as few edges as possible. The ranking it gives does
 not come from deleting relations, so deletion-based fidelity tests it independently.
 """
 from __future__ import annotations
@@ -27,27 +27,31 @@ class GnnExplainerConfig:
 
     epochs: int
     learning_rate: float
+    # The mask is fitted to cosine / temperature, the logit the encoder was trained on. On the raw
+    # cosine, score changes (about 0.02) are far below the mask regularizers and the mask is noise.
+    temperature: float
 
     def __post_init__(self) -> None:
-        if self.epochs < 1 or self.learning_rate <= 0:
-            raise ConfigError("gnn_explainer.epochs must be >= 1 and learning_rate positive")
+        if self.epochs < 1 or self.learning_rate <= 0 or self.temperature <= 0:
+            raise ConfigError("gnn_explainer needs epochs >= 1 and positive learning_rate and temperature")
 
 
 class _GraphScore(nn.Module):
-    """Graph score of one image for one query, as a function of (node features, edges)."""
+    """Graph logit of one image for one query, as a function of (node features, edges)."""
 
     query_vector: torch.Tensor
 
-    def __init__(self, encoder: GraphImageEncoder, query_vector: torch.Tensor) -> None:
+    def __init__(self, encoder: GraphImageEncoder, query_vector: torch.Tensor, temperature: float) -> None:
         super().__init__()
         self.encoder = encoder
+        self.temperature = temperature
         self.register_buffer("query_vector", query_vector.float(), persistent=False)
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
-        """Cosine of the image node's graph vector with the query, shape (1, 1)."""
+        """Training logit of the image for the query: cosine / temperature, shape (1, 1)."""
         image_state = self.encoder.message_passing(x, edge_index)[IMAGE_NODE : IMAGE_NODE + 1]
         vector = nn.functional.normalize(self.encoder.project(image_state), dim=-1)
-        result: torch.Tensor = (vector @ self.query_vector).unsqueeze(-1)
+        result: torch.Tensor = (vector @ self.query_vector).unsqueeze(-1) / self.temperature
         return result
 
 
@@ -80,7 +84,7 @@ def gnn_explainer_relation_scores(
 
     torch.manual_seed(seed)  # the mask starts from random values
     explainer = Explainer(
-        model=_GraphScore(model, query_vector.to(device)),
+        model=_GraphScore(model, query_vector.to(device), config.temperature),
         algorithm=GNNExplainer(epochs=config.epochs, lr=config.learning_rate),
         explanation_type="model",
         edge_mask_type="object",

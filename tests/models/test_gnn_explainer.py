@@ -10,7 +10,7 @@ from src.models.graphsage import GraphImageEncoder, GraphSageConfig, ImageNodeFe
 DIM = 8
 # man riding bike, man near tree, bike near tree
 GRAPH = {"vg_image_id": 7, "concept_ids": [0, 1, 2], "triplets": [[0, 0, 1], [0, 1, 2], [1, 1, 2]]}
-CONFIG = GnnExplainerConfig(epochs=20, learning_rate=0.01)
+CONFIG = GnnExplainerConfig(epochs=20, learning_rate=0.01, temperature=0.07)
 
 
 def _encoder(ablation=Ablation.FULL):
@@ -49,5 +49,6 @@ def test_undirected_encoder_and_empty_graph_are_rejected():
 
 
 def test_config_rejects_non_positive_values():
-    with pytest.raises(ConfigError):
-        GnnExplainerConfig(epochs=0, learning_rate=0.01)
+    for bad in ({"epochs": 0}, {"learning_rate": 0.0}, {"temperature": 0.0}):
+        with pytest.raises(ConfigError):
+            GnnExplainerConfig(**{"epochs": 20, "learning_rate": 0.01, "temperature": 0.07, **bad})

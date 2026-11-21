@@ -78,7 +78,9 @@ def run(path: str) -> None:
     if selector is Selector.GNN_EXPLAINER:
         settings = require_field(protocol, "gnn_explainer", dict)
         explainer_config = GnnExplainerConfig(
-            require_field(settings, "epochs", int), float(require_field(settings, "learning_rate", float))
+            require_field(settings, "epochs", int),
+            float(require_field(settings, "learning_rate", float)),
+            config.training.temperature,
         )
     fractions = protocol.get("fractions")
     if (
