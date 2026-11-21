@@ -127,7 +127,15 @@ Bản đầy đủ trừ biến thể, điểm % R@1 sau khi xếp hạng lại,
 - Tập test của MKG-W caption subset nhỏ (882 truy vấn), nên độ lệch chuẩn và khoảng tin cậy rộng hơn VG ∩ COCO.
 - Phép thử trực tiếp hơn cho câu hỏi mô hình có đọc cạnh hay không trên VG ∩ COCO là bộ relation queries của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
 
-File kết quả của MKG-W caption subset nằm local trong `runs/mkg_w_captions/`; config và lệnh chạy lại sẽ vào `main` cùng phần code.
+Chạy lại trên MKG-W caption subset (file kết quả nằm local trong `runs/mkg_w_captions/`):
+
+```bash
+for variant in full objects_only drop_predicates random_edges undirected; do
+  python -m scripts.train_graphsage --config "configs/retrieval/ablations/mkg_w_captions/${variant}.yaml" --resume || break
+  python -m scripts.run_benchmark --method graphsage --config "configs/retrieval/ablations/mkg_w_captions/${variant}.yaml" || break
+done
+python -m scripts.analyze_ablation --config configs/retrieval/ablations/mkg_w_captions/full.yaml --output runs/mkg_w_captions/analysis/ablation.json
+```
 
 Cùng bộ phép can thiệp trên MMKG tự xây: [Ablation trên VN Heritage](#ablation-trên-vn-heritage).
 
