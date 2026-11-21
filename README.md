@@ -45,21 +45,46 @@ File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng see
 
 ### Ablation: bỏ cạnh và cạnh ngẫu nhiên
 
-Mỗi biến thể được huấn luyện lại 3 seed với cùng thiết lập, α và k chọn riêng trên validation (lượt ngày 18/11). Định nghĩa từng phép can thiệp: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#intervention-contract).
+Mỗi biến thể được huấn luyện lại 3 seed với cùng thiết lập, α và k chọn riêng trên validation. Cùng lệnh, cùng tham số trên hai dataset: VG ∩ COCO (lượt ngày 18/11, 1.500 ảnh test) và MKG-W caption subset (lượt ngày 21/11, 441 mục test). Định nghĩa từng phép can thiệp: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#intervention-contract).
 
-| Biến thể | R@1 sau khi xếp hạng lại | So với CLIP (43,88%) | R@1 chỉ dùng điểm đồ thị |
-|---|---|---|---|
-| Đầy đủ | 48,12 ± 0,23% | +4,24 | 27,54 ± 0,50% |
-| Bỏ cạnh, chỉ giữ vật thể (`objects_only`) | 47,56 ± 0,16% | +3,67 | 26,16 ± 0,45% |
-| Cạnh ngẫu nhiên (`random_edges`) | 47,79 ± 0,18% | +3,91 | 27,38 ± 0,26% |
-| Bỏ nhãn vị từ (`drop_predicates`) | 48,06 ± 0,28% | +4,18 | 27,35 ± 0,49% |
-| Không hướng (`undirected`) | 47,84 ± 0,15% | +3,96 | 28,16 ± 0,58% |
+R@1 sau khi xếp hạng lại, %; trong ngoặc là mức tăng so với CLIP:
 
-![Ablation cấp độ 1: R@1 tăng so với CLIP và R@1 chỉ dùng điểm đồ thị, theo từng biến thể](reports/ablation/level1-ablation.png)
+| Biến thể | VG ∩ COCO (CLIP 43,88) | MKG-W caption subset (CLIP 35,60) |
+|---|---|---|
+| Đầy đủ | 48,12 ± 0,23 (+4,24) | 43,35 ± 0,54 (+7,75) |
+| Bỏ cạnh, chỉ giữ vật thể (`objects_only`) | 47,56 ± 0,16 (+3,67) | 40,67 ± 1,25 (+5,07) |
+| Cạnh ngẫu nhiên (`random_edges`) | 47,79 ± 0,18 (+3,91) | 42,67 ± 0,47 (+7,07) |
+| Bỏ nhãn vị từ (`drop_predicates`) | 48,06 ± 0,28 (+4,18) | 41,42 ± 0,66 (+5,82) |
+| Không hướng (`undirected`) | 47,84 ± 0,15 (+3,96) | 42,25 ± 0,56 (+6,65) |
 
-- Đồ thị nâng R@1 thêm 4,24 điểm so với CLIP, nhưng bỏ hết cạnh vẫn còn +3,67. Khoảng 0,6 điểm đến từ cạnh; phần còn lại đến từ danh sách vật thể trong ảnh.
-- Bản đầy đủ hơn bản bỏ cạnh 0,56 điểm, khoảng 95% [0,05; 1,06]. So với cạnh ngẫu nhiên, chênh 0,33 điểm với khoảng [−0,09; 0,74], chưa tách được khỏi 0. Các khoảng này lấy từ phân tích theo cặp trong tài liệu thiết kế.
-- Kết luận: trên caption COCO, vốn chủ yếu kể tên vật thể, cấu trúc quan hệ đóng góp ít. Phép thử trực tiếp hơn cho câu hỏi mô hình có đọc cạnh hay không là bộ relation queries của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
+R@1 khi chỉ dùng điểm đồ thị, %:
+
+| Biến thể | VG ∩ COCO | MKG-W caption subset |
+|---|---|---|
+| Đầy đủ | 27,54 ± 0,50 | 28,19 ± 1,08 |
+| Bỏ cạnh, chỉ giữ vật thể | 26,16 ± 0,45 | 21,01 ± 0,58 |
+| Cạnh ngẫu nhiên | 27,38 ± 0,26 | 26,95 ± 0,91 |
+| Bỏ nhãn vị từ | 27,35 ± 0,49 | 22,52 ± 1,18 |
+| Không hướng | 28,16 ± 0,58 | 27,10 ± 1,93 |
+
+Bản đầy đủ trừ biến thể, điểm % R@1 sau khi xếp hạng lại, kèm khoảng 95% (bootstrap theo cặp, gom caption theo ảnh đúng, giữ cố định 3 mô hình đã huấn luyện):
+
+| Biến thể | VG ∩ COCO | MKG-W caption subset |
+|---|---|---|
+| Bỏ cạnh | 0,56 [0,05; 1,06] | 2,68 [1,06; 4,35] |
+| Cạnh ngẫu nhiên | 0,33 [−0,09; 0,74] | 0,68 [−0,45; 1,81] |
+| Bỏ nhãn vị từ | 0,05 [−0,35; 0,45] | 1,93 [0,38; 3,36] |
+| Không hướng | chưa có khoảng | 1,10 [−0,11; 2,34] |
+
+![Ablation trên hai dataset: R@1 tăng so với CLIP và R@1 chỉ dùng điểm đồ thị, theo từng biến thể](reports/ablation/level1-ablation.png)
+
+- **VG ∩ COCO:** đồ thị nâng R@1 thêm 4,24 điểm so với CLIP, nhưng bỏ hết cạnh vẫn còn +3,67. Khoảng 0,6 điểm đến từ cạnh; phần còn lại đến từ danh sách vật thể trong ảnh.
+- **MKG-W caption subset:** cạnh đóng góp rõ hơn. Bỏ hết cạnh làm mất 2,68 trong 7,75 điểm tăng, và điểm đồ thị đứng riêng tụt từ 28,19% xuống 21,01%. Bỏ nhãn vị từ cũng làm mất 1,93 điểm, trong khi ở VG ∩ COCO gần như không đổi (0,05): ở đây mô hình dùng cả nội dung của quan hệ.
+- **Cạnh ngẫu nhiên** ở cả hai dataset đều chưa tách được khỏi bản đầy đủ (khoảng 95% chứa 0). Phép xáo giữ nguyên tập vật thể, số cạnh và nhãn vị từ của từng mục, chỉ đổi cặp chủ thể và tân ngữ, nên kết quả này nói rằng mô hình cần có cạnh và nhãn vị từ, còn việc cạnh nối đúng hai vật thể nào thì chưa thấy tác dụng.
+- Tập test của MKG-W caption subset nhỏ (882 truy vấn), nên độ lệch chuẩn và khoảng tin cậy rộng hơn VG ∩ COCO.
+- Phép thử trực tiếp hơn cho câu hỏi mô hình có đọc cạnh hay không trên VG ∩ COCO là bộ relation queries của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
+
+File kết quả của MKG-W caption subset nằm local trong `runs/mkg_w_captions/`; config và lệnh chạy lại sẽ vào `main` cùng phần code.
 
 ### Chưa có
 
