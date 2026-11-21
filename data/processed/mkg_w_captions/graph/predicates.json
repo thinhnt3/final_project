@@ -1,0 +1,722 @@
+[
+  {
+    "predicate_id": 0,
+    "text": "cast member",
+    "train_images": 1178
+  },
+  {
+    "predicate_id": 1,
+    "text": "instance of",
+    "train_images": 862
+  },
+  {
+    "predicate_id": 2,
+    "text": "director",
+    "train_images": 546
+  },
+  {
+    "predicate_id": 3,
+    "text": "composer",
+    "train_images": 462
+  },
+  {
+    "predicate_id": 4,
+    "text": "producer",
+    "train_images": 455
+  },
+  {
+    "predicate_id": 5,
+    "text": "screenwriter",
+    "train_images": 429
+  },
+  {
+    "predicate_id": 6,
+    "text": "director of photography",
+    "train_images": 348
+  },
+  {
+    "predicate_id": 7,
+    "text": "country of origin",
+    "train_images": 259
+  },
+  {
+    "predicate_id": 8,
+    "text": "place of birth",
+    "train_images": 255
+  },
+  {
+    "predicate_id": 9,
+    "text": "occupation",
+    "train_images": 251
+  },
+  {
+    "predicate_id": 10,
+    "text": "country of citizenship",
+    "train_images": 202
+  },
+  {
+    "predicate_id": 11,
+    "text": "genre",
+    "train_images": 162
+  },
+  {
+    "predicate_id": 12,
+    "text": "distributed by",
+    "train_images": 142
+  },
+  {
+    "predicate_id": 13,
+    "text": "film editor",
+    "train_images": 141
+  },
+  {
+    "predicate_id": 14,
+    "text": "performer",
+    "train_images": 140
+  },
+  {
+    "predicate_id": 15,
+    "text": "production company",
+    "train_images": 140
+  },
+  {
+    "predicate_id": 16,
+    "text": "place of death",
+    "train_images": 126
+  },
+  {
+    "predicate_id": 17,
+    "text": "original language of film or TV show",
+    "train_images": 124
+  },
+  {
+    "predicate_id": 18,
+    "text": "follows",
+    "train_images": 115
+  },
+  {
+    "predicate_id": 19,
+    "text": "followed by",
+    "train_images": 110
+  },
+  {
+    "predicate_id": 20,
+    "text": "country",
+    "train_images": 105
+  },
+  {
+    "predicate_id": 21,
+    "text": "narrative location",
+    "train_images": 104
+  },
+  {
+    "predicate_id": 22,
+    "text": "record label",
+    "train_images": 97
+  },
+  {
+    "predicate_id": 23,
+    "text": "member of sports team",
+    "train_images": 96
+  },
+  {
+    "predicate_id": 24,
+    "text": "educated at",
+    "train_images": 94
+  },
+  {
+    "predicate_id": 25,
+    "text": "filming location",
+    "train_images": 94
+  },
+  {
+    "predicate_id": 26,
+    "text": "twinned administrative body",
+    "train_images": 78
+  },
+  {
+    "predicate_id": 27,
+    "text": "located in the administrative territorial entity",
+    "train_images": 74
+  },
+  {
+    "predicate_id": 28,
+    "text": "P937",
+    "train_images": 38
+  },
+  {
+    "predicate_id": 29,
+    "text": "P159",
+    "train_images": 37
+  },
+  {
+    "predicate_id": 30,
+    "text": "P1412",
+    "train_images": 37
+  },
+  {
+    "predicate_id": 31,
+    "text": "P1303",
+    "train_images": 36
+  },
+  {
+    "predicate_id": 32,
+    "text": "P36",
+    "train_images": 35
+  },
+  {
+    "predicate_id": 33,
+    "text": "P921",
+    "train_images": 34
+  },
+  {
+    "predicate_id": 34,
+    "text": "P676",
+    "train_images": 34
+  },
+  {
+    "predicate_id": 35,
+    "text": "P172",
+    "train_images": 33
+  },
+  {
+    "predicate_id": 36,
+    "text": "P647",
+    "train_images": 32
+  },
+  {
+    "predicate_id": 37,
+    "text": "P1376",
+    "train_images": 32
+  },
+  {
+    "predicate_id": 38,
+    "text": "P47",
+    "train_images": 29
+  },
+  {
+    "predicate_id": 39,
+    "text": "P1431",
+    "train_images": 28
+  },
+  {
+    "predicate_id": 40,
+    "text": "P108",
+    "train_images": 27
+  },
+  {
+    "predicate_id": 41,
+    "text": "P166",
+    "train_images": 27
+  },
+  {
+    "predicate_id": 42,
+    "text": "publisher",
+    "train_images": 27
+  },
+  {
+    "predicate_id": 43,
+    "text": "P150",
+    "train_images": 25
+  },
+  {
+    "predicate_id": 44,
+    "text": "P509",
+    "train_images": 25
+  },
+  {
+    "predicate_id": 45,
+    "text": "part of the series",
+    "train_images": 25
+  },
+  {
+    "predicate_id": 46,
+    "text": "P737",
+    "train_images": 21
+  },
+  {
+    "predicate_id": 47,
+    "text": "P40",
+    "train_images": 21
+  },
+  {
+    "predicate_id": 48,
+    "text": "P463",
+    "train_images": 20
+  },
+  {
+    "predicate_id": 49,
+    "text": "P527",
+    "train_images": 20
+  },
+  {
+    "predicate_id": 50,
+    "text": "P551",
+    "train_images": 19
+  },
+  {
+    "predicate_id": 51,
+    "text": "P170",
+    "train_images": 19
+  },
+  {
+    "predicate_id": 52,
+    "text": "P22",
+    "train_images": 18
+  },
+  {
+    "predicate_id": 53,
+    "text": "P50",
+    "train_images": 18
+  },
+  {
+    "predicate_id": 54,
+    "text": "P413",
+    "train_images": 17
+  },
+  {
+    "predicate_id": 55,
+    "text": "P119",
+    "train_images": 16
+  },
+  {
+    "predicate_id": 56,
+    "text": "P452",
+    "train_images": 15
+  },
+  {
+    "predicate_id": 57,
+    "text": "P740",
+    "train_images": 15
+  },
+  {
+    "predicate_id": 58,
+    "text": "P140",
+    "train_images": 14
+  },
+  {
+    "predicate_id": 59,
+    "text": "P7",
+    "train_images": 14
+  },
+  {
+    "predicate_id": 60,
+    "text": "P102",
+    "train_images": 14
+  },
+  {
+    "predicate_id": 61,
+    "text": "P178",
+    "train_images": 14
+  },
+  {
+    "predicate_id": 62,
+    "text": "P2438",
+    "train_images": 14
+  },
+  {
+    "predicate_id": 63,
+    "text": "P449",
+    "train_images": 13
+  },
+  {
+    "predicate_id": 64,
+    "text": "P279",
+    "train_images": 12
+  },
+  {
+    "predicate_id": 65,
+    "text": "P607",
+    "train_images": 12
+  },
+  {
+    "predicate_id": 66,
+    "text": "P241",
+    "train_images": 12
+  },
+  {
+    "predicate_id": 67,
+    "text": "P30",
+    "train_images": 11
+  },
+  {
+    "predicate_id": 68,
+    "text": "P127",
+    "train_images": 9
+  },
+  {
+    "predicate_id": 69,
+    "text": "P112",
+    "train_images": 8
+  },
+  {
+    "predicate_id": 70,
+    "text": "P400",
+    "train_images": 7
+  },
+  {
+    "predicate_id": 71,
+    "text": "P355",
+    "train_images": 7
+  },
+  {
+    "predicate_id": 72,
+    "text": "P37",
+    "train_images": 7
+  },
+  {
+    "predicate_id": 73,
+    "text": "P361",
+    "train_images": 6
+  },
+  {
+    "predicate_id": 74,
+    "text": "P421",
+    "train_images": 6
+  },
+  {
+    "predicate_id": 75,
+    "text": "P276",
+    "train_images": 6
+  },
+  {
+    "predicate_id": 76,
+    "text": "P138",
+    "train_images": 6
+  },
+  {
+    "predicate_id": 77,
+    "text": "P437",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 78,
+    "text": "P1142",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 79,
+    "text": "P749",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 80,
+    "text": "P26",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 81,
+    "text": "P800",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 82,
+    "text": "P103",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 83,
+    "text": "P451",
+    "train_images": 5
+  },
+  {
+    "predicate_id": 84,
+    "text": "P135",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 85,
+    "text": "P206",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 86,
+    "text": "P530",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 87,
+    "text": "P25",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 88,
+    "text": "P1441",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 89,
+    "text": "P2512",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 90,
+    "text": "P137",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 91,
+    "text": "P176",
+    "train_images": 4
+  },
+  {
+    "predicate_id": 92,
+    "text": "P674",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 93,
+    "text": "P144",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 94,
+    "text": "P1344",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 95,
+    "text": "P9",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 96,
+    "text": "P767",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 97,
+    "text": "P945",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 98,
+    "text": "P403",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 99,
+    "text": "P1366",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 100,
+    "text": "P306",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 101,
+    "text": "P1365",
+    "train_images": 3
+  },
+  {
+    "predicate_id": 102,
+    "text": "P126",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 103,
+    "text": "P118",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 104,
+    "text": "P469",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 105,
+    "text": "P641",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 106,
+    "text": "P1336",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 107,
+    "text": "P2541",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 108,
+    "text": "P408",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 109,
+    "text": "P101",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 110,
+    "text": "P2554",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 111,
+    "text": "P706",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 112,
+    "text": "P1408",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 113,
+    "text": "P412",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 114,
+    "text": "P941",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 115,
+    "text": "P2936",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 116,
+    "text": "P1532",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 117,
+    "text": "P200",
+    "train_images": 2
+  },
+  {
+    "predicate_id": 118,
+    "text": "P2348",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 119,
+    "text": "P275",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 120,
+    "text": "P287",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 121,
+    "text": "P611",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 122,
+    "text": "P710",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 123,
+    "text": "P184",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 124,
+    "text": "P1056",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 125,
+    "text": "P1716",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 126,
+    "text": "P425",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 127,
+    "text": "P1071",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 128,
+    "text": "P407",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 129,
+    "text": "P501",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 130,
+    "text": "P504",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 131,
+    "text": "P462",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 132,
+    "text": "P1889",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 133,
+    "text": "P406",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 134,
+    "text": "P461",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 135,
+    "text": "P205",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 136,
+    "text": "P725",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 137,
+    "text": "P122",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 138,
+    "text": "P1018",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 139,
+    "text": "P263",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 140,
+    "text": "P1427",
+    "train_images": 1
+  },
+  {
+    "predicate_id": 141,
+    "text": "P149",
+    "train_images": 0
+  },
+  {
+    "predicate_id": 142,
+    "text": "P485",
+    "train_images": 0
+  },
+  {
+    "predicate_id": 143,
+    "text": "P134",
+    "train_images": 0
+  }
+]

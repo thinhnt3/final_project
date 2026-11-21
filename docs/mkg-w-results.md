@@ -244,7 +244,7 @@ python -m scripts.build_mkg_w_extra_queries                    # câu chain và 
 python -m scripts.benchmark_mkg_w_extra_queries                # bảng "Kiểm tra lại"
 python -m scripts.train_mkg_w_adamf_mat                        # AdaMF-MAT, khoảng 40-60 phút mỗi seed trên CPU
 
-pytest                                                         # 393 test, không cần mạng
+pytest                                                         # 398 test, không cần mạng
 ```
 
 Tham số thí nghiệm: `configs/retrieval/mkg_w.yaml`.
