@@ -63,3 +63,16 @@ def test_density_tier_bounds_are_inclusive() -> None:
     assert [density_tier(n, 10, 50) for n in (0, 10, 11, 50, 51)] == [
         DensityTier.SPARSE, DensityTier.SPARSE, DensityTier.MEDIUM, DensityTier.MEDIUM, DensityTier.DENSE,
     ]
+
+
+def test_graph_variants_keep_fact_rows_aligned() -> None:
+    from scripts.run_vn_heritage_retrieval import graph_variant
+
+    triples = {"train": [[0, 3, 1], [1, 4, 2]], "articles": {"generic": [[2, 5, 0]]}}
+
+    graph, rows = graph_variant("claims_untyped_undirected", triples, seed=13)
+
+    assert graph == [(0, 0, 1), (1, 0, 2), (1, 0, 0), (2, 0, 1)]
+    assert rows == {(0, 3, 1): [0, 2], (1, 4, 2): [1, 3]}
+    assert graph_variant("generic", triples, seed=13)[0] == [(0, 3, 1), (1, 4, 2), (2, 5, 0)]
+    assert graph_variant("no_edges", triples, seed=13) == ([], {})
