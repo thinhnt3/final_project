@@ -1,0 +1,847 @@
+[
+  {
+    "relation_id": 0,
+    "pid": "P161",
+    "label": "cast member"
+  },
+  {
+    "relation_id": 1,
+    "pid": "P58",
+    "label": "screenwriter"
+  },
+  {
+    "relation_id": 2,
+    "pid": "P106",
+    "label": "occupation"
+  },
+  {
+    "relation_id": 3,
+    "pid": "P175",
+    "label": "performer"
+  },
+  {
+    "relation_id": 4,
+    "pid": "P840",
+    "label": "narrative location"
+  },
+  {
+    "relation_id": 5,
+    "pid": "P162",
+    "label": "producer"
+  },
+  {
+    "relation_id": 6,
+    "pid": "P20",
+    "label": "place of death"
+  },
+  {
+    "relation_id": 7,
+    "pid": "P344",
+    "label": "director of photography"
+  },
+  {
+    "relation_id": 8,
+    "pid": "P156",
+    "label": "followed by"
+  },
+  {
+    "relation_id": 9,
+    "pid": "P17",
+    "label": "country"
+  },
+  {
+    "relation_id": 10,
+    "pid": "P750",
+    "label": "distributed by"
+  },
+  {
+    "relation_id": 11,
+    "pid": "P86",
+    "label": "composer"
+  },
+  {
+    "relation_id": 12,
+    "pid": "P1303",
+    "label": null
+  },
+  {
+    "relation_id": 13,
+    "pid": "P31",
+    "label": "instance of"
+  },
+  {
+    "relation_id": 14,
+    "pid": "P155",
+    "label": "follows"
+  },
+  {
+    "relation_id": 15,
+    "pid": "P364",
+    "label": "original language of film or TV show"
+  },
+  {
+    "relation_id": 16,
+    "pid": "P264",
+    "label": "record label"
+  },
+  {
+    "relation_id": 17,
+    "pid": "P279",
+    "label": null
+  },
+  {
+    "relation_id": 18,
+    "pid": "P54",
+    "label": "member of sports team"
+  },
+  {
+    "relation_id": 19,
+    "pid": "P449",
+    "label": null
+  },
+  {
+    "relation_id": 20,
+    "pid": "P30",
+    "label": null
+  },
+  {
+    "relation_id": 21,
+    "pid": "P495",
+    "label": "country of origin"
+  },
+  {
+    "relation_id": 22,
+    "pid": "P57",
+    "label": "director"
+  },
+  {
+    "relation_id": 23,
+    "pid": "P150",
+    "label": null
+  },
+  {
+    "relation_id": 24,
+    "pid": "P22",
+    "label": null
+  },
+  {
+    "relation_id": 25,
+    "pid": "P140",
+    "label": null
+  },
+  {
+    "relation_id": 26,
+    "pid": "P36",
+    "label": null
+  },
+  {
+    "relation_id": 27,
+    "pid": "P921",
+    "label": null
+  },
+  {
+    "relation_id": 28,
+    "pid": "P7",
+    "label": null
+  },
+  {
+    "relation_id": 29,
+    "pid": "P190",
+    "label": "twinned administrative body"
+  },
+  {
+    "relation_id": 30,
+    "pid": "P19",
+    "label": "place of birth"
+  },
+  {
+    "relation_id": 31,
+    "pid": "P69",
+    "label": "educated at"
+  },
+  {
+    "relation_id": 32,
+    "pid": "P136",
+    "label": "genre"
+  },
+  {
+    "relation_id": 33,
+    "pid": "P102",
+    "label": null
+  },
+  {
+    "relation_id": 34,
+    "pid": "P27",
+    "label": "country of citizenship"
+  },
+  {
+    "relation_id": 35,
+    "pid": "P172",
+    "label": null
+  },
+  {
+    "relation_id": 36,
+    "pid": "P135",
+    "label": null
+  },
+  {
+    "relation_id": 37,
+    "pid": "P272",
+    "label": "production company"
+  },
+  {
+    "relation_id": 38,
+    "pid": "P361",
+    "label": null
+  },
+  {
+    "relation_id": 39,
+    "pid": "P47",
+    "label": null
+  },
+  {
+    "relation_id": 40,
+    "pid": "P108",
+    "label": null
+  },
+  {
+    "relation_id": 41,
+    "pid": "P937",
+    "label": null
+  },
+  {
+    "relation_id": 42,
+    "pid": "P197",
+    "label": null
+  },
+  {
+    "relation_id": 43,
+    "pid": "P126",
+    "label": null
+  },
+  {
+    "relation_id": 44,
+    "pid": "P509",
+    "label": null
+  },
+  {
+    "relation_id": 45,
+    "pid": "P437",
+    "label": null
+  },
+  {
+    "relation_id": 46,
+    "pid": "P50",
+    "label": null
+  },
+  {
+    "relation_id": 47,
+    "pid": "P674",
+    "label": null
+  },
+  {
+    "relation_id": 48,
+    "pid": "P131",
+    "label": "located in the administrative territorial entity"
+  },
+  {
+    "relation_id": 49,
+    "pid": "P413",
+    "label": null
+  },
+  {
+    "relation_id": 50,
+    "pid": "P179",
+    "label": "part of the series"
+  },
+  {
+    "relation_id": 51,
+    "pid": "P1142",
+    "label": null
+  },
+  {
+    "relation_id": 52,
+    "pid": "P551",
+    "label": null
+  },
+  {
+    "relation_id": 53,
+    "pid": "P166",
+    "label": null
+  },
+  {
+    "relation_id": 54,
+    "pid": "P118",
+    "label": null
+  },
+  {
+    "relation_id": 55,
+    "pid": "P171",
+    "label": null
+  },
+  {
+    "relation_id": 56,
+    "pid": "P1040",
+    "label": "film editor"
+  },
+  {
+    "relation_id": 57,
+    "pid": "P607",
+    "label": null
+  },
+  {
+    "relation_id": 58,
+    "pid": "P123",
+    "label": "publisher"
+  },
+  {
+    "relation_id": 59,
+    "pid": "P647",
+    "label": null
+  },
+  {
+    "relation_id": 60,
+    "pid": "P2348",
+    "label": null
+  },
+  {
+    "relation_id": 61,
+    "pid": "P400",
+    "label": null
+  },
+  {
+    "relation_id": 62,
+    "pid": "P737",
+    "label": null
+  },
+  {
+    "relation_id": 63,
+    "pid": "P749",
+    "label": null
+  },
+  {
+    "relation_id": 64,
+    "pid": "P676",
+    "label": null
+  },
+  {
+    "relation_id": 65,
+    "pid": "P127",
+    "label": null
+  },
+  {
+    "relation_id": 66,
+    "pid": "P40",
+    "label": null
+  },
+  {
+    "relation_id": 67,
+    "pid": "P159",
+    "label": null
+  },
+  {
+    "relation_id": 68,
+    "pid": "P206",
+    "label": null
+  },
+  {
+    "relation_id": 69,
+    "pid": "P421",
+    "label": null
+  },
+  {
+    "relation_id": 70,
+    "pid": "P185",
+    "label": null
+  },
+  {
+    "relation_id": 71,
+    "pid": "P178",
+    "label": null
+  },
+  {
+    "relation_id": 72,
+    "pid": "P915",
+    "label": "filming location"
+  },
+  {
+    "relation_id": 73,
+    "pid": "P119",
+    "label": null
+  },
+  {
+    "relation_id": 74,
+    "pid": "P355",
+    "label": null
+  },
+  {
+    "relation_id": 75,
+    "pid": "P26",
+    "label": null
+  },
+  {
+    "relation_id": 76,
+    "pid": "P144",
+    "label": null
+  },
+  {
+    "relation_id": 77,
+    "pid": "P1431",
+    "label": null
+  },
+  {
+    "relation_id": 78,
+    "pid": "P275",
+    "label": null
+  },
+  {
+    "relation_id": 79,
+    "pid": "P1412",
+    "label": null
+  },
+  {
+    "relation_id": 80,
+    "pid": "P463",
+    "label": null
+  },
+  {
+    "relation_id": 81,
+    "pid": "P530",
+    "label": null
+  },
+  {
+    "relation_id": 82,
+    "pid": "P800",
+    "label": null
+  },
+  {
+    "relation_id": 83,
+    "pid": "P2438",
+    "label": null
+  },
+  {
+    "relation_id": 84,
+    "pid": "P1376",
+    "label": null
+  },
+  {
+    "relation_id": 85,
+    "pid": "P287",
+    "label": null
+  },
+  {
+    "relation_id": 86,
+    "pid": "P452",
+    "label": null
+  },
+  {
+    "relation_id": 87,
+    "pid": "P112",
+    "label": null
+  },
+  {
+    "relation_id": 88,
+    "pid": "P469",
+    "label": null
+  },
+  {
+    "relation_id": 89,
+    "pid": "P170",
+    "label": null
+  },
+  {
+    "relation_id": 90,
+    "pid": "P527",
+    "label": null
+  },
+  {
+    "relation_id": 91,
+    "pid": "P25",
+    "label": null
+  },
+  {
+    "relation_id": 92,
+    "pid": "P37",
+    "label": null
+  },
+  {
+    "relation_id": 93,
+    "pid": "P241",
+    "label": null
+  },
+  {
+    "relation_id": 94,
+    "pid": "P611",
+    "label": null
+  },
+  {
+    "relation_id": 95,
+    "pid": "P641",
+    "label": null
+  },
+  {
+    "relation_id": 96,
+    "pid": "P1336",
+    "label": null
+  },
+  {
+    "relation_id": 97,
+    "pid": "P2541",
+    "label": null
+  },
+  {
+    "relation_id": 98,
+    "pid": "P276",
+    "label": null
+  },
+  {
+    "relation_id": 99,
+    "pid": "P1344",
+    "label": null
+  },
+  {
+    "relation_id": 100,
+    "pid": "P84",
+    "label": null
+  },
+  {
+    "relation_id": 101,
+    "pid": "P1441",
+    "label": null
+  },
+  {
+    "relation_id": 102,
+    "pid": "P2512",
+    "label": null
+  },
+  {
+    "relation_id": 103,
+    "pid": "P408",
+    "label": null
+  },
+  {
+    "relation_id": 104,
+    "pid": "P137",
+    "label": null
+  },
+  {
+    "relation_id": 105,
+    "pid": "P149",
+    "label": null
+  },
+  {
+    "relation_id": 106,
+    "pid": "P176",
+    "label": null
+  },
+  {
+    "relation_id": 107,
+    "pid": "P138",
+    "label": null
+  },
+  {
+    "relation_id": 108,
+    "pid": "P740",
+    "label": null
+  },
+  {
+    "relation_id": 109,
+    "pid": "P101",
+    "label": null
+  },
+  {
+    "relation_id": 110,
+    "pid": "P2554",
+    "label": null
+  },
+  {
+    "relation_id": 111,
+    "pid": "P706",
+    "label": null
+  },
+  {
+    "relation_id": 112,
+    "pid": "P103",
+    "label": null
+  },
+  {
+    "relation_id": 113,
+    "pid": "P1387",
+    "label": null
+  },
+  {
+    "relation_id": 114,
+    "pid": "P451",
+    "label": null
+  },
+  {
+    "relation_id": 115,
+    "pid": "P9",
+    "label": null
+  },
+  {
+    "relation_id": 116,
+    "pid": "P710",
+    "label": null
+  },
+  {
+    "relation_id": 117,
+    "pid": "P767",
+    "label": null
+  },
+  {
+    "relation_id": 118,
+    "pid": "P945",
+    "label": null
+  },
+  {
+    "relation_id": 119,
+    "pid": "P184",
+    "label": null
+  },
+  {
+    "relation_id": 120,
+    "pid": "P1056",
+    "label": null
+  },
+  {
+    "relation_id": 121,
+    "pid": "P1408",
+    "label": null
+  },
+  {
+    "relation_id": 122,
+    "pid": "P735",
+    "label": null
+  },
+  {
+    "relation_id": 123,
+    "pid": "P87",
+    "label": null
+  },
+  {
+    "relation_id": 124,
+    "pid": "P277",
+    "label": null
+  },
+  {
+    "relation_id": 125,
+    "pid": "P1716",
+    "label": null
+  },
+  {
+    "relation_id": 126,
+    "pid": "P403",
+    "label": null
+  },
+  {
+    "relation_id": 127,
+    "pid": "P412",
+    "label": null
+  },
+  {
+    "relation_id": 128,
+    "pid": "P1366",
+    "label": null
+  },
+  {
+    "relation_id": 129,
+    "pid": "P286",
+    "label": null
+  },
+  {
+    "relation_id": 130,
+    "pid": "P306",
+    "label": null
+  },
+  {
+    "relation_id": 131,
+    "pid": "P1811",
+    "label": null
+  },
+  {
+    "relation_id": 132,
+    "pid": "P1365",
+    "label": null
+  },
+  {
+    "relation_id": 133,
+    "pid": "P466",
+    "label": null
+  },
+  {
+    "relation_id": 134,
+    "pid": "P180",
+    "label": null
+  },
+  {
+    "relation_id": 135,
+    "pid": "P485",
+    "label": null
+  },
+  {
+    "relation_id": 136,
+    "pid": "P425",
+    "label": null
+  },
+  {
+    "relation_id": 137,
+    "pid": "P1071",
+    "label": null
+  },
+  {
+    "relation_id": 138,
+    "pid": "P407",
+    "label": null
+  },
+  {
+    "relation_id": 139,
+    "pid": "P61",
+    "label": null
+  },
+  {
+    "relation_id": 140,
+    "pid": "P195",
+    "label": null
+  },
+  {
+    "relation_id": 141,
+    "pid": "P1383",
+    "label": null
+  },
+  {
+    "relation_id": 142,
+    "pid": "P501",
+    "label": null
+  },
+  {
+    "relation_id": 143,
+    "pid": "P504",
+    "label": null
+  },
+  {
+    "relation_id": 144,
+    "pid": "P462",
+    "label": null
+  },
+  {
+    "relation_id": 145,
+    "pid": "P941",
+    "label": null
+  },
+  {
+    "relation_id": 146,
+    "pid": "P410",
+    "label": null
+  },
+  {
+    "relation_id": 147,
+    "pid": "P81",
+    "label": null
+  },
+  {
+    "relation_id": 148,
+    "pid": "P658",
+    "label": null
+  },
+  {
+    "relation_id": 149,
+    "pid": "P1889",
+    "label": null
+  },
+  {
+    "relation_id": 150,
+    "pid": "P406",
+    "label": null
+  },
+  {
+    "relation_id": 151,
+    "pid": "P201",
+    "label": null
+  },
+  {
+    "relation_id": 152,
+    "pid": "P2936",
+    "label": null
+  },
+  {
+    "relation_id": 153,
+    "pid": "P461",
+    "label": null
+  },
+  {
+    "relation_id": 154,
+    "pid": "P205",
+    "label": null
+  },
+  {
+    "relation_id": 155,
+    "pid": "P991",
+    "label": null
+  },
+  {
+    "relation_id": 156,
+    "pid": "P725",
+    "label": null
+  },
+  {
+    "relation_id": 157,
+    "pid": "P289",
+    "label": null
+  },
+  {
+    "relation_id": 158,
+    "pid": "P726",
+    "label": null
+  },
+  {
+    "relation_id": 159,
+    "pid": "P488",
+    "label": null
+  },
+  {
+    "relation_id": 160,
+    "pid": "P1532",
+    "label": null
+  },
+  {
+    "relation_id": 161,
+    "pid": "P122",
+    "label": null
+  },
+  {
+    "relation_id": 162,
+    "pid": "P1018",
+    "label": null
+  },
+  {
+    "relation_id": 163,
+    "pid": "P134",
+    "label": null
+  },
+  {
+    "relation_id": 164,
+    "pid": "P802",
+    "label": null
+  },
+  {
+    "relation_id": 165,
+    "pid": "P1066",
+    "label": null
+  },
+  {
+    "relation_id": 166,
+    "pid": "P200",
+    "label": null
+  },
+  {
+    "relation_id": 167,
+    "pid": "P263",
+    "label": null
+  },
+  {
+    "relation_id": 168,
+    "pid": "P1427",
+    "label": null
+  }
+]

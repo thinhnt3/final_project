@@ -1,0 +1,17 @@
+# MKG-W caption subset card. Written by `python -m scripts.build_mkg_w_captions`; do not edit by hand.
+items:
+  train: 2055
+  val: 440
+  test: 441
+captions:
+  test: 882
+  train: 4110
+  val: 880
+captions_per_item: 2
+concepts: 11153
+concepts_seen_in_train: 9404
+predicates: 144
+triples_per_item:
+  min: 4
+  median: 7.0
+  max: 1319

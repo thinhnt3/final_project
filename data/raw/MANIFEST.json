@@ -8,6 +8,70 @@
     "recorded_at": "2026-11-16T20:31:42+00:00"
   },
   {
+    "name": "mkg_w_descriptions",
+    "path": "data/raw/mkg_w/MKG-W_ent2descreption.txt",
+    "url": "https://drive.usercontent.google.com/download?export=download&confirm=t&id=1-0j4DKgvokOOF2FxxjgrmsAehm549aPq",
+    "bytes": 6683167,
+    "sha256": "5c41c83a57ca4df4385ccdd596f18c6cd3ea9c947c69e041dc944032ef1e89ed",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_ent_links",
+    "path": "data/raw/mkg_w/ent_links",
+    "url": "https://drive.usercontent.google.com/download?export=download&confirm=t&id=1rW4hyqAFUoe5gv9gAKNnvCVunuZ-zuAC",
+    "bytes": 1299610,
+    "sha256": "4aa7e9f5ff3bbeea7dee3124669edba7903e65b22844529999325c6bec624511",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_entity2id",
+    "path": "data/raw/mkg_w/triples/entity2id.txt",
+    "url": "https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/entity2id.txt",
+    "bytes": 672264,
+    "sha256": "d94b546efcb535d8253821626dd32f3ee876b2f263b727a4a446bc74697785df",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_images",
+    "path": "data/raw/mkg_w/MKG-W_img.zip",
+    "url": "https://drive.usercontent.google.com/download?export=download&confirm=t&id=1UA3qsboZ5pvt0nbfsMNDgxjlG30PZjde",
+    "bytes": 6422519900,
+    "sha256": "0178f7bb3b6199309a56fad23c595c252f79506deb5dbecece58d814d5f0aede",
+    "recorded_at": "2026-11-19T17:29:43+00:00"
+  },
+  {
+    "name": "mkg_w_relation2id",
+    "path": "data/raw/mkg_w/triples/relation2id.txt",
+    "url": "https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/relation2id.txt",
+    "bytes": 6656,
+    "sha256": "204203e03a92d4f973ee815449695bcfaae1b6917fcb08b65f3b0fb071a47f61",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_test2id",
+    "path": "data/raw/mkg_w/triples/test2id.txt",
+    "url": "https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/test2id.txt",
+    "bytes": 52754,
+    "sha256": "0e1294b1f95c8ef80ad422aeefafea321d16c1d127570e6bb566882b2e053989",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_train2id",
+    "path": "data/raw/mkg_w/triples/train2id.txt",
+    "url": "https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/train2id.txt",
+    "bytes": 416832,
+    "sha256": "a9f316506a20a7b5bef7de3ceaaa1e82de554b8e92e6aa26e7cb54bcd8ada53d",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
+    "name": "mkg_w_valid2id",
+    "path": "data/raw/mkg_w/triples/valid2id.txt",
+    "url": "https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/valid2id.txt",
+    "bytes": 52959,
+    "sha256": "34dd556893b8e4832600298864dbd18012529a1f172793c21e45ad7bdee9d189",
+    "recorded_at": "2026-11-19T17:29:39+00:00"
+  },
+  {
     "name": "vg_image_data",
     "path": "data/raw/visual_genome/image_data.json",
     "url": "https://homes.cs.washington.edu/~ranjay/visualgenome/data/dataset/image_data.json.zip",

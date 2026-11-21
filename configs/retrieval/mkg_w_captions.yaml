@@ -1,0 +1,82 @@
+# Retrieval experiments on the MKG-W caption subset (MKG-W entities in the VG ∩ COCO layout).
+# Same scripts and same model settings as configs/retrieval/vg_coco.yaml.
+# All paths are relative to the repository root; run commands from there.
+
+# Dataset build config: gives the processed data directory and the split seed.
+data_config: configs/data/mkg_w_captions.yaml
+
+# Frozen CLIP used for images, captions and graph node texts.
+# device: auto picks cuda, then mps, then cpu.
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+
+# One sub-directory per CLIP model is created under this directory.
+embeddings_dir: data/processed/mkg_w_captions/embeddings
+
+# Evaluation. alpha and top_k are searched on validation only:
+# final score = alpha * CLIP cosine + (1 - alpha) * graph score, over the top-k CLIP candidates.
+# alpha_step: alpha runs over 0, step, 2*step, ..., 1. The best alpha sits in a narrow peak
+# (a 0.1 step missed it), so the step is fine.
+benchmark:
+  recall_ks: [1, 5, 10]
+  alpha_step: 0.01
+  top_k_grid: [10, 20, 50, 100, 200, 440]
+
+# Benchmark results and trained models are written under this directory.
+runs_dir: runs/mkg_w_captions
+
+# Graph encoder: GraphSAGE over each image's sub-graph (image, object and relation nodes).
+# directed: true keeps subject → relation → object; false is the plain undirected variant.
+# image_node: learned = one trained vector shared by all images, so the graph vector comes
+# from the graph only; clip_image = the image's own CLIP vector.
+graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  directed: true
+  image_node: learned
+
+# AdaMF-MAT encoder (Zhang et al., COLING 2024): each image is an entity with three modalities
+# (structure = GraphSAGE above with a learned image node, image = CLIP image vector, text =
+# CLIP text of the labels), fused with one learned weight per modality and entity.
+# adaptive_fusion: false replaces the weights by a mean; mat: false trains without the generator.
+# mu: weight of the adversarial term. noise_dim, generator_hidden_dim and
+# generator_learning_rate are the values of the paper's code.
+# The defaults are the full model; the two switches are the paper's ablations.
+# modalities: drop one for a modality ablation (needs mat: false). normalize_modalities: true
+# L2-normalizes each modality before fusion, so fusion weights are not offset by vector norms.
+adamf_mat:
+  dim: 256
+  adaptive_fusion: true
+  mat: true
+  modalities: [structure, image, text]
+  normalize_modalities: false
+  mu: 1.0
+  noise_dim: 64
+  generator_hidden_dim: 512
+  generator_learning_rate: 0.0001
+
+# Training of the graph encoder. Starting values; tune on validation only.
+# device: cpu is faster than mps for these small sub-graphs, and identical across machines.
+# patience: stop after this many epochs in a row without a better validation result.
+# selection_metric: validation metric of the graph score alone that picks the best epoch
+# (recall@1 or mrr; the other one breaks ties).
+training:
+  seeds: [13, 37, 97]
+  device: cpu
+  batch_size: 256
+  max_epochs: 50
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+
+# Weights & Biases tracking. mode: online (needs `wandb login`), offline (local files, upload
+# later with `wandb sync`), or disabled.
+wandb:
+  mode: disabled
+  project: vg-coco-graph-retrieval
