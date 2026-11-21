@@ -59,7 +59,7 @@ Mỗi biến thể được huấn luyện lại 3 seed với cùng thiết lậ
 
 - Đồ thị nâng R@1 thêm 4,24 điểm so với CLIP, nhưng bỏ hết cạnh vẫn còn +3,67. Khoảng 0,6 điểm đến từ cạnh; phần còn lại đến từ danh sách vật thể trong ảnh.
 - Bản đầy đủ hơn bản bỏ cạnh 0,56 điểm, khoảng 95% [0,05; 1,06]. So với cạnh ngẫu nhiên, chênh 0,33 điểm với khoảng [−0,09; 0,74], chưa tách được khỏi 0. Các khoảng này lấy từ phân tích theo cặp trong tài liệu thiết kế.
-- Kết luận: trên caption COCO, vốn chủ yếu kể tên vật thể, cấu trúc quan hệ đóng góp ít. Bằng chứng mạnh hơn cho vai trò của cạnh nằm ở bộ truy vấn cần quan hệ của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
+- Kết luận: trên caption COCO, vốn chủ yếu kể tên vật thể, cấu trúc quan hệ đóng góp ít. Phép thử trực tiếp hơn cho câu hỏi mô hình có đọc cạnh hay không là bộ relation queries của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
 
 ### Chưa có
 
