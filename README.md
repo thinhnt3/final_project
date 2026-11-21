@@ -45,7 +45,7 @@ File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng see
 
 ### Chưa có
 
-- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi, fidelity và sparsity đã có ([kết quả](#kết-quả-đánh-giá-giải-thích-cấp-độ-3)), validity còn thiếu nhãn.
+- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi, fidelity và sparsity đã có ([kết quả](#kết-quả-đánh-giá-giải-thích-cấp-độ-3)), validity mới có nhãn AI, chưa có người chấm.
 - Backbone thứ hai (OpenCLIP) và tập dữ liệu công khai thứ hai.
 - Phân tích 5 truy vấn thành công và 5 truy vấn thất bại.
 
@@ -298,7 +298,7 @@ Giải thích của một cặp truy vấn và ảnh là các relation làm đi�
 
 - **Fidelity**: xoá nhóm giải thích làm ảnh mất vị trí đầu nhiều gấp khoảng 4 lần xoá ngẫu nhiên, và điểm đồ thị giảm nhiều gấp khoảng 10 lần.
 - **Sparsity**: giải thích gồm 2,1 (mức 10%) và 3,7 (mức 25%) trên trung bình 13,0 relation của ảnh. Mức 10% thực tế lấy khoảng 20% vì luôn lấy ít nhất hai relation.
-- **Validity**: chưa có nhãn cho lượt này. Bộ chấm đã xuất 20 truy vấn với 42 relation; form chấm ở `tools/validity-review/`.
+- **Validity**: nhãn do AI chấm, chưa có người chấm. Một trợ lý AI xem ảnh và chấm 20 truy vấn với 42 relation (seed 13, mức 10%, 10 ảnh trả về đúng và 10 sai) ngày 21/11. 38/42 relation đúng với ảnh, 4 chưa rõ, không có cái nào sai. Tỷ lệ đạt cả hai tiêu chí là 35/42 (83,3%) nếu "liên quan" nghĩa là relation chạm tới vật thể, hành động hoặc ràng buộc được hỏi, và 14/42 (33,3%) nếu relation phải nói đúng quan hệ hoặc hành động được hỏi. Cần chốt tiêu chí rồi nhờ người chấm; form chấm ở `tools/validity-review/`. File nhãn nằm local trong `runs/`, không thuộc repository.
 
 Đối chứng cho giới hạn "cách chọn tự chấm chính nó": chọn relation bằng GNNExplainer (mask học trên cạnh, không dùng phép xoá) rồi chạy cùng giao thức. Nhóm nó chọn vẫn vượt ngẫu nhiên (mất vị trí đầu 8,52% ở mức 10% và 12,78% ở mức 25%) nhưng yếu hơn cách bỏ từng relation. Chi tiết: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#gnnexplainer-làm-cách-chọn-độc-lập).
 
