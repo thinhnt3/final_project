@@ -4,8 +4,8 @@
     python -m scripts.build_wandb_report                    # create a new report, print its URL
     python -m scripts.build_wandb_report --url <report url> # rewrite that report in place, same URL
 
-Panels select runs by config: role (summary / train) and the section flags s1..s5. Section 7 and the
-dataset-2 ablation of section 2 have no runs: they show static figures from reports/ on the main branch. The text
+Panels select runs by config: role (summary / train) and the section flags s1..s5. Section 7 has no
+runs and the two-dataset chart of section 2 is a picture: static figures from reports/ on the main branch. The text
 blocks live in docs/wandb-report/*.md and repeat the numbers of README.md; keep both in sync.
 """
 
@@ -120,6 +120,13 @@ def build(entity: str, project: str) -> wr.Report:
         ),
         _text("21-graph-ablation-notes"),
         _text("22-graph-ablation-mkg-w"),
+        wr.PanelGrid(
+            runsets=[_summary_set(entity, project, "s2_mkg_w", "Ablation trên MKG-W caption subset")],
+            panels=[
+                bar("MKG-W caption subset: R@1 test sau rerank (%)", "test/r1", 0, 0),
+                bar("MKG-W caption subset: graph-only R@1 test (%)", "graph_only/r1", 12, 0),
+            ],
+        ),
         _figure("ablation/level1-ablation", "Ablation trên hai dataset: R@1 tăng so với CLIP và graph-only R@1."),
         wr.H1("3. Cấp độ 2: AdaMF-MAT so với GraphSAGE"),
         _text("30-adamf-mat"),

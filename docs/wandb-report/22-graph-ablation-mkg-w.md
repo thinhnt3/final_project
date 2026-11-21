@@ -1,4 +1,4 @@
-**Cùng ablation trên dataset thứ hai (MKG-W caption subset).** Cùng năm biến thể, cùng 3 seed và cùng giao thức, chạy ngày 21/11 trên tập con của MKG-W dựng theo khuôn VG ∩ COCO (441 mục test, 882 truy vấn). Các run này không được đẩy lên W&B; hình bên dưới vẽ từ file kết quả local.
+**Cùng ablation trên dataset thứ hai (MKG-W caption subset).** Cùng năm biến thể, cùng 3 seed và cùng giao thức, chạy ngày 21/11 trên tập con của MKG-W dựng theo khuôn VG ∩ COCO (441 mục test, 882 truy vấn). Panel ngay dưới đoạn này là 6 summary run của tập con (23 đến 28, số liệu từ `runs/mkg_w_captions/benchmark/*.json`); hình cuối đặt hai dataset cạnh nhau.
 
 R@1 sau khi xếp hạng lại, %; trong ngoặc là mức tăng so với CLIP:
 
