@@ -17,6 +17,11 @@ data/interim/
 # Final dataset (10k images) JSON is committed; the 1.4G image files are not (re-download via scripts).
 data/processed/vg_coco/images/
 
+# MKG-W: entity/triple/query JSON is committed; extracted images (about 6 GB) are not.
+# Rebuild with `python -m scripts.build_mkg_w --stage all`.
+data/processed/mkg_w/images/
+data/processed/mkg_w/embeddings/
+
 # EDA review byproducts (regenerate with scripts/review_vg_coco.py + archify).
 # Only files referenced by reports/data-review/{index,sample}.html are committed.
 reports/data-review/stats.json

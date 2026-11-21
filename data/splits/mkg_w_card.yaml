@@ -1,0 +1,3755 @@
+# MKG-W retrieval dataset card. Written by `python -m scripts.build_mkg_w --stage build`.
+# Do not edit by hand; change configs/data/mkg_w.yaml and rebuild.
+entities: 15000
+entities_with_images: 9301
+images: 27884
+entities_with_description: 14150
+relations: 169
+triples:
+  train: 34196
+  val: 4276
+  test: 4274
+query_rules:
+  prior_top_k: 10
+  max_prior_hits: 0.3
+  min_train_triples: 200
+  max_answers: 10
+  max_hops: 3
+query_counts:
+  direct/description:
+    train: 6161
+    val: 1316
+    test: 1315
+  direct/name:
+    train: 6511
+    val: 1395
+    test: 1395
+  indirect/relation:
+    train: 14441
+    val: 2462
+    test: 2444
+indirect_queries_by_answer_count:
+  '1': 11099
+  '2': 2675
+  '3': 1728
+  '4': 1058
+  '5': 645
+  '6': 565
+  '7': 471
+  '8': 436
+  '9': 364
+  '10': 306
+indirect_queries_by_hops:
+  '1':
+    train: 3636
+    val: 568
+    test: 567
+  '2':
+    train: 1991
+    val: 294
+    test: 276
+  '3':
+    train: 5332
+    val: 1031
+    test: 1034
+  over_3_or_none:
+    train: 3482
+    val: 569
+    test: 567
+directions:
+- relation: P161
+  label: cast member
+  direction: head
+  train_triples: 6521
+  unique_answers: 3551
+  prior_hits: 0.012
+  status: kept
+  queries:
+    train: 772
+    val: 215
+    test: 204
+- relation: P161
+  label: cast member
+  direction: tail
+  train_triples: 6521
+  unique_answers: 1118
+  prior_hits: 0.0419
+  status: kept
+  queries:
+    train: 2739
+    val: 501
+    test: 493
+- relation: P31
+  label: instance of
+  direction: head
+  train_triples: 3691
+  unique_answers: 3689
+  prior_hits: 0.0033
+  status: kept
+  queries:
+    train: 20
+    val: 3
+    test: 6
+- relation: P31
+  label: instance of
+  direction: tail
+  train_triples: 3691
+  unique_answers: 30
+  prior_hits: 0.9881
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P57
+  label: director
+  direction: head
+  train_triples: 1484
+  unique_answers: 1416
+  prior_hits: 0.0256
+  status: kept
+  queries:
+    train: 312
+    val: 56
+    test: 67
+- relation: P57
+  label: director
+  direction: tail
+  train_triples: 1484
+  unique_answers: 393
+  prior_hits: 0.1159
+  status: kept
+  queries:
+    train: 982
+    val: 139
+    test: 113
+- relation: P86
+  label: composer
+  direction: head
+  train_triples: 1317
+  unique_answers: 1306
+  prior_hits: 0.0159
+  status: kept
+  queries:
+    train: 123
+    val: 36
+    test: 27
+- relation: P86
+  label: composer
+  direction: tail
+  train_triples: 1317
+  unique_answers: 194
+  prior_hits: 0.1989
+  status: kept
+  queries:
+    train: 709
+    val: 95
+    test: 88
+- relation: P54
+  label: member of sports team
+  direction: head
+  train_triples: 1282
+  unique_answers: 519
+  prior_hits: 0.064
+  status: kept
+  queries:
+    train: 62
+    val: 15
+    test: 24
+- relation: P54
+  label: member of sports team
+  direction: tail
+  train_triples: 1282
+  unique_answers: 137
+  prior_hits: 0.2231
+  status: kept
+  queries:
+    train: 378
+    val: 87
+    test: 80
+- relation: P162
+  label: producer
+  direction: head
+  train_triples: 1253
+  unique_answers: 1165
+  prior_hits: 0.0184
+  status: kept
+  queries:
+    train: 251
+    val: 56
+    test: 60
+- relation: P162
+  label: producer
+  direction: tail
+  train_triples: 1253
+  unique_answers: 359
+  prior_hits: 0.1564
+  status: kept
+  queries:
+    train: 726
+    val: 95
+    test: 93
+- relation: P175
+  label: performer
+  direction: head
+  train_triples: 1222
+  unique_answers: 1144
+  prior_hits: 0.0245
+  status: kept
+  queries:
+    train: 308
+    val: 52
+    test: 66
+- relation: P175
+  label: performer
+  direction: tail
+  train_triples: 1222
+  unique_answers: 392
+  prior_hits: 0.1023
+  status: kept
+  queries:
+    train: 775
+    val: 92
+    test: 80
+- relation: P58
+  label: screenwriter
+  direction: head
+  train_triples: 1146
+  unique_answers: 975
+  prior_hits: 0.0314
+  status: kept
+  queries:
+    train: 263
+    val: 57
+    test: 59
+- relation: P106
+  label: occupation
+  direction: head
+  train_triples: 1146
+  unique_answers: 1055
+  prior_hits: 0.0192
+  status: kept
+  queries:
+    train: 17
+    val: 2
+    test: 3
+- relation: P58
+  label: screenwriter
+  direction: tail
+  train_triples: 1146
+  unique_answers: 340
+  prior_hits: 0.1789
+  status: kept
+  queries:
+    train: 601
+    val: 85
+    test: 83
+- relation: P106
+  label: occupation
+  direction: tail
+  train_triples: 1146
+  unique_answers: 30
+  prior_hits: 0.9302
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P344
+  label: director of photography
+  direction: head
+  train_triples: 1029
+  unique_answers: 1009
+  prior_hits: 0.0204
+  status: kept
+  queries:
+    train: 107
+    val: 30
+    test: 37
+- relation: P344
+  label: director of photography
+  direction: tail
+  train_triples: 1029
+  unique_answers: 164
+  prior_hits: 0.1672
+  status: kept
+  queries:
+    train: 542
+    val: 63
+    test: 81
+- relation: P264
+  label: record label
+  direction: head
+  train_triples: 960
+  unique_answers: 867
+  prior_hits: 0.0333
+  status: kept
+  queries:
+    train: 108
+    val: 39
+    test: 26
+- relation: P264
+  label: record label
+  direction: tail
+  train_triples: 960
+  unique_answers: 151
+  prior_hits: 0.2687
+  status: kept
+  queries:
+    train: 646
+    val: 95
+    test: 78
+- relation: P19
+  label: place of birth
+  direction: head
+  train_triples: 941
+  unique_answers: 940
+  prior_hits: 0.0117
+  status: kept
+  queries:
+    train: 248
+    val: 59
+    test: 62
+- relation: P19
+  label: place of birth
+  direction: tail
+  train_triples: 941
+  unique_answers: 323
+  prior_hits: 0.1785
+  status: kept
+  queries:
+    train: 588
+    val: 75
+    test: 92
+- relation: P495
+  label: country of origin
+  direction: head
+  train_triples: 881
+  unique_answers: 834
+  prior_hits: 0.025
+  status: kept
+  queries:
+    train: 6
+    val: 1
+    test: 1
+- relation: P495
+  label: country of origin
+  direction: tail
+  train_triples: 881
+  unique_answers: 16
+  prior_hits: 0.9932
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P27
+  label: country of citizenship
+  direction: head
+  train_triples: 838
+  unique_answers: 829
+  prior_hits: 0.0227
+  status: kept
+  queries:
+    train: 36
+    val: 12
+    test: 8
+- relation: P27
+  label: country of citizenship
+  direction: tail
+  train_triples: 838
+  unique_answers: 49
+  prior_hits: 0.8592
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P136
+  label: genre
+  direction: head
+  train_triples: 700
+  unique_answers: 666
+  prior_hits: 0.0314
+  status: kept
+  queries:
+    train: 44
+    val: 15
+    test: 16
+- relation: P136
+  label: genre
+  direction: tail
+  train_triples: 700
+  unique_answers: 73
+  prior_hits: 0.6329
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P155
+  label: follows
+  direction: head
+  train_triples: 673
+  unique_answers: 673
+  prior_hits: 0.0149
+  status: kept
+  queries:
+    train: 401
+    val: 44
+    test: 57
+- relation: P155
+  label: follows
+  direction: tail
+  train_triples: 673
+  unique_answers: 670
+  prior_hits: 0.0193
+  status: kept
+  queries:
+    train: 401
+    val: 46
+    test: 64
+- relation: P156
+  label: followed by
+  direction: head
+  train_triples: 664
+  unique_answers: 662
+  prior_hits: 0.0181
+  status: kept
+  queries:
+    train: 410
+    val: 54
+    test: 42
+- relation: P156
+  label: followed by
+  direction: tail
+  train_triples: 664
+  unique_answers: 664
+  prior_hits: 0.0151
+  status: kept
+  queries:
+    train: 395
+    val: 59
+    test: 49
+- relation: P17
+  label: country
+  direction: head
+  train_triples: 584
+  unique_answers: 578
+  prior_hits: 0.0274
+  status: kept
+  queries:
+    train: 43
+    val: 9
+    test: 9
+- relation: P17
+  label: country
+  direction: tail
+  train_triples: 584
+  unique_answers: 61
+  prior_hits: 0.7842
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P69
+  label: educated at
+  direction: head
+  train_triples: 563
+  unique_answers: 506
+  prior_hits: 0.0373
+  status: kept
+  queries:
+    train: 93
+    val: 22
+    test: 23
+- relation: P69
+  label: educated at
+  direction: tail
+  train_triples: 563
+  unique_answers: 122
+  prior_hits: 0.2274
+  status: kept
+  queries:
+    train: 355
+    val: 51
+    test: 45
+- relation: P190
+  label: twinned administrative body
+  direction: head
+  train_triples: 547
+  unique_answers: 185
+  prior_hits: 0.2066
+  status: kept
+  queries:
+    train: 144
+    val: 36
+    test: 29
+- relation: P190
+  label: twinned administrative body
+  direction: tail
+  train_triples: 547
+  unique_answers: 189
+  prior_hits: 0.2121
+  status: kept
+  queries:
+    train: 145
+    val: 38
+    test: 21
+- relation: P364
+  label: original language of film or TV show
+  direction: head
+  train_triples: 459
+  unique_answers: 450
+  prior_hits: 0.0414
+  status: kept
+  queries:
+    train: 11
+    val: 2
+    test: 4
+- relation: P364
+  label: original language of film or TV show
+  direction: tail
+  train_triples: 459
+  unique_answers: 17
+  prior_hits: 0.9695
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P750
+  label: distributed by
+  direction: head
+  train_triples: 453
+  unique_answers: 452
+  prior_hits: 0.0243
+  status: kept
+  queries:
+    train: 48
+    val: 5
+    test: 13
+- relation: P750
+  label: distributed by
+  direction: tail
+  train_triples: 453
+  unique_answers: 66
+  prior_hits: 0.6203
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P20
+  label: place of death
+  direction: head
+  train_triples: 441
+  unique_answers: 441
+  prior_hits: 0.0227
+  status: kept
+  queries:
+    train: 121
+    val: 24
+    test: 28
+- relation: P20
+  label: place of death
+  direction: tail
+  train_triples: 441
+  unique_answers: 165
+  prior_hits: 0.3583
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P272
+  label: production company
+  direction: head
+  train_triples: 332
+  unique_answers: 316
+  prior_hits: 0.0602
+  status: kept
+  queries:
+    train: 44
+    val: 8
+    test: 8
+- relation: P272
+  label: production company
+  direction: tail
+  train_triples: 332
+  unique_answers: 61
+  prior_hits: 0.6175
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1040
+  label: film editor
+  direction: head
+  train_triples: 303
+  unique_answers: 302
+  prior_hits: 0.0363
+  status: kept
+  queries:
+    train: 60
+    val: 15
+    test: 20
+- relation: P1040
+  label: film editor
+  direction: tail
+  train_triples: 303
+  unique_answers: 81
+  prior_hits: 0.363
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P179
+  label: part of the series
+  direction: head
+  train_triples: 267
+  unique_answers: 267
+  prior_hits: 0.0375
+  status: kept
+  queries:
+    train: 28
+    val: 10
+    test: 8
+- relation: P179
+  label: part of the series
+  direction: tail
+  train_triples: 267
+  unique_answers: 42
+  prior_hits: 0.5243
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P840
+  label: narrative location
+  direction: head
+  train_triples: 263
+  unique_answers: 244
+  prior_hits: 0.0913
+  status: kept
+  queries:
+    train: 30
+    val: 5
+    test: 11
+- relation: P840
+  label: narrative location
+  direction: tail
+  train_triples: 263
+  unique_answers: 40
+  prior_hits: 0.7909
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P131
+  label: located in the administrative territorial entity
+  direction: head
+  train_triples: 247
+  unique_answers: 239
+  prior_hits: 0.0729
+  status: kept
+  queries:
+    train: 107
+    val: 19
+    test: 22
+- relation: P131
+  label: located in the administrative territorial entity
+  direction: tail
+  train_triples: 247
+  unique_answers: 141
+  prior_hits: 0.251
+  status: kept
+  queries:
+    train: 163
+    val: 19
+    test: 22
+- relation: P123
+  label: publisher
+  direction: head
+  train_triples: 239
+  unique_answers: 233
+  prior_hits: 0.0669
+  status: kept
+  queries:
+    train: 54
+    val: 14
+    test: 14
+- relation: P123
+  label: publisher
+  direction: tail
+  train_triples: 239
+  unique_answers: 63
+  prior_hits: 0.3849
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P915
+  label: filming location
+  direction: head
+  train_triples: 201
+  unique_answers: 188
+  prior_hits: 0.0995
+  status: kept
+  queries:
+    train: 25
+    val: 7
+    test: 8
+- relation: P915
+  label: filming location
+  direction: tail
+  train_triples: 201
+  unique_answers: 39
+  prior_hits: 0.7015
+  status: answers_are_classes
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P166
+  label: ''
+  direction: head
+  train_triples: 166
+  unique_answers: 134
+  prior_hits: 0.1446
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P166
+  label: ''
+  direction: tail
+  train_triples: 166
+  unique_answers: 14
+  prior_hits: 0.9277
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P647
+  label: ''
+  direction: head
+  train_triples: 162
+  unique_answers: 162
+  prior_hits: 0.0617
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P647
+  label: ''
+  direction: tail
+  train_triples: 162
+  unique_answers: 33
+  prior_hits: 0.4753
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P449
+  label: ''
+  direction: head
+  train_triples: 139
+  unique_answers: 137
+  prior_hits: 0.0863
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P449
+  label: ''
+  direction: tail
+  train_triples: 139
+  unique_answers: 19
+  prior_hits: 0.8489
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1303
+  label: ''
+  direction: head
+  train_triples: 136
+  unique_answers: 122
+  prior_hits: 0.1765
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1303
+  label: ''
+  direction: tail
+  train_triples: 136
+  unique_answers: 9
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P607
+  label: ''
+  direction: head
+  train_triples: 135
+  unique_answers: 121
+  prior_hits: 0.1556
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P607
+  label: ''
+  direction: tail
+  train_triples: 135
+  unique_answers: 21
+  prior_hits: 0.8963
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P676
+  label: ''
+  direction: head
+  train_triples: 126
+  unique_answers: 123
+  prior_hits: 0.1032
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P676
+  label: ''
+  direction: tail
+  train_triples: 126
+  unique_answers: 55
+  prior_hits: 0.381
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1412
+  label: ''
+  direction: head
+  train_triples: 122
+  unique_answers: 121
+  prior_hits: 0.0902
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1412
+  label: ''
+  direction: tail
+  train_triples: 122
+  unique_answers: 16
+  prior_hits: 0.9508
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P102
+  label: ''
+  direction: head
+  train_triples: 113
+  unique_answers: 111
+  prior_hits: 0.1062
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P102
+  label: ''
+  direction: tail
+  train_triples: 113
+  unique_answers: 26
+  prior_hits: 0.646
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P400
+  label: ''
+  direction: head
+  train_triples: 107
+  unique_answers: 86
+  prior_hits: 0.243
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P400
+  label: ''
+  direction: tail
+  train_triples: 107
+  unique_answers: 13
+  prior_hits: 0.9252
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P178
+  label: ''
+  direction: head
+  train_triples: 101
+  unique_answers: 99
+  prior_hits: 0.1188
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P178
+  label: ''
+  direction: tail
+  train_triples: 101
+  unique_answers: 36
+  prior_hits: 0.5941
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P172
+  label: ''
+  direction: head
+  train_triples: 98
+  unique_answers: 98
+  prior_hits: 0.102
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P937
+  label: ''
+  direction: head
+  train_triples: 98
+  unique_answers: 89
+  prior_hits: 0.1939
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P413
+  label: ''
+  direction: head
+  train_triples: 98
+  unique_answers: 98
+  prior_hits: 0.102
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P172
+  label: ''
+  direction: tail
+  train_triples: 98
+  unique_answers: 11
+  prior_hits: 0.9898
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P937
+  label: ''
+  direction: tail
+  train_triples: 98
+  unique_answers: 28
+  prior_hits: 0.7755
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P413
+  label: ''
+  direction: tail
+  train_triples: 98
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P108
+  label: ''
+  direction: head
+  train_triples: 89
+  unique_answers: 83
+  prior_hits: 0.1798
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P108
+  label: ''
+  direction: tail
+  train_triples: 89
+  unique_answers: 44
+  prior_hits: 0.4719
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P47
+  label: ''
+  direction: head
+  train_triples: 85
+  unique_answers: 69
+  prior_hits: 0.2471
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P47
+  label: ''
+  direction: tail
+  train_triples: 85
+  unique_answers: 69
+  prior_hits: 0.2588
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P509
+  label: ''
+  direction: head
+  train_triples: 83
+  unique_answers: 83
+  prior_hits: 0.1205
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P509
+  label: ''
+  direction: tail
+  train_triples: 83
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P921
+  label: ''
+  direction: head
+  train_triples: 82
+  unique_answers: 81
+  prior_hits: 0.1341
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P921
+  label: ''
+  direction: tail
+  train_triples: 82
+  unique_answers: 19
+  prior_hits: 0.878
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P159
+  label: ''
+  direction: head
+  train_triples: 78
+  unique_answers: 78
+  prior_hits: 0.1282
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P159
+  label: ''
+  direction: tail
+  train_triples: 78
+  unique_answers: 47
+  prior_hits: 0.5128
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P50
+  label: ''
+  direction: head
+  train_triples: 73
+  unique_answers: 73
+  prior_hits: 0.137
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P50
+  label: ''
+  direction: tail
+  train_triples: 73
+  unique_answers: 35
+  prior_hits: 0.6301
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P150
+  label: ''
+  direction: head
+  train_triples: 56
+  unique_answers: 31
+  prior_hits: 0.6071
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P150
+  label: ''
+  direction: tail
+  train_triples: 56
+  unique_answers: 55
+  prior_hits: 0.1964
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P437
+  label: ''
+  direction: head
+  train_triples: 55
+  unique_answers: 53
+  prior_hits: 0.2182
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P437
+  label: ''
+  direction: tail
+  train_triples: 55
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P170
+  label: ''
+  direction: head
+  train_triples: 54
+  unique_answers: 54
+  prior_hits: 0.1852
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P170
+  label: ''
+  direction: tail
+  train_triples: 54
+  unique_answers: 37
+  prior_hits: 0.4815
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P737
+  label: ''
+  direction: head
+  train_triples: 50
+  unique_answers: 21
+  prior_hits: 0.74
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P119
+  label: ''
+  direction: head
+  train_triples: 50
+  unique_answers: 50
+  prior_hits: 0.2
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P737
+  label: ''
+  direction: tail
+  train_triples: 50
+  unique_answers: 37
+  prior_hits: 0.46
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P119
+  label: ''
+  direction: tail
+  train_triples: 50
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P463
+  label: ''
+  direction: head
+  train_triples: 47
+  unique_answers: 45
+  prior_hits: 0.2553
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P463
+  label: ''
+  direction: tail
+  train_triples: 47
+  unique_answers: 15
+  prior_hits: 0.8936
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P7
+  label: ''
+  direction: head
+  train_triples: 42
+  unique_answers: 39
+  prior_hits: 0.3095
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1431
+  label: ''
+  direction: head
+  train_triples: 42
+  unique_answers: 41
+  prior_hits: 0.2619
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P7
+  label: ''
+  direction: tail
+  train_triples: 42
+  unique_answers: 39
+  prior_hits: 0.3095
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1431
+  label: ''
+  direction: tail
+  train_triples: 42
+  unique_answers: 29
+  prior_hits: 0.5476
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P452
+  label: ''
+  direction: head
+  train_triples: 41
+  unique_answers: 41
+  prior_hits: 0.2439
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P452
+  label: ''
+  direction: tail
+  train_triples: 41
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P36
+  label: ''
+  direction: head
+  train_triples: 40
+  unique_answers: 40
+  prior_hits: 0.25
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1376
+  label: ''
+  direction: head
+  train_triples: 40
+  unique_answers: 37
+  prior_hits: 0.325
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P36
+  label: ''
+  direction: tail
+  train_triples: 40
+  unique_answers: 36
+  prior_hits: 0.35
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1376
+  label: ''
+  direction: tail
+  train_triples: 40
+  unique_answers: 39
+  prior_hits: 0.275
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P140
+  label: ''
+  direction: head
+  train_triples: 39
+  unique_answers: 39
+  prior_hits: 0.2564
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P140
+  label: ''
+  direction: tail
+  train_triples: 39
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P30
+  label: ''
+  direction: head
+  train_triples: 38
+  unique_answers: 38
+  prior_hits: 0.2632
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P30
+  label: ''
+  direction: tail
+  train_triples: 38
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P361
+  label: ''
+  direction: head
+  train_triples: 37
+  unique_answers: 36
+  prior_hits: 0.2973
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P171
+  label: ''
+  direction: head
+  train_triples: 37
+  unique_answers: 37
+  prior_hits: 0.2703
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P361
+  label: ''
+  direction: tail
+  train_triples: 37
+  unique_answers: 21
+  prior_hits: 0.7027
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P171
+  label: ''
+  direction: tail
+  train_triples: 37
+  unique_answers: 26
+  prior_hits: 0.5676
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P241
+  label: ''
+  direction: head
+  train_triples: 34
+  unique_answers: 31
+  prior_hits: 0.3824
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P241
+  label: ''
+  direction: tail
+  train_triples: 34
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P551
+  label: ''
+  direction: head
+  train_triples: 33
+  unique_answers: 31
+  prior_hits: 0.3636
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P551
+  label: ''
+  direction: tail
+  train_triples: 33
+  unique_answers: 28
+  prior_hits: 0.4545
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P137
+  label: ''
+  direction: head
+  train_triples: 32
+  unique_answers: 32
+  prior_hits: 0.3125
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P137
+  label: ''
+  direction: tail
+  train_triples: 32
+  unique_answers: 11
+  prior_hits: 0.9688
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P40
+  label: ''
+  direction: head
+  train_triples: 28
+  unique_answers: 26
+  prior_hits: 0.4286
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P40
+  label: ''
+  direction: tail
+  train_triples: 28
+  unique_answers: 27
+  prior_hits: 0.3929
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P135
+  label: ''
+  direction: head
+  train_triples: 26
+  unique_answers: 26
+  prior_hits: 0.3846
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P26
+  label: ''
+  direction: head
+  train_triples: 26
+  unique_answers: 26
+  prior_hits: 0.3846
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P135
+  label: ''
+  direction: tail
+  train_triples: 26
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P26
+  label: ''
+  direction: tail
+  train_triples: 26
+  unique_answers: 26
+  prior_hits: 0.3846
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P740
+  label: ''
+  direction: head
+  train_triples: 24
+  unique_answers: 24
+  prior_hits: 0.4167
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P740
+  label: ''
+  direction: tail
+  train_triples: 24
+  unique_answers: 14
+  prior_hits: 0.8333
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P127
+  label: ''
+  direction: head
+  train_triples: 23
+  unique_answers: 23
+  prior_hits: 0.4348
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P127
+  label: ''
+  direction: tail
+  train_triples: 23
+  unique_answers: 20
+  prior_hits: 0.5652
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P279
+  label: ''
+  direction: head
+  train_triples: 22
+  unique_answers: 22
+  prior_hits: 0.4545
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P22
+  label: ''
+  direction: head
+  train_triples: 22
+  unique_answers: 22
+  prior_hits: 0.4545
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P37
+  label: ''
+  direction: head
+  train_triples: 22
+  unique_answers: 20
+  prior_hits: 0.5455
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P279
+  label: ''
+  direction: tail
+  train_triples: 22
+  unique_answers: 20
+  prior_hits: 0.5455
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P22
+  label: ''
+  direction: tail
+  train_triples: 22
+  unique_answers: 22
+  prior_hits: 0.4545
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P37
+  label: ''
+  direction: tail
+  train_triples: 22
+  unique_answers: 12
+  prior_hits: 0.9091
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1142
+  label: ''
+  direction: head
+  train_triples: 20
+  unique_answers: 19
+  prior_hits: 0.55
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1142
+  label: ''
+  direction: tail
+  train_triples: 20
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P118
+  label: ''
+  direction: head
+  train_triples: 19
+  unique_answers: 19
+  prior_hits: 0.5263
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P421
+  label: ''
+  direction: head
+  train_triples: 19
+  unique_answers: 19
+  prior_hits: 0.5263
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P527
+  label: ''
+  direction: head
+  train_triples: 19
+  unique_answers: 16
+  prior_hits: 0.6842
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P408
+  label: ''
+  direction: head
+  train_triples: 19
+  unique_answers: 19
+  prior_hits: 0.5263
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P118
+  label: ''
+  direction: tail
+  train_triples: 19
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P421
+  label: ''
+  direction: tail
+  train_triples: 19
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P527
+  label: ''
+  direction: tail
+  train_triples: 19
+  unique_answers: 19
+  prior_hits: 0.5263
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P408
+  label: ''
+  direction: tail
+  train_triples: 19
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P176
+  label: ''
+  direction: head
+  train_triples: 17
+  unique_answers: 17
+  prior_hits: 0.5882
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P176
+  label: ''
+  direction: tail
+  train_triples: 17
+  unique_answers: 9
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1344
+  label: ''
+  direction: head
+  train_triples: 16
+  unique_answers: 16
+  prior_hits: 0.625
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1344
+  label: ''
+  direction: tail
+  train_triples: 16
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P674
+  label: ''
+  direction: head
+  train_triples: 15
+  unique_answers: 15
+  prior_hits: 0.6667
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P112
+  label: ''
+  direction: head
+  train_triples: 15
+  unique_answers: 14
+  prior_hits: 0.7333
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P674
+  label: ''
+  direction: tail
+  train_triples: 15
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P112
+  label: ''
+  direction: tail
+  train_triples: 15
+  unique_answers: 12
+  prior_hits: 0.8667
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P275
+  label: ''
+  direction: head
+  train_triples: 13
+  unique_answers: 13
+  prior_hits: 0.7692
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P275
+  label: ''
+  direction: tail
+  train_triples: 13
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2438
+  label: ''
+  direction: head
+  train_triples: 12
+  unique_answers: 12
+  prior_hits: 0.8333
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2438
+  label: ''
+  direction: tail
+  train_triples: 12
+  unique_answers: 11
+  prior_hits: 0.9167
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P530
+  label: ''
+  direction: head
+  train_triples: 11
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P800
+  label: ''
+  direction: head
+  train_triples: 11
+  unique_answers: 11
+  prior_hits: 0.9091
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P138
+  label: ''
+  direction: head
+  train_triples: 11
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P101
+  label: ''
+  direction: head
+  train_triples: 11
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P412
+  label: ''
+  direction: head
+  train_triples: 11
+  unique_answers: 11
+  prior_hits: 0.9091
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P530
+  label: ''
+  direction: tail
+  train_triples: 11
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P800
+  label: ''
+  direction: tail
+  train_triples: 11
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P138
+  label: ''
+  direction: tail
+  train_triples: 11
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P101
+  label: ''
+  direction: tail
+  train_triples: 11
+  unique_answers: 9
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P412
+  label: ''
+  direction: tail
+  train_triples: 11
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P749
+  label: ''
+  direction: head
+  train_triples: 10
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P641
+  label: ''
+  direction: head
+  train_triples: 10
+  unique_answers: 10
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P749
+  label: ''
+  direction: tail
+  train_triples: 10
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P641
+  label: ''
+  direction: tail
+  train_triples: 10
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P144
+  label: ''
+  direction: head
+  train_triples: 9
+  unique_answers: 9
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P144
+  label: ''
+  direction: tail
+  train_triples: 9
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P206
+  label: ''
+  direction: head
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P276
+  label: ''
+  direction: head
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P103
+  label: ''
+  direction: head
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P767
+  label: ''
+  direction: head
+  train_triples: 8
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P184
+  label: ''
+  direction: head
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P206
+  label: ''
+  direction: tail
+  train_triples: 8
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P276
+  label: ''
+  direction: tail
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P103
+  label: ''
+  direction: tail
+  train_triples: 8
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P767
+  label: ''
+  direction: tail
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P184
+  label: ''
+  direction: tail
+  train_triples: 8
+  unique_answers: 8
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P197
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P126
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P355
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P25
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2554
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P9
+  label: ''
+  direction: head
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P197
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P126
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P355
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P25
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2554
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P9
+  label: ''
+  direction: tail
+  train_triples: 7
+  unique_answers: 7
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1441
+  label: ''
+  direction: head
+  train_triples: 6
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P149
+  label: ''
+  direction: head
+  train_triples: 6
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P451
+  label: ''
+  direction: head
+  train_triples: 6
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1441
+  label: ''
+  direction: tail
+  train_triples: 6
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P149
+  label: ''
+  direction: tail
+  train_triples: 6
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P451
+  label: ''
+  direction: tail
+  train_triples: 6
+  unique_answers: 6
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P287
+  label: ''
+  direction: head
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P706
+  label: ''
+  direction: head
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P466
+  label: ''
+  direction: head
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P407
+  label: ''
+  direction: head
+  train_triples: 5
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1383
+  label: ''
+  direction: head
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P287
+  label: ''
+  direction: tail
+  train_triples: 5
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P706
+  label: ''
+  direction: tail
+  train_triples: 5
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P466
+  label: ''
+  direction: tail
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P407
+  label: ''
+  direction: tail
+  train_triples: 5
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1383
+  label: ''
+  direction: tail
+  train_triples: 5
+  unique_answers: 5
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P611
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P84
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1408
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P277
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1366
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1365
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P462
+  label: ''
+  direction: head
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P611
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P84
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1408
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P277
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1366
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1365
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 4
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P462
+  label: ''
+  direction: tail
+  train_triples: 4
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2541
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2512
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P710
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P945
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P87
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1716
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P403
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1071
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P941
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P658
+  label: ''
+  direction: head
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2541
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2512
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P710
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P945
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P87
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1716
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P403
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1071
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P941
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P658
+  label: ''
+  direction: tail
+  train_triples: 3
+  unique_answers: 3
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2348
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1387
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P306
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P61
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P195
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2936
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P461
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P205
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1532
+  label: ''
+  direction: head
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2348
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1387
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P306
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P61
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P195
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P2936
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P461
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P205
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1532
+  label: ''
+  direction: tail
+  train_triples: 2
+  unique_answers: 2
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P185
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P469
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1336
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1056
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P735
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P286
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1811
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P180
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P485
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P425
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P501
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P504
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P410
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P81
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1889
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P406
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P201
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P991
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P725
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P289
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P726
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P488
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P122
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1018
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P134
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P802
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1066
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P200
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P263
+  label: ''
+  direction: head
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P185
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P469
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1336
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1056
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P735
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P286
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1811
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P180
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P485
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P425
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P501
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P504
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P410
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P81
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1889
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P406
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P201
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P991
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P725
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P289
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P726
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P488
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P122
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1018
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P134
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P802
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P1066
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P200
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0
+- relation: P263
+  label: ''
+  direction: tail
+  train_triples: 1
+  unique_answers: 1
+  prior_hits: 1.0
+  status: too_few_triples
+  queries:
+    train: 0
+    val: 0
+    test: 0

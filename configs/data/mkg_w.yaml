@@ -1,0 +1,102 @@
+# MKG-W dataset build (Wikidata knowledge graph with entity images).
+# All paths are relative to the repository root; run commands from there.
+
+paths:
+  raw_dir: data/raw
+  manifest_file: data/raw/MANIFEST.json
+  processed_dir: data/processed/mkg_w
+  split_file: data/splits/mkg_w.json
+  # Written by `--stage build`: sizes, rule outcomes per relation, query counts.
+  card_file: data/splits/mkg_w_card.yaml
+
+# Triples and id maps come from the AdaMF-MAT repository, so ids match that method's split.
+# Names, descriptions and images come from the MMRNS release (the dataset's authors).
+sources:
+  - name: mkg_w_entity2id
+    url: https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/entity2id.txt
+    target: mkg_w/triples/entity2id.txt
+  - name: mkg_w_relation2id
+    url: https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/relation2id.txt
+    target: mkg_w/triples/relation2id.txt
+  - name: mkg_w_train2id
+    url: https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/train2id.txt
+    target: mkg_w/triples/train2id.txt
+  - name: mkg_w_valid2id
+    url: https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/valid2id.txt
+    target: mkg_w/triples/valid2id.txt
+  - name: mkg_w_test2id
+    url: https://raw.githubusercontent.com/zjukg/AdaMF-MAT/main/benchmarks/MKG-W/test2id.txt
+    target: mkg_w/triples/test2id.txt
+  - name: mkg_w_ent_links
+    url: https://drive.usercontent.google.com/download?export=download&confirm=t&id=1rW4hyqAFUoe5gv9gAKNnvCVunuZ-zuAC
+    target: mkg_w/ent_links
+  - name: mkg_w_descriptions
+    url: https://drive.usercontent.google.com/download?export=download&confirm=t&id=1-0j4DKgvokOOF2FxxjgrmsAehm549aPq
+    target: mkg_w/MKG-W_ent2descreption.txt
+  - name: mkg_w_images
+    url: https://drive.usercontent.google.com/download?export=download&confirm=t&id=1UA3qsboZ5pvt0nbfsMNDgxjlG30PZjde
+    target: mkg_w/MKG-W_img.zip
+
+# Which (relation, direction) pairs and which anchors may become relation queries.
+# Every statistic is computed on train triples only.
+#   direction `tail`: the query names the head, the answer is the tail.
+#   direction `head`: the query names the tail, the answer is the head.
+# prior_top_k / max_prior_hits: drop a direction when always guessing its prior_top_k most
+#   frequent train answers already hits more than max_prior_hits of its train triples. Those
+#   answers are classes (Film, United States, Politician): guessable without reading the
+#   anchor, and not a meaningful image to retrieve.
+# min_train_triples: a relation needs this many train triples to be learnable and reportable.
+# max_answers: drop a query whose anchor has more correct answers than this over all splits.
+#   Such anchors are classes on the other side ("something that is a Film").
+query_rules:
+  prior_top_k: 10
+  max_prior_hits: 0.3
+  min_train_triples: 200
+  max_answers: 10
+  # Labels only, never filters: each relation query records the shortest train-graph path
+  # from its anchor to an answer, up to this many hops (the GraphSAGE depth). Longer or no
+  # path is recorded as null.
+  max_hops: 3
+
+# Name and description queries have no triple, so their entities are split at random.
+direct_split:
+  seed: 13
+  fractions:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+
+# Query wording per relation. `label` is the English Wikidata label. `{anchor}` is the
+# entity the query names. The build fails when a direction passes query_rules but has no
+# template here, so a direction cannot be left out by omission.
+templates:
+  P161: {label: cast member, tail: "an actor in {anchor}", head: "a film or show starring {anchor}"}
+  P31: {label: instance of, head: "an example of {anchor}"}
+  P57: {label: director, tail: "the director of {anchor}", head: "a film directed by {anchor}"}
+  P86: {label: composer, tail: "the composer of the music for {anchor}", head: "a work with music composed by {anchor}"}
+  P54: {label: member of sports team, tail: "a sports team that {anchor} played for", head: "an athlete who played for {anchor}"}
+  P162: {label: producer, tail: "the producer of {anchor}", head: "a film produced by {anchor}"}
+  P175: {label: performer, tail: "the performer of {anchor}", head: "a song or album performed by {anchor}"}
+  P58: {label: screenwriter, tail: "the screenwriter of {anchor}", head: "a film written by {anchor}"}
+  P106: {label: occupation, head: "a person who works as {anchor}"}
+  P344: {label: director of photography, tail: "the cinematographer of {anchor}", head: "a film shot by the cinematographer {anchor}"}
+  P264: {label: record label, tail: "the record label of {anchor}", head: "a musician or release on the record label {anchor}"}
+  P19: {label: place of birth, tail: "the birthplace of {anchor}", head: "a person born in {anchor}"}
+  P495: {label: country of origin, head: "a work originating from {anchor}"}
+  P27: {label: country of citizenship, head: "a citizen of {anchor}"}
+  P136: {label: genre, head: "a work in the genre {anchor}"}
+  P155: {label: follows, tail: "the work that came right before {anchor}", head: "the work that came right after {anchor}"}
+  P156: {label: followed by, tail: "the work that came right after {anchor}", head: "the work that came right before {anchor}"}
+  P17: {label: country, head: "a place or organization in the country {anchor}"}
+  P69: {label: educated at, tail: "a school or university attended by {anchor}", head: "a person educated at {anchor}"}
+  P190: {label: twinned administrative body, tail: "a sister city of {anchor}", head: "a sister city of {anchor}"}
+  P364: {label: original language of film or TV show, head: "a film or show whose original language is {anchor}"}
+  P750: {label: distributed by, head: "a film distributed by {anchor}"}
+  P20: {label: place of death, head: "a person who died in {anchor}"}
+  P272: {label: production company, head: "a film from the production company {anchor}"}
+  P1040: {label: film editor, head: "a film edited by {anchor}"}
+  P179: {label: part of the series, head: "a work in the series {anchor}"}
+  P840: {label: narrative location, head: "a story set in {anchor}"}
+  P131: {label: located in the administrative territorial entity, tail: "the administrative region that contains {anchor}", head: "a place located in {anchor}"}
+  P123: {label: publisher, head: "a work published by {anchor}"}
+  P915: {label: filming location, head: "a film shot on location in {anchor}"}
