@@ -10,7 +10,7 @@ Cập nhật: 21/11/2026.
 ## Nội dung report VG ∩ COCO
 
 1. Cấp độ 1: CLIP + GraphSAGE
-2. Ablation đồ thị của GraphSAGE và fidelity (lượt 18/11)
+2. Ablation đồ thị của GraphSAGE trên hai dataset, và fidelity (lượt 18/11)
 3. Cấp độ 2: AdaMF-MAT so với GraphSAGE
 4. Ablation của AdaMF-MAT
 5. Mô hình có đọc cạnh không: relation queries

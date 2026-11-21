@@ -4,8 +4,8 @@
     python -m scripts.build_wandb_report                    # create a new report, print its URL
     python -m scripts.build_wandb_report --url <report url> # rewrite that report in place, same URL
 
-Panels select runs by config: role (summary / train) and the section flags s1..s5. Section 7 has no
-runs: it shows static figures from reports/explanation-quality/figures on the main branch. The text
+Panels select runs by config: role (summary / train) and the section flags s1..s5. Section 7 and the
+dataset-2 ablation of section 2 have no runs: they show static figures from reports/ on the main branch. The text
 blocks live in docs/wandb-report/*.md and repeat the numbers of README.md; keep both in sync.
 """
 
@@ -32,10 +32,8 @@ DESCRIPTION = (
     "relation queries có confuser và edge masking, đánh giá giải thích (fidelity, sparsity, validity)."
 )
 ORDER = [wr.OrderBy(name=wr.Metric("Name"), ascending=True)]
-# Figures of the explanation evaluation are static files in the repository, served from its main branch.
-FIGURE_URL = (
-    "https://raw.githubusercontent.com/thinhnt3/master-hcmus-graphML/main/reports/explanation-quality/figures"
-)
+# Figures are static files in the repository, served from its main branch.
+FIGURE_URL = "https://raw.githubusercontent.com/thinhnt3/master-hcmus-graphML/main/reports"
 
 
 def _runset(entity: str, project: str, role: str, section: str, name: str) -> wr.Runset:
@@ -56,9 +54,9 @@ def _text(name: str) -> wr.MarkdownBlock:
     return wr.MarkdownBlock((TEXT_DIR / f"{name}.md").read_text(encoding="utf-8"))
 
 
-def _figure(name: str, caption: str) -> wr.Image:
-    """Image block showing reports/explanation-quality/figures/<name>.png."""
-    return wr.Image(url=f"{FIGURE_URL}/{name}.png", caption=caption)
+def _figure(path: str, caption: str) -> wr.Image:
+    """Image block showing reports/<path>.png."""
+    return wr.Image(url=f"{FIGURE_URL}/{path}.png", caption=caption)
 
 
 def bar(title: str, metric: str, x: int, y: int, w: int = 12, h: int = 8) -> wr.BarPlot:
@@ -121,6 +119,8 @@ def build(entity: str, project: str) -> wr.Report:
             ],
         ),
         _text("21-graph-ablation-notes"),
+        _text("22-graph-ablation-mkg-w"),
+        _figure("ablation/level1-ablation", "Ablation trên hai dataset: R@1 tăng so với CLIP và graph-only R@1."),
         wr.H1("3. Cấp độ 2: AdaMF-MAT so với GraphSAGE"),
         _text("30-adamf-mat"),
         wr.PanelGrid(
@@ -162,13 +162,25 @@ def build(entity: str, project: str) -> wr.Report:
         _text("60-other-ablations-conclusions"),
         wr.H1("7. Đánh giá giải thích: fidelity, sparsity, validity"),
         _text("70-explanation-fidelity"),
-        _figure("fidelity", "Fidelity: xoá nhóm relation giải thích so với xoá ngẫu nhiên cùng số relation."),
+        _figure(
+            "explanation-quality/figures/fidelity",
+            "Fidelity: xoá nhóm relation giải thích so với xoá ngẫu nhiên cùng số relation.",
+        ),
         _text("71-explanation-sparsity"),
-        _figure("keep-only", "Sparsity: giữ vị trí đầu khi chỉ giữ nhóm giải thích so với giữ nhóm ngẫu nhiên."),
+        _figure(
+            "explanation-quality/figures/keep-only",
+            "Sparsity: giữ vị trí đầu khi chỉ giữ nhóm giải thích so với giữ nhóm ngẫu nhiên.",
+        ),
         _text("72-explanation-validity"),
-        _figure("validity-ai", "Validity: nhãn AI trên 42 relation của 20 truy vấn, theo hai cách đọc tiêu chí."),
+        _figure(
+            "explanation-quality/figures/validity-ai",
+            "Validity: nhãn AI trên 42 relation của 20 truy vấn, theo hai cách đọc tiêu chí.",
+        ),
         _text("73-explanation-gnnexplainer"),
-        _figure("gnn-explainer-control", "Đối chứng GNNExplainer so với cách bỏ từng relation và ngẫu nhiên."),
+        _figure(
+            "explanation-quality/figures/gnn-explainer-control",
+            "Đối chứng GNNExplainer so với cách bỏ từng relation và ngẫu nhiên.",
+        ),
     ]
     return report
 
