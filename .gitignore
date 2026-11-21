@@ -78,3 +78,7 @@ data/processed/vg_coco_full/
 data/processed/vg_coco_kg/embeddings/
 data/processed/vg_coco_kg/images.json
 data/processed/vg_coco_kg/queries.json
+
+# MKG-W caption subset: CLIP embeddings and extracted images stay local.
+data/processed/mkg_w_captions/embeddings
+data/processed/mkg_w_captions/images/
