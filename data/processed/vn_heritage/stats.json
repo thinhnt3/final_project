@@ -1,0 +1,88 @@
+{
+  "places": 1079,
+  "images": 3589,
+  "places_by_split": {
+    "train": 720,
+    "val": 187,
+    "test": 172
+  },
+  "images_by_split": {
+    "train": 2361,
+    "val": 621,
+    "test": 607
+  },
+  "places_by_group": {
+    "nature": 307,
+    "religious": 354,
+    "historic": 148,
+    "museum_culture": 87,
+    "landmark": 183
+  },
+  "places_with_province": 525,
+  "places_with_article": {
+    "vi": 988,
+    "en": 360
+  },
+  "caption_languages": {
+    "en": 1487,
+    "vi": 1793,
+    "und": 656
+  },
+  "caption_source": {
+    "commons_file_description": 2922,
+    "commons_structured_caption": 667
+  },
+  "caption_words_median": 9,
+  "licenses_top": {
+    "CC BY-SA 3.0": 1092,
+    "CC BY-SA 4.0": 760,
+    "Public domain": 600,
+    "CC BY 2.0": 275,
+    "CC BY 3.0": 244,
+    "CC0": 233,
+    "CC BY 4.0": 205,
+    "CC BY-SA 2.0": 148,
+    "Attribution": 12,
+    "CC BY-SA 2.5": 8
+  },
+  "triples": 6035,
+  "relations": {
+    "instance_of": 1030,
+    "part_of": 79,
+    "located_in_admin": 667,
+    "heritage_designation": 40,
+    "architectural_style": 23,
+    "religion": 65,
+    "named_after": 17,
+    "located_in_province": 525,
+    "depicts": 3589
+  },
+  "funnels": {
+    "places": {
+      "candidates": 9310,
+      "viwiki_pages_without_qid": 193,
+      "drop_excluded_class": 1316,
+      "drop_class": 640,
+      "drop_no_label": 2,
+      "drop_not_vietnam": 5525,
+      "kept_class": 1827,
+      "with_province": 694,
+      "with_article_vi": 1725,
+      "with_article_en": 399
+    },
+    "media": {
+      "files_seen": 5901,
+      "drop_no_caption": 1031,
+      "drop_duplicate_file": 823,
+      "places_with_images": 1079,
+      "drop_title_pattern": 374,
+      "drop_mime": 30,
+      "drop_too_small": 51,
+      "images_kept": 3592
+    },
+    "download": {
+      "drop_identical_bytes": 3,
+      "images_downloaded": 3589
+    }
+  }
+}

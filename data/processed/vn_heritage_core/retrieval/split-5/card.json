@@ -1,0 +1,102 @@
+{
+  "entities": 849,
+  "gallery_places": 160,
+  "images": 772,
+  "claims": {
+    "train": 639,
+    "val": 118,
+    "test": 224
+  },
+  "article_edges": {
+    "generic": 902,
+    "kind": 902,
+    "section": 902,
+    "cue": 902
+  },
+  "relations": {
+    "claim": 18,
+    "generic": 1,
+    "kind": 10,
+    "section": 5,
+    "cue": 16
+  },
+  "asked_directions": [
+    "architectural_style/head",
+    "crosses/head",
+    "diocese/head",
+    "has_part/head",
+    "has_part/tail",
+    "heritage_criterion/head",
+    "heritage_designation/head",
+    "inception_century/head",
+    "instance_of/head",
+    "located_in_admin/head",
+    "located_in_province/head",
+    "location/head",
+    "location/tail",
+    "named_after/head",
+    "part_of/head",
+    "part_of/tail",
+    "religion/head",
+    "significant_event/head"
+  ],
+  "directions_too_small_or_unworded": [
+    "architect/head",
+    "architect/tail",
+    "architectural_style/tail",
+    "crosses/tail",
+    "dedicated_to/head",
+    "dedicated_to/tail",
+    "diocese/tail",
+    "heritage_criterion/tail",
+    "heritage_designation/tail",
+    "inception_century/tail",
+    "instance_of/tail",
+    "located_in_admin/tail",
+    "located_in_province/tail",
+    "made_from_material/head",
+    "made_from_material/tail",
+    "named_after/tail",
+    "religion/tail",
+    "significant_event/tail"
+  ],
+  "queries": {
+    "direct/test": 41,
+    "direct/train": 97,
+    "direct/val": 22,
+    "indirect/test": 145,
+    "indirect/train": 310,
+    "indirect/val": 94
+  },
+  "answers": {
+    "direct/test": 41,
+    "direct/train": 97,
+    "direct/val": 22,
+    "indirect/test": 193,
+    "indirect/train": 487,
+    "indirect/val": 104
+  },
+  "indirect_density": {
+    "test/dense": 36,
+    "test/medium": 46,
+    "test/sparse": 63,
+    "train/dense": 76,
+    "train/medium": 149,
+    "train/sparse": 85,
+    "val/dense": 28,
+    "val/medium": 23,
+    "val/sparse": 43
+  },
+  "indirect_hops": {
+    "test/2": 48,
+    "test/3": 41,
+    "test/none": 56,
+    "train/1": 31,
+    "train/2": 64,
+    "train/3": 36,
+    "train/none": 179,
+    "val/2": 36,
+    "val/3": 22,
+    "val/none": 36
+  }
+}

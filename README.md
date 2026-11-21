@@ -8,7 +8,7 @@ Cho một câu mô tả, hệ thống tìm ảnh khớp nhất. CLIP chọn ra c
 
 Điểm đồ thị lấy từ GraphSAGE: mạng này mã hoá đồ thị của mỗi ảnh thành một vector trong không gian CLIP.
 
-Phần dưới mô tả dataset thứ nhất (Visual Genome ∩ COCO). Dataset thứ hai là đồ thị tri thức MKG-W, tóm tắt ở mục [Kết quả trên MKG-W](#kết-quả-trên-mkg-w).
+Phần dưới mô tả dataset thứ nhất (Visual Genome ∩ COCO). Dataset thứ hai là đồ thị tri thức MKG-W, tóm tắt ở mục [Kết quả trên MKG-W](#kết-quả-trên-mkg-w). Dataset thứ ba là MMKG tự xây về di tích Việt Nam, ở mục [Kết quả trên VN Heritage](#kết-quả-trên-vn-heritage-mmkg-tự-xây).
 
 ## Kết quả cấp độ 1: GraphSAGE
 
@@ -296,6 +296,70 @@ Cách đọc bảng:
 
 Cách dựng dữ liệu, ablation, kết quả theo khoảng cách từ anchor, chi tiết AdaMF-MAT, giới hạn và lệnh chạy lại: [docs/mkg-w-results.md](docs/mkg-w-results.md).
 
+## Kết quả trên VN Heritage (MMKG tự xây)
+
+Dataset thứ ba, tự xây cho cấp độ 3: địa điểm và di tích Việt Nam, bản lõi gồm 160 địa điểm, 772 ảnh từ Wikimedia Commons, 981 claim Wikidata (18 quan hệ) và 902 cạnh rút từ bài Wikipedia tiếng Việt. Không có đồ thị cảnh: đồ thị là một KG dùng chung, ảnh nối vào KG qua cạnh "ảnh – mô tả – địa điểm". Có hai nhóm câu hỏi: trực tiếp (tên địa điểm) và gián tiếp (một claim Wikidata bị giấu, viết thành câu: "a heritage site located in Đà Lạt"). Sự kiện được hỏi trong câu test không có trong đồ thị train.
+
+Tập test, gallery 772 ảnh: một ảnh đúng khi nó chụp địa điểm trả lời, và một ảnh nhận điểm đồ thị của địa điểm nó mô tả. α và k chọn trên validation; đơn vị %; ± là độ lệch chuẩn qua 10 cách chia claim, mỗi cách chia là trung bình của 5 seed.
+
+| Phương pháp | Nhóm truy vấn | R@1 | R@5 | R@10 | MRR |
+|---|---|---|---|---|---|
+| CLIP ViT-B/32 | trực tiếp | 4,9 | 24,4 | 31,7 | 14,2 |
+| CLIP ViT-B/32 | gián tiếp | 6,7 ± 1,7 | 17,8 ± 2,7 | 25,1 ± 3,2 | 13,3 ± 1,8 |
+| **CLIP + GraphSAGE**, đồ thị Wikidata | trực tiếp | 5,9 ± 1,8 | 16,4 ± 6,7 | 24,3 ± 8,7 | 12,6 ± 3,1 |
+| **CLIP + GraphSAGE**, đồ thị Wikidata | gián tiếp | 8,6 ± 1,0 | 17,3 ± 2,8 | 24,4 ± 3,9 | 14,1 ± 1,5 |
+
+Cùng các vector thực thể, chấm trên gallery 160 địa điểm (điểm của địa điểm là điểm ảnh tốt nhất của nó):
+
+| Phương pháp | R@1 gián tiếp | R@10 gián tiếp | R@10 trực tiếp |
+|---|---|---|---|
+| CLIP ViT-B/32 | 6,7 ± 1,7 | 30,5 ± 3,8 | 34,2 |
+| CLIP + GraphSAGE, đồ thị Wikidata | 8,6 ± 0,9 | 35,8 ± 2,8 | 41,1 ± 3,7 |
+
+Cách đọc bảng:
+
+- **Chấm theo ảnh, đồ thị không vượt CLIP ở R@10** trên truy vấn gián tiếp: −0,7 ± 1,4 (4/6) điểm (trong ngoặc là số cách chia thắng/thua). Chấm theo địa điểm thì hơn CLIP +5,3 ± 1,1 (10/0) điểm.
+- R@1 gián tiếp tăng +1,9 ± 0,5 (8/2) điểm, nhưng bản bỏ hết cạnh cũng tăng ngang vậy (bảng ablation), nên phần này không đến từ cạnh.
+- CLIP gần như không biết các địa điểm này: gõ đúng tên chỉ đưa một ảnh đúng lên hạng 1 ở 4,9% truy vấn.
+- Vì sao hai cách chấm lệch nhau: mọi ảnh của một địa điểm nhận cùng điểm đồ thị, nên một địa điểm sai được đẩy lên kéo theo tất cả ảnh của nó. Đồ thị làm giảm số địa điểm sai đứng trên đáp án, nhưng mỗi địa điểm sai giờ mang theo nhiều ảnh hơn, nên số ảnh sai đứng trên lại tăng. Chấm theo địa điểm tương đương với việc trả về mỗi địa điểm một ảnh.
+- α chọn trên validation có trung vị 0,70; k là cả gallery ở 41/50 lần chạy; 4/50 lần chạy chọn α = 1, tức bỏ hẳn điểm đồ thị.
+
+### Ablation trên VN Heritage
+
+Cùng bộ phép can thiệp với cấp độ 1. Mỗi biến thể được huấn luyện lại trên 10 cách chia × 5 seed, α và k chọn riêng trên validation. Truy vấn gián tiếp, tập test. "So với bản đầy đủ" là chênh lệch ghép cặp bản đầy đủ − biến thể ± sai số chuẩn qua 10 cách chia, trong ngoặc là số cách chia thắng/thua.
+
+| Biến thể | R@1 theo ảnh | R@10 theo ảnh | R@10 so với CLIP | Đầy đủ − biến thể, R@10 theo ảnh | R@10 theo địa điểm | Đầy đủ − biến thể, R@10 theo địa điểm | R@10 theo địa điểm, chỉ dùng điểm đồ thị |
+|---|---|---|---|---|---|---|---|
+| Đầy đủ (đồ thị Wikidata) | 8,6 ± 1,0 | 24,4 ± 3,9 | −0,7 |  | 35,8 ± 2,8 |  | 32,4 |
+| Bỏ hết cạnh (`no_edges`) | 8,8 ± 0,8 | 23,3 ± 5,1 | −1,8 | +1,2 ± 1,8 (6/4) | 34,7 ± 2,4 | +1,1 ± 1,1 (7/3) | 31,7 |
+| Cạnh ngẫu nhiên (`claims_shuffled`) | 9,0 ± 1,0 | 21,7 ± 4,3 | −3,4 | +2,8 ± 1,5 (8/2) | 31,4 ± 2,5 | +4,4 ± 1,0 (9/1) | 27,5 |
+| Bỏ nhãn quan hệ (`claims_untyped`) | 8,4 ± 1,5 | 24,6 ± 3,1 | −0,5 | −0,2 ± 1,0 (5/4) | 34,8 ± 2,1 | +1,0 ± 0,4 (8/2) | 29,6 |
+| Không hướng (`claims_undirected`) | 8,7 ± 1,0 | 24,9 ± 4,0 | −0,2 | −0,5 ± 1,2 (4/6) | 36,8 ± 2,1 | −1,0 ± 0,8 (4/6) | 31,5 |
+
+- **Chỉ phép cạnh ngẫu nhiên tách được khỏi bản đầy đủ:** +2,8 ± 1,5 (8/2) điểm R@10 theo ảnh, +4,4 ± 1,0 (9/1) theo địa điểm. Việc "ai nối với ai" mang tín hiệu.
+- **Bỏ hết cạnh gần ngang bản đầy đủ:** +1,2 ± 1,8 (6/4) theo ảnh, +1,1 ± 1,1 (7/3) theo địa điểm, đều trong khoảng hai sai số chuẩn. Phần lớn kết quả đến từ vector tên của thực thể và việc huấn luyện trên truy vấn. Cấp độ 1 cũng cho thấy điều tương tự: danh sách vật thể gánh phần lớn, cạnh góp ít.
+- **Nhãn quan hệ và hướng cạnh gần như không được dùng:** theo ảnh, bỏ nhãn quan hệ −0,2 ± 1,0 (5/4), bỏ hướng −0,5 ± 1,2 (4/6). Theo địa điểm, bỏ nhãn quan hệ làm giảm nhẹ nhưng đều (+1,0 ± 0,4, 8/2); bỏ hướng thì không (−1,0 ± 0,8, 4/6).
+- **Cạnh sai gây hại:** cạnh ngẫu nhiên kém cả bản bỏ hết cạnh (21,7% so với 23,3% R@10 theo ảnh).
+- Sai số chuẩn lạc quan hơn thực tế vì 10 cách chia dùng chung 160 địa điểm và claim chồng lấn. Cột cuối chấm theo địa điểm vì trên gallery ảnh mọi ảnh của một địa điểm có cùng điểm đồ thị, nên chỉ dùng điểm đồ thị thì các ảnh hoà nhau.
+
+Thêm 902 cạnh rút từ bài Wikipedia vào đồ thị Wikidata, dưới bốn cách đặt tên quan hệ (gallery ảnh; cột thứ tư là chênh lệch ghép cặp so với đồ thị Wikidata):
+
+| Đồ thị | R@1 gián tiếp | R@10 gián tiếp | So với đồ thị Wikidata, R@10 | R@10 trực tiếp |
+|---|---|---|---|---|
+| Đồ thị Wikidata, không có cạnh từ bài | 8,6 ± 1,0 | 24,4 ± 3,9 | | 24,3 ± 8,7 |
+| + cạnh từ bài, `generic` | 8,4 ± 0,8 | 23,9 ± 4,9 | −0,5 ± 1,0 (3/7) | 25,7 ± 9,1 |
+| + cạnh từ bài, `cue` | 8,6 ± 1,0 | 24,5 ± 5,2 | +0,0 ± 1,3 (5/5) | 25,3 ± 9,1 |
+| + cạnh từ bài, `kind` | 8,6 ± 1,1 | 23,9 ± 4,3 | | 25,2 ± 7,2 |
+| + cạnh từ bài, `section` | 8,5 ± 0,9 | 23,5 ± 3,2 | | 24,2 ± 7,4 |
+| + cạnh từ bài, `cue`, cạnh ngẫu nhiên | 9,0 ± 1,2 | 21,9 ± 4,0 | | 24,9 ± 7,9 |
+
+- Thêm cạnh từ bài không đổi gì đo được trên truy vấn gián tiếp.
+- Bốn sơ đồ đặt tên không tách được nhau: chênh lệch nằm trong sai số chuẩn.
+- Mẫu 100 cạnh do mô hình ngôn ngữ chấm (chưa có người kiểm): đích và loại đích đúng 98/100, nhưng quan hệ đoán bằng từ khoá chỉ đúng 11/21.
+- Giới hạn: cạnh từ bài trùng cặp với một claim đã bị bỏ khi build, nên chưa thử vai trò "bài nhắc lại đúng sự kiện bị hỏi".
+
+Cách dựng dữ liệu, phép đếm ảnh chen nhau, mốc phụ AdaMF-MAT, phần chưa có và lệnh chạy lại: [docs/vn-heritage-results.md](docs/vn-heritage-results.md). Báo cáo về bộ dữ liệu (quy trình xây, cấu trúc đồ thị, rò rỉ, giấy phép): [plans/reports/vn-heritage-261120-0033-mmkg-report.html](plans/reports/vn-heritage-261120-0033-mmkg-report.html).
+
 ## Dữ liệu
 
 Phần giao của Visual Genome và COCO: ảnh và đồ thị cảnh lấy từ Visual Genome, câu truy vấn là caption COCO của cùng ảnh.
@@ -333,14 +397,14 @@ python -m scripts.train_graphsage                        # huấn luyện 3 seed
 python -m scripts.run_benchmark --method graphsage       # CLIP + GraphSAGE
 python -m scripts.explain_retrieval --sample 5           # kết quả kèm relation giải thích
 
-pytest                                                   # 398 test, không cần mạng
+pytest                                                   # 402 test, không cần mạng
 ```
 
 Lưu ý:
 
 - `embed_vg_coco` cần 10.000 file ảnh trong `data/processed/vg_coco/images/`. Ảnh (1,4 GB) không nằm trong repo. Script tải ảnh và xây dữ liệu (`scripts/build_vg_coco.py`) hiện cũng không nằm trong repo; các file JSON nó sinh ra (ảnh, truy vấn, đồ thị, split) thì có.
 - `train_graphsage` báo cáo lên Weights & Biases. Đổi `wandb.mode` trong `configs/retrieval/vg_coco.yaml` thành `offline` hoặc `disabled` nếu không dùng.
-- Lệnh cho MKG-W nằm ở [docs/mkg-w-results.md](docs/mkg-w-results.md#chạy-lại).
+- Lệnh cho MKG-W nằm ở [docs/mkg-w-results.md](docs/mkg-w-results.md#chạy-lại); lệnh cho VN Heritage ở [docs/vn-heritage-results.md](docs/vn-heritage-results.md#chạy-lại).
 - Biến thể đỉnh ảnh mang CLIP: `python -m scripts.train_graphsage --image-node clip_image`, rồi `python -m scripts.run_benchmark --method graphsage --run directed-clip_image-l3-h512`.
 
 Cấp độ 2 (AdaMF), mỗi seed khoảng 5 phút trên CPU:

@@ -78,3 +78,6 @@ data/processed/vg_coco_full/
 data/processed/vg_coco_kg/embeddings/
 data/processed/vg_coco_kg/images.json
 data/processed/vg_coco_kg/queries.json
+
+# Per-split CLIP embeddings; regenerate with scripts/run_vn_heritage_retrieval.py.
+data/processed/*/retrieval/embeddings/
