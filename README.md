@@ -45,7 +45,7 @@ File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng see
 
 ### Chưa có
 
-- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi và fidelity perturbation đã có (xem tài liệu bên dưới).
+- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi, fidelity và sparsity đã có ([kết quả](#kết-quả-đánh-giá-giải-thích-cấp-độ-3)), validity còn thiếu nhãn.
 - Backbone thứ hai (OpenCLIP) và tập dữ liệu công khai thứ hai.
 - Phân tích 5 truy vấn thành công và 5 truy vấn thất bại.
 
@@ -282,9 +282,32 @@ python -m scripts.train_graphsage --config configs/retrieval/ablations/objects_o
 python -m scripts.run_benchmark --method graphsage --config configs/retrieval/ablations/objects_only.yaml
 python -m scripts.analyze_ablation
 python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+python -m scripts.evaluate_explanation_quality
 ```
 
-Report giải thích tương tác là tài liệu local trong `private/`, không thuộc repository.
+### Kết quả đánh giá giải thích (cấp độ 3)
+
+Báo cáo có biểu đồ và đồ thị con của 10 truy vấn: [reports/explanation-quality/index.html](reports/explanation-quality/index.html) (mở bằng trình duyệt).
+
+Giải thích của một cặp truy vấn và ảnh là các relation làm điểm đồ thị giảm nhiều nhất khi bỏ riêng từng cái. Bảng dưới xoá đồng thời cả nhóm đó khỏi đồ thị của ảnh đứng đầu, giữ nguyên CLIP và điểm của mọi ảnh khác, rồi so với 20 nhóm ngẫu nhiên cùng số relation. 200 truy vấn test, trung bình 3 seed, lượt ngày 21/11 trên mô hình huấn luyện lại từ `configs/retrieval/ablations/full.yaml`.
+
+| Mức xoá | Mất vị trí đầu | Ngẫu nhiên | Điểm đồ thị giảm | Ngẫu nhiên | Sparsity | Giữ vị trí đầu khi chỉ giữ nhóm giải thích | Ngẫu nhiên |
+|---|---|---|---|---|---|---|---|
+| 10% | 18,23% | 4,66% | 0,0236 | 0,0022 | 79,58% | 91,83% | 81,06% |
+| 25% | 25,05% | 6,64% | 0,0327 | 0,0034 | 69,57% | 96,59% | 85,52% |
+
+- **Fidelity**: xoá nhóm giải thích làm ảnh mất vị trí đầu nhiều gấp khoảng 4 lần xoá ngẫu nhiên, và điểm đồ thị giảm nhiều gấp khoảng 10 lần.
+- **Sparsity**: giải thích gồm 2,1 (mức 10%) và 3,7 (mức 25%) trên trung bình 13,0 relation của ảnh. Mức 10% thực tế lấy khoảng 20% vì luôn lấy ít nhất hai relation.
+- **Validity**: chưa có nhãn cho lượt này. Bộ chấm đã xuất 20 truy vấn với 42 relation; form chấm ở `tools/validity-review/`.
+
+Đối chứng cho giới hạn "cách chọn tự chấm chính nó": chọn relation bằng GNNExplainer (mask học trên cạnh, không dùng phép xoá) rồi chạy cùng giao thức. Nhóm nó chọn vẫn vượt ngẫu nhiên (mất vị trí đầu 8,52% ở mức 10% và 12,78% ở mức 25%) nhưng yếu hơn cách bỏ từng relation. Chi tiết: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#gnnexplainer-làm-cách-chọn-độc-lập).
+
+```bash
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity_gnn_explainer.yaml
+python -m scripts.evaluate_explanation_quality --config configs/evaluation/explanation_quality_gnn_explainer.yaml
+```
+
+Report giải thích tương tác của lượt 18/11 là tài liệu local trong `private/`, không thuộc repository.
 
 Các output mới trong `runs/` và report local trong `private/` được Git-ignore.
 Những file lịch sử đã tracked trong `runs/` vẫn được Git theo dõi.
