@@ -8,7 +8,8 @@
   averaged over seeds from <runs_dir>/benchmark/*.json, plus relation-query accuracy;
 - train runs (role=train, id train-NN-sSEED): one per configuration and seed, the per-epoch
   <runs_dir>/<method>/<run>/seed<n>/history.json.
-Booleans s1..s5 in the config say which report section shows a run. Runs already uploaded
+Booleans s1..s5 and s2_mkg_w in the config say which report section shows a run; runs 23-28 are
+the graph ablation on the MKG-W caption subset, read from runs/mkg_w_captions. Runs already uploaded
 (same id, tag report-v1) are skipped, so the script can be re-run after adding entries.
 """
 
@@ -19,6 +20,7 @@ import logging
 import statistics
 import sys
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import wandb
@@ -32,7 +34,9 @@ log = logging.getLogger("upload_report_runs")
 
 DEFAULT_CONFIG = "configs/retrieval/vg_coco.yaml"
 TAG = "report-v1"
-SECTIONS = ("s1", "s2", "s3", "s4", "s5")
+SECTIONS = ("s1", "s2", "s3", "s4", "s5", "s2_mkg_w")
+# Results of the second dataset live under their own runs directory.
+MKG_W_RUNS_DIR = "runs/mkg_w_captions"
 ABLATION_REPORT = "plans/reports/ablation-261120-0650-relation-suite.md"
 METRICS = (("recall@1", "r1"), ("recall@5", "r5"), ("recall@10", "r10"), ("mrr", "mrr"))
 
@@ -48,6 +52,7 @@ class ReportRun:
     benchmark: str | None = None  # file stem under <runs_dir>/benchmark
     train_dir: str | None = None  # <method>/<run> under <runs_dir>, holding seed*/history.json
     extra: dict[str, Any] = field(default_factory=dict)  # numbers whose raw outputs are gone
+    runs_dir: str | None = None  # read from here instead of the config's runs_dir
 
 
 # Graph-only confuser acc@1 (%) on the relation queries, 5 seeds. The raw outputs of these runs
@@ -146,6 +151,25 @@ RUNS = (
     ReportRun(
         "22", "L2 + same-pair hard negatives", 2, ("s4",), "adamf_mat-adamf-d256-l2-hn4", "adamf_mat/adamf-d256-l2-hn4"
     ),
+    # Graph ablation on the MKG-W caption subset: summary runs only, no learning curves in the report.
+    ReportRun("23", "MKG-W subset: CLIP ViT-B/32 (zero-shot)", 1, ("s2_mkg_w",), "clip", runs_dir=MKG_W_RUNS_DIR),
+    *(
+        ReportRun(
+            number,
+            f"MKG-W subset: GraphSAGE {name}",
+            1,
+            ("s2_mkg_w",),
+            f"graphsage-directed-learned-l3-h512{suffix}",
+            runs_dir=MKG_W_RUNS_DIR,
+        )
+        for number, name, suffix in (
+            ("24", "(learned image node)", ""),
+            ("25", "ablation: objects only", "-objects_only-a0"),
+            ("26", "ablation: drop predicates", "-drop_predicates-a0"),
+            ("27", "ablation: random edges", "-random_edges-a0"),
+            ("28", "ablation: undirected", "-undirected-a0"),
+        )
+    ),
 )
 # Train runs that also appear in the learning-curve panels of sections 1 and 3.
 CURVES = {"s1": {"03", "04"}, "s3": {"04", "09", "10", "17", "19"}}
@@ -187,15 +211,16 @@ def upload(config: RetrievalConfig, entity: str, project: str) -> None:
     done = {r.id for r in api.runs(f"{entity}/{project}", filters={"tags": TAG})}
     for spec in RUNS:
         base = {"level": spec.level, "label": spec.label, "number": spec.number}
+        runs_dir = Path(spec.runs_dir) if spec.runs_dir else config.runs_dir
         if f"summary-{spec.number}" not in done:
             summary = (
-                benchmark_summary(read_json(config.runs_dir / "benchmark" / f"{spec.benchmark}.json"))
+                benchmark_summary(read_json(runs_dir / "benchmark" / f"{spec.benchmark}.json"))
                 if spec.benchmark
                 else {}
             )
             summary.update(spec.extra)
             summary.update(RELATION.get(spec.number, {}))
-            source = f"runs/benchmark/{spec.benchmark}.json" if spec.benchmark else ABLATION_REPORT
+            source = f"{runs_dir}/benchmark/{spec.benchmark}.json" if spec.benchmark else ABLATION_REPORT
             run = wandb.init(
                 entity=entity,
                 project=project,
@@ -211,9 +236,9 @@ def upload(config: RetrievalConfig, entity: str, project: str) -> None:
             log.info("uploaded summary %s", spec.number)
         if spec.train_dir is None:
             continue
-        seed_dirs = sorted((config.runs_dir / spec.train_dir).glob("seed*"))
+        seed_dirs = sorted((runs_dir / spec.train_dir).glob("seed*"))
         if not seed_dirs:
-            raise DataError(f"no seed directories under {config.runs_dir / spec.train_dir}")
+            raise DataError(f"no seed directories under {runs_dir / spec.train_dir}")
         for seed_dir in seed_dirs:
             seed = int(seed_dir.name.removeprefix("seed"))
             run_id = f"train-{spec.number}-s{seed}"
