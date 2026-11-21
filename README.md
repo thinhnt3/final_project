@@ -43,6 +43,24 @@ Cách đọc bảng:
 
 File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng seed: `runs/graphsage/<tên lượt chạy>/seed<n>/history.json`.
 
+### Ablation: bỏ cạnh và cạnh ngẫu nhiên
+
+Mỗi biến thể được huấn luyện lại 3 seed với cùng thiết lập, α và k chọn riêng trên validation (lượt ngày 18/11). Định nghĩa từng phép can thiệp: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#intervention-contract).
+
+| Biến thể | R@1 sau khi xếp hạng lại | So với CLIP (43,88%) | R@1 chỉ dùng điểm đồ thị |
+|---|---|---|---|
+| Đầy đủ | 48,12 ± 0,23% | +4,24 | 27,54 ± 0,50% |
+| Bỏ cạnh, chỉ giữ vật thể (`objects_only`) | 47,56 ± 0,16% | +3,67 | 26,16 ± 0,45% |
+| Cạnh ngẫu nhiên (`random_edges`) | 47,79 ± 0,18% | +3,91 | 27,38 ± 0,26% |
+| Bỏ nhãn vị từ (`drop_predicates`) | 48,06 ± 0,28% | +4,18 | 27,35 ± 0,49% |
+| Không hướng (`undirected`) | 47,84 ± 0,15% | +3,96 | 28,16 ± 0,58% |
+
+![Ablation cấp độ 1: R@1 tăng so với CLIP và R@1 chỉ dùng điểm đồ thị, theo từng biến thể](reports/ablation/level1-ablation.png)
+
+- Đồ thị nâng R@1 thêm 4,24 điểm so với CLIP, nhưng bỏ hết cạnh vẫn còn +3,67. Khoảng 0,6 điểm đến từ cạnh; phần còn lại đến từ danh sách vật thể trong ảnh.
+- Bản đầy đủ hơn bản bỏ cạnh 0,56 điểm, khoảng 95% [0,05; 1,06]. So với cạnh ngẫu nhiên, chênh 0,33 điểm với khoảng [−0,09; 0,74], chưa tách được khỏi 0. Các khoảng này lấy từ phân tích theo cặp trong tài liệu thiết kế.
+- Kết luận: trên caption COCO, vốn chủ yếu kể tên vật thể, cấu trúc quan hệ đóng góp ít. Bằng chứng mạnh hơn cho vai trò của cạnh nằm ở bộ truy vấn cần quan hệ của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
+
 ### Chưa có
 
 - Dataset thứ hai và ablation xử lý hub; ablation cốt lõi, fidelity và sparsity đã có ([kết quả](#kết-quả-đánh-giá-giải-thích-cấp-độ-3)), validity mới có nhãn AI, chưa có người chấm.
