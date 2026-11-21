@@ -1,0 +1,408 @@
+<title>Đồ thị tri thức có giúp truy hồi ảnh?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: một cột đọc ~70ch, bảng và biểu đồ tràn rộng hơn; màu theo vai trò: CLIP / tên thực thể (text) / cạnh quan hệ (structure). Cùng hệ với báo cáo VG ∩ COCO. */
+:root {
+  --bg: #f5f6f3;
+  --paper: #ffffff;
+  --ink: #1d2422;
+  --muted: #5d6763;
+  --line: #d9ddd8;
+  --img: #2f6fb3;      /* ảnh thực thể, CLIP image */
+  --txt: #7a4fb0;      /* tên thực thể, CLIP text */
+  --edge: #c26a12;     /* cạnh quan hệ, structure */
+  --clip: #8a938f;     /* mốc, đối chứng */
+  --good: #23795a;
+  --bad: #b23b3b;
+  --tint-edge: #fbefe2;
+  --tint-img: #e7f0fa;
+  --font-head: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151918; --paper: #1d2220; --ink: #e6ebe8; --muted: #a0aaa5; --line: #333a37;
+  --img: #6ea8e6; --txt: #b493e0; --edge: #f0a04b; --clip: #8d9792; --good: #5cc79b; --bad: #ec7b7b;
+  --tint-edge: #34281b; --tint-img: #1d2a38; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151918; --paper: #1d2220; --ink: #e6ebe8; --muted: #a0aaa5; --line: #333a37;
+  --img: #6ea8e6; --txt: #b493e0; --edge: #f0a04b; --clip: #8d9792; --good: #5cc79b; --bad: #ec7b7b;
+  --tint-edge: #34281b; --tint-img: #1d2a38; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 980px; margin: 0 auto; padding-block: 40px 80px; display: grid; gap: 56px }
+h1, h2, h3 { font-family: var(--font-head); text-wrap: balance; margin: 0; line-height: 1.25 }
+h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700 }
+h2 { font-size: 1.5rem; font-weight: 700 }
+h3 { font-size: 1.05rem; font-weight: 600 }
+p { margin: 0; max-width: 70ch }
+ul { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; max-width: 70ch }
+.eyebrow { font: 600 .75rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+section { display: grid; gap: 18px; min-width: 0 }
+.lede { font-size: 1.1rem; color: var(--muted) }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums }
+.k-img { color: var(--img); font-weight: 600 } .k-txt { color: var(--txt); font-weight: 600 } .k-edge { color: var(--edge); font-weight: 600 }
+
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-width: 0 }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px }
+.answer { border-left: 4px solid var(--edge); background: var(--tint-edge); padding: 14px 18px; border-radius: 0 8px 8px 0 }
+.answer p { max-width: none }
+
+.diagram { overflow-x: auto }
+.diagram svg { display: block; width: 100%; min-width: 560px; height: auto }
+.diagram text { font-family: var(--font-body); fill: var(--ink) }
+
+.bars { display: grid; gap: 10px }
+.bar { display: grid; grid-template-columns: minmax(150px, 250px) 1fr 64px; gap: 12px; align-items: center }
+.bar .lab { font-size: .9rem; min-width: 0 }
+.bar .lab small { display: block; color: var(--muted); font-size: .78rem }
+.track { position: relative; height: 22px; background: color-mix(in srgb, var(--line) 45%, transparent); border-radius: 4px }
+.fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px }
+.val { font: 600 .9rem var(--font-mono); text-align: right; font-variant-numeric: tabular-nums }
+.axis { display: grid; grid-template-columns: minmax(150px, 250px) 1fr 64px; gap: 12px }
+.ticks { position: relative; height: 18px; font: .72rem var(--font-mono); color: var(--muted) }
+.ticks span { position: absolute; transform: translateX(-50%) }
+.chance { position: absolute; top: -4px; bottom: -4px; border-left: 2px dotted var(--muted) }
+
+.gsvg .n rect { fill: var(--paper); stroke: var(--txt); stroke-width: 1.5; transition: fill .25s }
+.gsvg .n.anchor rect { stroke: var(--edge); stroke-width: 3 }
+.gsvg .n.ans rect { stroke: var(--img); stroke-width: 3 }
+.gsvg .n.lit rect { fill: var(--tint-edge) }
+.gsvg .n.ans.lit rect { fill: var(--tint-img) }
+.gsvg .e { stroke: var(--line); stroke-width: 2; fill: none; transition: stroke .25s, stroke-width .25s, opacity .25s }
+.gsvg .e.on { stroke: var(--edge) }
+.gsvg .e.strong { stroke: var(--edge); stroke-width: 6 }
+.gsvg .e.weak { opacity: .35; stroke-width: 1 }
+.gsvg .el { font-size: 11px; fill: var(--muted) }
+.gsvg .el.on { fill: var(--edge); font-weight: 600 }
+.hl { background: var(--tint-edge); border-bottom: 2px solid var(--edge); padding: 0 3px; border-radius: 3px }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px }
+.step { border-top: 3px solid var(--edge); padding-top: 8px; font-size: .93rem }
+.step b { display: block }
+.toggle { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--paper) }
+.toggle button { font: 500 .88rem var(--font-body); border: 0; background: none; color: var(--ink); padding: 8px 14px; cursor: pointer }
+.toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper) }
+.toggle button:focus-visible { outline: 2px solid var(--edge); outline-offset: -2px }
+.query { font: 600 1.05rem var(--font-mono); padding: 10px 14px; border: 1px dashed var(--line); border-radius: 8px; background: var(--paper) }
+.mask-note { font-size: .85rem; color: var(--muted) }
+.formula { font-family: var(--font-mono); font-size: .88rem; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 8px; overflow-x: auto; white-space: nowrap; display: grid; gap: 6px }
+
+.limits { display: grid; gap: 12px }
+.limit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--paper) }
+.limit > div { padding: 14px 16px; display: grid; gap: 6px; align-content: start }
+.limit > div + div { border-left: 1px solid var(--line); background: color-mix(in srgb, var(--tint-edge) 55%, var(--paper)) }
+.limit p { font-size: .93rem }
+.limit .what { font-weight: 600 }
+.limit .who { font: 600 .72rem var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--edge) }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600 }
+table { border-collapse: collapse; width: 100%; font-size: .9rem }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top }
+th { font: 600 .75rem var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted) }
+td.n, th.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap }
+.tablewrap { overflow-x: auto }
+.ok { color: var(--good); font-weight: 600 } .no { color: var(--bad); font-weight: 600 }
+
+@media (max-width: 620px) {
+  .bar, .axis { grid-template-columns: 1fr 56px }
+  .bar .lab { grid-column: 1 / -1 }
+  .axis > :first-child { display: none }
+  .limit { grid-template-columns: 1fr }
+  .limit > div + div { border-left: 0; border-top: 1px solid var(--line) }
+}
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 12px }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0 }
+.card .tag { font: 600 .72rem var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted) }
+.card .q { font: 500 .9rem/1.45 var(--font-mono); overflow-wrap: anywhere }
+.card .a { font-size: .9rem; color: var(--img); font-weight: 600 }
+.card p { font-size: .88rem; color: var(--muted) }
+.big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px }
+.stat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px }
+.stat b { font: 700 1.9rem/1.1 var(--font-mono); font-variant-numeric: tabular-nums }
+.stat span { font-size: .85rem; color: var(--muted) }
+.stat.hi { border-color: var(--edge); background: var(--tint-edge) }
+.verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px }
+.verdict .panel { display: grid; gap: 10px; align-content: start }
+.verdict li { font-size: .95rem }
+</style>
+
+<main>
+
+<header style="display:grid;gap:14px">
+  <div class="eyebrow">MKG-W · CLIP ViT-B/32 · gallery 9.301 thực thể có ảnh · 3 seed</div>
+  <h1>Đồ thị tri thức giúp truy hồi ảnh khi nào?</h1>
+  <p class="lede">Khi câu hỏi nhắc tới một thực thể và mô hình biết bắt đầu từ thực thể đó. Thực thể ấy gọi là anchor entity.</p>
+  <div class="big">
+    <div class="stat"><b>0,027</b><span>CLIP (zero-shot)</span></div>
+    <div class="stat"><b>0,058</b><span>GraphSAGE, không biết anchor</span></div>
+    <div class="stat"><b>0,248</b><span>AdaMF-MAT (2024), biết anchor và quan hệ</span></div>
+    <div class="stat hi"><b>0,274</b><span>Relation path scorer, biết anchor</span></div>
+  </div>
+  <p class="mask-note">R@1 trên indirect queries của tập test, sau khi rerank cùng CLIP. R@1 = tỉ lệ câu hỏi có đáp án đúng đứng đầu.</p>
+</header>
+
+<!-- 1. Các loại câu hỏi -->
+<section>
+  <div class="eyebrow">Dữ liệu</div>
+  <h2>Bốn loại câu hỏi</h2>
+  <p>Mỗi câu hỏi là một câu chữ; đáp án là một thực thể có ảnh. Phần tô màu là <span class="k-edge">anchor entity</span>.</p>
+  <div class="cards">
+    <div class="card"><span class="tag">Direct · 2.710</span><div class="q">Snoop Dogg</div><div class="a">→ Snoop Dogg</div><p>Nêu thẳng tên hoặc mô tả đáp án. Không cần đồ thị.</p></div>
+    <div class="card"><span class="tag">Indirect · 2.626</span><div class="q">the performer of <span class="hl">Doggfather</span></div><div class="a">→ Snoop Dogg</div><p>Một triple viết thành câu theo mẫu. Triple đó không có trong đồ thị train.</p></div>
+    <div class="card"><span class="tag">Chain · 3.943</span><div class="q">a film written by the director of <span class="hl">Scream 3</span></div><div class="a">→ Swamp Thing</div><p>Hai triple nối nhau. Thực thể ở giữa (Wes Craven) không được nêu tên.</p></div>
+    <div class="card"><span class="tag">Viết tay · 30</span><div class="q">Who was the cinematographer on M. Night Shyamalan’s <span class="hl">Signs</span>?</div><div class="a">→ Tak Fujimoto</div><p>Câu tự nhiên do người viết, đáp án kiểm tra bằng triple.</p></div>
+  </div>
+  <p class="mask-note">Con số sau tên loại là số cặp (câu hỏi, đáp án) trong tập test. Chain và viết tay được thêm sau để kiểm tra lại kết quả trên indirect.</p>
+</section>
+
+<!-- 2. Cách làm -->
+<section>
+  <div class="eyebrow">Cách làm</div>
+  <h2>Lan điểm từ anchor entity</h2>
+  <div class="query">the performer of <span class="hl">Doggfather</span></div>
+  <div class="panel" style="display:grid;gap:14px">
+    <div class="toggle" role="group" aria-label="Chọn bước lan điểm">
+      <button type="button" data-s="0" aria-pressed="true">Bắt đầu</button>
+      <button type="button" data-s="1" aria-pressed="false">1 hop</button>
+      <button type="button" data-s="2" aria-pressed="false">2 hop</button>
+      <button type="button" data-s="3" aria-pressed="false">Có trọng số quan hệ</button>
+    </div>
+    <div class="diagram">
+      <svg class="gsvg" id="g" viewBox="0 0 800 300" role="img" aria-label="Đồ thị quanh Doggfather: follows tới Vapors, Vapors performer Snoop Dogg; các cạnh genre và record label dẫn tới thực thể khác">
+        <path class="e" data-e="a-v" d="M170 165 L330 80"/>
+        <path class="e" data-e="a-h" d="M170 165 L330 165"/>
+        <path class="e" data-e="a-l" d="M170 165 L330 250"/>
+        <path class="e" data-e="v-s" d="M470 80 L630 80"/>
+        <path class="e" data-e="h-x" d="M470 165 L630 165"/>
+        <path class="e" data-e="l-y" d="M470 250 L630 250"/>
+        <text class="el" data-e="a-v" x="235" y="108">follows</text>
+        <text class="el" data-e="a-h" x="232" y="158">genre</text>
+        <text class="el" data-e="a-l" x="215" y="232">record label</text>
+        <text class="el" data-e="v-s" x="520" y="72">performer</text>
+        <text class="el" data-e="h-x" x="530" y="158">genre</text>
+        <text class="el" data-e="l-y" x="515" y="242">record label</text>
+        <g class="n anchor" data-n="a"><rect x="30" y="143" width="140" height="44" rx="22"/><text x="100" y="170" text-anchor="middle">Doggfather</text></g>
+        <g class="n" data-n="v"><rect x="330" y="58" width="140" height="44" rx="22"/><text x="400" y="85" text-anchor="middle">Vapors (song)</text></g>
+        <g class="n" data-n="h"><rect x="330" y="143" width="140" height="44" rx="22"/><text x="400" y="170" text-anchor="middle">hip hop</text></g>
+        <g class="n" data-n="l"><rect x="330" y="228" width="140" height="44" rx="22"/><text x="400" y="255" text-anchor="middle">hãng đĩa</text></g>
+        <g class="n ans" data-n="s"><rect x="630" y="58" width="140" height="44" rx="22"/><text x="700" y="85" text-anchor="middle">Snoop Dogg</text></g>
+        <g class="n" data-n="x"><rect x="630" y="143" width="140" height="44" rx="22"/><text x="700" y="170" text-anchor="middle">hàng trăm bài khác</text></g>
+        <g class="n" data-n="y"><rect x="630" y="228" width="140" height="44" rx="22"/><text x="700" y="255" text-anchor="middle">nghệ sĩ khác</text></g>
+        <text x="100" y="130" text-anchor="middle" style="font-size:12px;fill:var(--edge);font-weight:600">anchor entity</text>
+        <text x="700" y="45" text-anchor="middle" style="font-size:12px;fill:var(--img);font-weight:600">đáp án · có ảnh</text>
+      </svg>
+    </div>
+    <p id="gnote" style="max-width:none"></p>
+    <p class="mask-note">Đường follows → performer là thật trong MKG-W; các nút genre và hãng đĩa là minh hoạ cho hướng đi sai. Cạnh “Doggfather performer Snoop Dogg” thuộc tập test, không có trong đồ thị train.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><b>Path score</b>Mọi cạnh nặng như nhau. Không cần train.</div>
+    <div class="step"><b>Relation path scorer</b>Đọc câu hỏi để biết nên đi theo quan hệ nào ở từng hop.</div>
+    <div class="step"><b>Rerank cùng CLIP</b>Điểm cuối = α·CLIP + (1−α)·graph score, α chọn trên validation.</div>
+  </div>
+</section>
+
+<!-- 3. Kết quả chính -->
+<section>
+  <div class="eyebrow">Kết quả chính</div>
+  <h2>Indirect queries: biết anchor thì tăng 10 lần</h2>
+  <p>Ba mô hình biết anchor đều vượt xa GraphSAGE. Relation path scorer cao nhất ở R@1; AdaMF-MAT cao nhất ở R@10 (0,525 so với 0,460).</p>
+  <div class="panel" style="display:grid;gap:14px">
+    <div class="bars" id="main"></div>
+    <div class="axis"><div></div><div class="ticks" id="mainTicks"></div><div></div></div>
+    <p class="mask-note">R@1 test sau rerank, 2.626 cặp, trung bình 3 seed. Đường chấm = CLIP 0,027. Shuffled edges = giữ nguyên số cạnh nhưng nối sai chỗ; mô hình rơi về mức CLIP, nên phần tăng đến từ cạnh thật.</p>
+  </div>
+  <div class="panel" style="display:grid;gap:14px">
+    <h3>Càng xa anchor càng khó</h3>
+    <div class="toggle" role="group" aria-label="Chọn nhóm hop">
+      <button type="button" data-h="h1" aria-pressed="true">1 hop · 597</button>
+      <button type="button" data-h="h2" aria-pressed="false">2 hop · 311</button>
+      <button type="button" data-h="h3" aria-pressed="false">3 hop · 1.128</button>
+      <button type="button" data-h="far" aria-pressed="false">&gt; 3 hop · 590</button>
+    </div>
+    <div class="bars" id="hop"></div>
+    <p class="mask-note" id="hopNote"></p>
+  </div>
+</section>
+
+<!-- 4. Kiểm tra lại -->
+<section>
+  <div class="eyebrow">Kiểm tra lại</div>
+  <h2>Con số 0,274 có ba trợ giúp. Bỏ đi thì sao?</h2>
+  <div class="steps">
+    <div class="step"><b>Trợ giúp 1 · anchor từ nhãn</b>Mô hình được cho biết anchor, không phải tự tìm trong câu.</div>
+    <div class="step"><b>Trợ giúp 2 · biết loại câu hỏi</b>Graph score chỉ áp dụng cho indirect; direct để nguyên CLIP.</div>
+    <div class="step"><b>Trợ giúp 3 · câu theo mẫu</b>Mỗi câu là đúng một triple, tên quan hệ gần như nguyên văn.</div>
+  </div>
+  <div class="panel" style="display:grid;gap:14px">
+    <h3>Relation path scorer trên từng bộ câu hỏi</h3>
+    <div class="toggle" role="group" aria-label="Chọn bộ câu hỏi">
+      <button type="button" data-t="ind" aria-pressed="true">Indirect</button>
+      <button type="button" data-t="dir" aria-pressed="false">Direct</button>
+      <button type="button" data-t="all" aria-pressed="false">Cả test</button>
+      <button type="button" data-t="chain" aria-pressed="false">Chain</button>
+      <button type="button" data-t="hand" aria-pressed="false">Viết tay</button>
+    </div>
+    <div class="bars" id="chk"></div>
+    <p id="chkNote" style="max-width:none"></p>
+    <p class="mask-note">R@1 test sau rerank. Trục từ 0 đến 0,9, giữ nguyên giữa các bộ. “Tự tìm” = so khớp tên thực thể trong câu. Dòng cuối chọn lại α và mức điểm của anchor trên validation; ba dòng trên không chọn lại gì.</p>
+  </div>
+  <div class="limits">
+    <div class="limit">
+      <div><span class="what">Bỏ trợ giúp 1 và 2</span><p>Tự tìm anchor cho mọi câu, kể cả direct.</p></div>
+      <div><span class="who">Phải chọn một trong hai</span><p>Giữ indirect 0,274 thì direct sụp còn 0,112. Cứu direct lên 0,880 thì indirect còn 0,107. Chưa có cấu hình nào giữ được cả hai.</p></div>
+    </div>
+    <div class="limit">
+      <div><span class="what">Bỏ trợ giúp 3 · chain</span><p>Câu hỏi cần hai triple nối nhau.</p></div>
+      <div><span class="who">Gần như không giải được</span><p>R@1 0,039. Đáp án vào được top 10 ở 34% số câu nhưng không lên đầu.</p></div>
+    </div>
+    <div class="limit">
+      <div><span class="what">Bỏ trợ giúp 3 · viết tay</span><p>30 câu tự nhiên: 14 câu một triple, 9 chain, 7 giao hai điều kiện.</p></div>
+      <div><span class="who">Đồ thị vẫn giúp, nếu biết anchor</span><p>0,200 so với 0,000 của CLIP. Tự tìm anchor chỉ đúng 60% vì người viết “Signs” còn dataset ghi “Signs (film)”. Chain: 0 trên 9 câu.</p></div>
+    </div>
+  </div>
+  <p class="mask-note">Bộ viết tay chỉ 30 câu, mỗi câu đổi 3,3 điểm phần trăm: đọc như phép kiểm tra, không phải ước lượng chính xác.</p>
+</section>
+
+<!-- 5. AdaMF-MAT -->
+<section>
+  <div class="eyebrow">Phương pháp 2024</div>
+  <h2>AdaMF-MAT: tái lập được, chưa hơn relation path scorer ở R@1</h2>
+  <p>AdaMF-MAT (COLING 2024) là mô hình hoàn thiện đồ thị tri thức đa phương thức; MKG-W là benchmark của chính bài báo. Bản cài đặt được đối chiếu với bài báo trên link prediction trước khi dùng cho truy hồi.</p>
+  <div class="big">
+    <div class="stat"><b>35,85</b><span>MRR link prediction trong bài báo</span></div>
+    <div class="stat"><b>34,58</b><span>MRR của bản cài đặt, 3 seed (± 0,07)</span></div>
+    <div class="stat"><b>0,248</b><span>Indirect R@1 (± 0,004)</span></div>
+    <div class="stat"><b>0,525</b><span>Indirect R@10, cao nhất trong các mô hình</span></div>
+  </div>
+  <div class="limits">
+    <div class="limit">
+      <div><span class="what">Được cho nhiều hơn</span><p>AdaMF-MAT nhận cả anchor lẫn quan hệ của câu hỏi từ nhãn. Relation path scorer chỉ nhận anchor và tự suy quan hệ từ câu chữ.</p></div>
+      <div><span class="who">Vẫn thấp hơn ở R@1</span><p>0,248 so với 0,274. Kém nhất ở nhóm 1 hop (0,653 so với 0,831); nhỉnh hơn ở 2 hop, 3 hop và nhóm ngoài tầm.</p></div>
+    </div>
+    <div class="limit">
+      <div><span class="what">Khác bài báo</span><p>Đặc trưng CLIP đóng băng thay cho BEiT và sentence-BERT; learning rate 1e-3, tối đa 200 epoch trên CPU.</p></div>
+      <div><span class="who">Còn đang chạy</span><p>Các ablation của bài báo và đối chứng xáo cạnh chưa đủ 3 seed.</p></div>
+    </div>
+    <div class="limit">
+      <div><span class="what">Ảnh và văn bản có giúp không</span><p>So với RotatE chỉ cấu trúc, cùng cài đặt, 3 seed.</p></div>
+      <div><span class="who">Giúp R@10, không giúp R@1</span><p>Link prediction: MRR 29,96 lên 34,58. Truy hồi gián tiếp: R@10 0,438 lên 0,525, nhưng R@1 0,262 xuống 0,248.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Kết luận -->
+<section>
+  <div class="eyebrow">Tóm lại</div>
+  <h2>Điều gì đứng vững, điều gì chưa</h2>
+  <div class="verdict">
+    <div class="panel">
+      <h3 class="ok">Đứng vững</h3>
+      <ul>
+        <li>Biết anchor thì đồ thị giúp: 0,027 → 0,274 trên indirect.</li>
+        <li>AdaMF-MAT tái lập sát bài báo (MRR 34,58 so với 35,85) và cũng cần anchor mới dùng được cho truy hồi.</li>
+        <li>Phần tăng đến từ cạnh thật: xáo cạnh thì về mức CLIP.</li>
+        <li>GraphSAGE không biết anchor gần như không dùng được cạnh (0,058; xáo cạnh 0,050).</li>
+        <li>Trên câu viết tay, biết anchor vẫn hơn CLIP (0,200 so với 0,000).</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3 class="no">Chưa đứng vững</h3>
+      <ul>
+        <li>Anchor đang lấy từ nhãn. Tự tìm trong câu tự nhiên chỉ đúng 60%.</li>
+        <li>Hệ thống phải biết trước câu nào là indirect; bỏ đi thì mất hoặc direct hoặc indirect.</li>
+        <li>Câu cần hai triple (chain) gần như không giải được.</li>
+        <li>Xa quá 3 hop (22% số cặp) thì đồ thị không giúp.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="mask-note">Nguồn số liệu: <span class="mono">runs/mkg_w/**/benchmark.json</span>. Câu viết tay: <span class="mono">data/splits/mkg_w_handwritten_queries.yaml</span>.</p>
+</section>
+
+</main>
+
+<script>
+(function () {
+  function fmt(v, d) { return v.toFixed(d).replace('.', ','); }
+  function drawBars(id, ticksId, rows, lo, hi, ticks, chance) {
+    var box = document.getElementById(id), tk = ticksId && document.getElementById(ticksId);
+    var pos = function (v) { return ((v - lo) / (hi - lo) * 100).toFixed(2) + '%'; };
+    box.innerHTML = '';
+    rows.forEach(function (r) {
+      var el = document.createElement('div'); el.className = 'bar';
+      var ch = chance != null ? '<span class="chance" style="left:' + pos(chance) + '"></span>' : '';
+      el.innerHTML = '<div class="lab">' + r.label + (r.note ? '<small>' + r.note + '</small>' : '') + '</div>' +
+        '<div class="track"><span class="fill" style="width:' + pos(r.v) + ';background:' + r.color + '"></span>' + ch + '</div>' +
+        '<div class="val">' + fmt(r.v, 3) + '</div>';
+      box.appendChild(el);
+    });
+    if (tk) ticks.forEach(function (t) { var s = document.createElement('span'); s.style.left = pos(t); s.textContent = fmt(t, 2); tk.appendChild(s); });
+  }
+  drawBars('main', 'mainTicks', [
+    { label: 'CLIP (zero-shot)', note: 'không đồ thị', v: 0.0270, color: 'var(--clip)' },
+    { label: 'GraphSAGE, real graph', note: 'không biết anchor', v: 0.0581, color: 'var(--txt)' },
+    { label: 'Path score (training-free)', note: 'biết anchor · không train', v: 0.1561, color: 'var(--edge)' },
+    { label: 'AdaMF-MAT (2024)', note: 'biết anchor và quan hệ', v: 0.2477, color: 'var(--img)' },
+    { label: 'Relation path scorer', note: 'biết anchor · học trọng số quan hệ', v: 0.2744, color: 'var(--edge)' },
+    { label: 'Relation path scorer, shuffled edges', note: 'control', v: 0.0275, color: 'var(--clip)' }
+  ], 0, 0.30, [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30], 0.0270);
+
+  var H = {
+    h1: { v: [0.0352, 0.0988, 0.5913, 0.6533, 0.8314], note: 'Đáp án nối thẳng với anchor bằng một cạnh khác.' },
+    h2: { v: [0.0547, 0.0911, 0.1061, 0.3408, 0.3183], note: 'Như ví dụ Doggfather: follows → performer.' },
+    h3: { v: [0.0177, 0.0381, 0.0124, 0.1149, 0.1040], note: 'Path score không train thấp hơn cả CLIP vì quá nhiều đường đi ngẫu nhiên qua đỉnh bậc cao; trọng số quan hệ lọc bớt chúng.' },
+    far: { v: [0.0220, 0.0379, 0.0169, 0.0418, 0.0136], note: 'Không có đường đi trong 3 hop: hai mô hình lan điểm không giúp được. AdaMF-MAT không bị giới hạn hop nên nhỉnh hơn một chút.' }
+  };
+  var labels = [['CLIP (zero-shot)', 'var(--clip)'], ['GraphSAGE, real graph', 'var(--txt)'], ['Path score (training-free)', 'var(--edge)'], ['AdaMF-MAT (2024)', 'var(--img)'], ['Relation path scorer', 'var(--edge)']];
+  var hb = document.querySelectorAll('[data-h]'), hn = document.getElementById('hopNote');
+  function showHop(k) {
+    drawBars('hop', null, labels.map(function (l, i) { return { label: l[0], v: H[k].v[i], color: l[1] }; }), 0, 0.9, []);
+    hn.textContent = H[k].note + ' Trục từ 0 đến 0,9, giữ nguyên giữa các nhóm.';
+    hb.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.h === k)); });
+  }
+  hb.forEach(function (b) { b.addEventListener('click', function () { showHop(b.dataset.h); }); });
+  showHop('h1');
+
+  var T = {
+    ind: { v: [0.027, 0.274, 0.274, 0.107], note: 'Câu theo mẫu chứa nguyên tên thực thể nên tự tìm anchor đúng 100%. Cho chính anchor được điểm thì nó chen lên đầu, indirect tụt.' },
+    dir: { v: [0.525, 0.525, 0.112, 0.880], note: 'Câu chỉ nêu tên cũng bị coi là có anchor: điểm bị đẩy sang hàng xóm của chính đáp án. Cho anchor được điểm thì thành khớp tên, name queries đạt 0,999.' },
+    all: { v: [0.280, 0.402, 0.192, 0.499], note: 'Gộp direct và indirect. Mức 0,499 cao nhất, nhưng phần tăng đến từ khớp tên chứ không từ đồ thị.' },
+    chain: { v: [0.010, 0.039, 0.039, 0.016], note: 'Hai triple nối nhau, triple sau không có trong đồ thị. Mọi cấu hình đều gần 0.' },
+    hand: { v: [0.000, 0.200, 0.067, 0.000], note: '30 câu tự nhiên, đều là indirect. Biết anchor: 6 trên 30 câu đúng ngay vị trí đầu.' }
+  };
+  var tl = [['CLIP (zero-shot)', 'không đồ thị', 'var(--clip)'], ['Anchor từ nhãn', 'đủ ba trợ giúp', 'var(--edge)'], ['Anchor tự tìm', 'bỏ trợ giúp 1 và 2', 'var(--txt)'], ['Tự tìm, anchor cũng được điểm', 'bỏ trợ giúp 1 và 2, chọn lại trên validation', 'var(--img)']];
+  var tb = document.querySelectorAll('[data-t]'), tn = document.getElementById('chkNote');
+  function showSet(k) {
+    drawBars('chk', null, tl.map(function (l, i) { return { label: l[0], note: l[1], v: T[k].v[i], color: l[2] }; }), 0, 0.9, []);
+    tn.textContent = T[k].note;
+    tb.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.t === k)); });
+  }
+  tb.forEach(function (b) { b.addEventListener('click', function () { showSet(b.dataset.t); }); });
+  showSet('ind');
+
+  var S = [
+    { lit: ['a'], on: [], strong: [], weak: [], note: 'Đặt 1 điểm lên anchor entity. Các thực thể khác bằng 0.' },
+    { lit: ['a', 'v', 'h', 'l'], on: ['a-v', 'a-h', 'a-l'], strong: [], weak: [], note: 'Sau 1 hop: điểm chia đều sang ba hàng xóm của anchor. Chưa tới đáp án.' },
+    { lit: ['a', 'v', 'h', 'l', 's', 'x', 'y'], on: ['a-v', 'a-h', 'a-l', 'v-s', 'h-x', 'l-y'], strong: [], weak: [], note: 'Sau 2 hop: điểm tới Snoop Dogg, nhưng cũng tới hàng trăm bài cùng thể loại. Đây là path score (training-free): đáp án có điểm nhưng chưa chắc đứng đầu.' },
+    { lit: ['a', 'v', 's'], on: [], strong: ['a-v', 'v-s'], weak: ['a-h', 'a-l', 'h-x', 'l-y'], note: 'Relation path scorer: câu hỏi về “performer” nên cạnh follows và performer được trọng số lớn, cạnh genre và record label gần 0. Điểm dồn về Snoop Dogg.' }
+  ];
+  var g = document.getElementById('g'), gn = document.getElementById('gnote'), sb = document.querySelectorAll('[data-s]');
+  function showStep(i) {
+    var st = S[i];
+    g.querySelectorAll('.n').forEach(function (n) { n.classList.toggle('lit', st.lit.indexOf(n.dataset.n) >= 0); });
+    g.querySelectorAll('[data-e]').forEach(function (e) {
+      var k = e.dataset.e, hot = st.on.indexOf(k) >= 0 || st.strong.indexOf(k) >= 0;
+      e.classList.toggle('on', hot);
+      if (e.classList.contains('e')) { e.classList.toggle('strong', st.strong.indexOf(k) >= 0); e.classList.toggle('weak', st.weak.indexOf(k) >= 0); }
+    });
+    gn.textContent = st.note;
+    sb.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.s === String(i))); });
+  }
+  sb.forEach(function (b) { b.addEventListener('click', function () { showStep(+b.dataset.s); }); });
+  showStep(2);
+})();
+</script>

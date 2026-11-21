@@ -1,0 +1,529 @@
+<title>Nhật ký chọn MKG-W</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: một cột nhật ký hẹp (~68ch), mỗi mục là một đoạn ghi chép; ví dụ đặt trong khung, bộ ba vẽ bằng chip nối mũi tên. */
+:root {
+  --bg: #f6f8f9;
+  --surface: #ffffff;
+  --fg: #17232b;
+  --muted: #56666f;
+  --line: #d5dde1;
+  --accent: #0d6b7a;        /* thực thể, đỉnh */
+  --accent-soft: #dff0f2;
+  --edge: #a85a00;          /* quan hệ, cạnh */
+  --edge-soft: #fbecd6;
+  --warn: #a13a2c;
+  --warn-soft: #fbe6e2;
+  --ok: #2b6b3c;
+  --ok-soft: #e1f1e4;
+  --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "Space Grotesk", "Be Vietnam Pro", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10181c; --surface: #18232a; --fg: #e4ecef; --muted: #9db0b9; --line: #2c3b44;
+    --accent: #6cc7d4; --accent-soft: #173840; --edge: #f0b060; --edge-soft: #3d2d14;
+    --warn: #f09a8b; --warn-soft: #40211c; --ok: #8fd3a0; --ok-soft: #1b3a24;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10181c; --surface: #18232a; --fg: #e4ecef; --muted: #9db0b9; --line: #2c3b44;
+  --accent: #6cc7d4; --accent-soft: #173840; --edge: #f0b060; --edge-soft: #3d2d14;
+  --warn: #f09a8b; --warn-soft: #40211c; --ok: #8fd3a0; --ok-soft: #1b3a24;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.page { max-width: 46rem; margin-inline: auto; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.dateline { font-family: var(--font-mono); font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+h1 { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-head); font-weight: 600; font-size: 22px; line-height: 1.25; margin: 0; text-wrap: balance; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 16px; margin: 0; }
+p { margin: 0; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 18px; color: var(--fg); }
+.muted { color: var(--muted); }
+.status { align-self: flex-start; font-size: 13px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--edge-soft); color: var(--edge); }
+ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 8px; }
+code, .mono { font-family: var(--font-mono); font-size: .9em; }
+
+/* Khung ví dụ */
+.example { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.example > .tag { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.quote { font-style: italic; }
+
+/* Bộ ba: chip — nhãn cạnh — chip */
+.triples { display: flex; flex-direction: column; gap: 8px; }
+.triple { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 14px; }
+.node { background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 2px 9px; font-weight: 500; }
+.rel { color: var(--edge); font-family: var(--font-mono); font-size: 13px; }
+.rel::before { content: "— "; } .rel::after { content: " →"; }
+.mark { margin-left: auto; font-size: 13px; padding: 1px 8px; border-radius: 999px; }
+.mark.no { background: var(--warn-soft); color: var(--warn); }
+.mark.yes { background: var(--ok-soft); color: var(--ok); }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.two > * { min-width: 0; }
+
+/* Các bước của pipeline */
+.steps { display: flex; flex-direction: column; gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; counter-increment: s; }
+.steps li::before { content: counter(s); font-family: var(--font-mono); font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.steps li > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cands { display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; }
+.cand { border: 1px solid var(--line); border-radius: 6px; padding: 2px 9px; }
+.cand.hit { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); font-weight: 500; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13px; color: var(--muted); }
+td.num { font-variant-numeric: tabular-nums; }
+th.pick, td.pick { background: var(--accent-soft); }
+
+.risk { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.risk > div { min-width: 0; border-top: 2px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.risk > div.block { border-top-color: var(--warn); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="page">
+
+<header>
+  <div class="dateline">Nhật ký đồ án · 20/11/2026 · Mức 2 · Dữ liệu</div>
+  <h1>Chọn MKG-W làm tập dữ liệu thứ hai</h1>
+  <span class="status">Đã dựng subset · đã đo CLIP và điểm đường đi · GraphSAGE chưa vượt điểm đường đi · mô hình đường đi theo quan hệ đạt 0,274 R@1 gián tiếp</span>
+  <p class="lede">Tập VG ∩ COCO không cho đồ thị cơ hội thể hiện. Tập thứ hai cần là một đồ thị tri thức có ảnh, nơi câu trả lời nằm ở quan hệ giữa các thực thể chứ không nằm trong điểm ảnh.</p>
+</header>
+
+<section>
+  <h2>Vì sao tập hiện tại chưa đủ</h2>
+  <p>Trên VG ∩ COCO, cạnh của đồ thị chỉ mô tả lại thứ đã có sẵn trong một bức ảnh. Caption COCO lại chỉ nhắc đến vài chi tiết nổi bật. Hai điều này cộng lại khiến mô hình không cần đọc cạnh.</p>
+
+  <div class="example">
+    <span class="tag">Ví dụ thật · ảnh 2377618 trong tập train</span>
+    <p class="quote">Caption: “A woman is swinging a tennis racket at a ball.”</p>
+    <div class="triples">
+      <div class="triple"><span class="node">woman</span><span class="rel">swinging</span><span class="node">racket</span><span class="mark yes">caption có nhắc</span></div>
+      <div class="triple"><span class="node">woman</span><span class="rel">wearing</span><span class="node">skirt</span><span class="mark no">không nhắc</span></div>
+      <div class="triple"><span class="node">lady</span><span class="rel">wearing</span><span class="node">shoe</span><span class="mark no">không nhắc</span></div>
+      <div class="triple"><span class="node">hair</span><span class="rel">on</span><span class="node">head</span><span class="mark no">không nhắc</span></div>
+      <div class="triple"><span class="node">foot</span><span class="rel">on</span><span class="node">court</span><span class="mark no">không nhắc</span></div>
+    </div>
+    <p class="muted">6 trên 8 cạnh của ảnh này không xuất hiện trong caption nào. Cạnh duy nhất được nhắc (“swinging”) thì CLIP đã nhìn thấy sẵn trong ảnh.</p>
+  </div>
+
+  <p>Các số đã đo trong phiên phân tích AdaMF-MAT:</p>
+  <ul>
+    <li>Chỉ <strong>6,2%</strong> caption cần đến quan hệ mới phân biệt được ảnh.</li>
+    <li>Nối cạnh ngẫu nhiên cho R@1 gần bằng cạnh thật (47,79 so với 48,12).</li>
+    <li>Một lớp Linear không có đồ thị đạt R@1 0,498, ngang GraphSAGE 0,494.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Quyết định</h2>
+  <p><strong>Dùng MKG-W làm tập công khai thứ hai cho mức 2.</strong> FB15k-237-IMG là phương án dự phòng. Không dùng MS-COCO.</p>
+  <p>MKG-W là một đồ thị tri thức lấy từ Wikidata. Mỗi đỉnh là một thực thể ngoài đời (người, công ty, thành phố, bộ phim) và có ảnh đi kèm. Mỗi cạnh là một sự thật nối hai thực thể.</p>
+
+  <div class="two">
+    <div class="example">
+      <span class="tag">VG ∩ COCO · cạnh nằm trong một ảnh</span>
+      <div class="triples">
+        <div class="triple"><span class="node">woman</span><span class="rel">wearing</span><span class="node">skirt</span></div>
+        <div class="triple"><span class="node">cup</span><span class="rel">on</span><span class="node">table</span></div>
+      </div>
+      <p class="muted">Nhìn ảnh là thấy. CLIP đã có thông tin này.</p>
+    </div>
+    <div class="example">
+      <span class="tag">MKG-W · cạnh nối các thực thể</span>
+      <div class="triples">
+        <div class="triple"><span class="node">See You in My Nightmares</span><span class="rel">performer</span><span class="node">Kanye West</span></div>
+        <div class="triple"><span class="node">My Darling Clementine</span><span class="rel">cast member</span><span class="node">Linda Darnell</span></div>
+      </div>
+      <p class="muted">Nhìn ảnh không thấy được. Phải có đồ thị mới biết.</p>
+    </div>
+  </div>
+  <p class="muted">Hai bộ ba bên phải lấy từ file train của MKG-W. Nhãn quan hệ là tên tiếng Anh của mã Wikidata P175 và P161.</p>
+</section>
+
+<section>
+  <h2>Một truy vấn chạy qua pipeline như thế nào</h2>
+  <p>Pipeline giữ nguyên như đề bài: CLIP lấy top-k, đồ thị chấm lại, rồi trả kết quả kèm cạnh đã dùng.</p>
+
+  <div class="example">
+    <span class="tag">Truy vấn gián tiếp · bộ ba thật, kết quả từng bước là dự kiến</span>
+    <p class="quote">Truy vấn: “nghệ sĩ trình bày bài See You in My Nightmares”</p>
+    <ol class="steps">
+      <li><div>
+        <h3>CLIP lấy các ảnh ứng viên</h3>
+        <div class="cands"><span class="cand">bìa đĩa See You in My Nightmares</span><span class="cand">một ca sĩ khác</span><span class="cand hit">Kanye West</span><span class="cand">poster phim kinh dị</span></div>
+        <p class="muted">CLIP khớp theo chữ trong câu, nên ảnh bìa đĩa hoặc ảnh có chữ “nightmare” dễ đứng đầu. Danh sách này là dự kiến, chưa chạy CLIP.</p>
+      </div></li>
+      <li><div>
+        <h3>Đồ thị chấm điểm từng ứng viên</h3>
+        <div class="triple"><span class="node">See You in My Nightmares</span><span class="rel">performer</span><span class="node">Kanye West</span></div>
+        <p class="muted">Chỉ ứng viên Kanye West có cạnh nối đúng quan hệ với thực thể trong truy vấn.</p>
+      </div></li>
+      <li><div>
+        <h3>Xếp hạng lại và giải thích</h3>
+        <p>Điểm cuối = α · điểm CLIP + (1 − α) · điểm đồ thị. Ảnh Kanye West lên đầu. Lời giải thích là chính cạnh <span class="mono">performer</span>.</p>
+      </div></li>
+      <li><div>
+        <h3>Kiểm tra độ trung thực</h3>
+        <p>Che cạnh <span class="mono">performer</span> rồi chấm lại. Nếu ảnh Kanye West tụt hạng thì lời giải thích là thật.</p>
+      </div></li>
+    </ol>
+  </div>
+
+  <h3>Hai nhóm truy vấn cho bộ 20 câu của mức 2</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Nhóm</th><th>Cách viết</th><th>Ví dụ</th><th>Dự đoán</th></tr>
+      <tr><td>Trực tiếp</td><td>Nêu tên hoặc mô tả thực thể</td><td>“Kanye West”, “rapper người Mỹ”</td><td>CLIP đã làm tốt</td></tr>
+      <tr><td>Gián tiếp</td><td>Mô tả qua 1–2 bước quan hệ, không nêu tên</td><td>“nghệ sĩ trình bày bài See You in My Nightmares”</td><td>Cần đồ thị</td></tr>
+    </table>
+  </div>
+  <p class="muted">Cột “Dự đoán” là giả thuyết, chưa có số đo.</p>
+</section>
+
+<section>
+  <h2>So sánh ba lựa chọn</h2>
+  <div class="tablewrap">
+    <table>
+      <tr><th></th><th class="pick">MKG-W</th><th>FB15k-237-IMG</th><th>MS-COCO</th></tr>
+      <tr><td>Thực thể</td><td class="num pick">15.000</td><td class="num">14.541</td><td>Không có đồ thị</td></tr>
+      <tr><td>Quan hệ</td><td class="num pick">169</td><td class="num">237</td><td>—</td></tr>
+      <tr><td>Bộ ba train / val / test</td><td class="num pick">34.196 / 4.276 / 4.274</td><td class="num">khoảng 310 nghìn tổng cộng</td><td>—</td></tr>
+      <tr><td>Ảnh gốc</td><td class="pick">27.884 ảnh, 3 ảnh cho mỗi thực thể có ảnh</td><td>Khoảng 10 ảnh mỗi thực thể</td><td>Trùng ảnh với tập hiện tại</td></tr>
+      <tr><td>Khớp AdaMF-MAT</td><td class="pick">Benchmark gốc của paper</td><td>Paper không báo số</td><td>Không</td></tr>
+      <tr><td>Viết truy vấn từ quan hệ</td><td class="pick">Dễ, nhãn Wikidata sạch</td><td>Khó, quan hệ Freebase là đường dẫn dài</td><td>—</td></tr>
+      <tr><td>Chi phí chạy</td><td class="pick">Nhỏ, train được trên CPU</td><td>Mã hoá CLIP cho khoảng 150 nghìn ảnh</td><td>—</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li>Đề bài gợi ý MKG-W cho mức 2, kèm kho mã NativE và AdaMF-MAT.</li>
+    <li>Chạy AdaMF-MAT trên split gốc rồi so với số trong paper là cách kiểm tra việc tái lập.</li>
+    <li>Wikidata có nhãn tiếng Việt, nối được sang phần MMKG tiếng Việt ở mức 3.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Kết quả kiểm tra dữ liệu</h2>
+  <p>Kiểm tra ngày 20/11 trên dữ liệu gốc của kho MMRNS. File <span class="mono">MKG-W_img.zip</span> (6,4 GB) đã tải đủ, giải nén và mở thử từng ảnh.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Câu hỏi</th><th>Kết quả</th></tr>
+      <tr><td>Có ảnh gốc không?</td><td class="num">Có. 27.884 ảnh trong 9.301 thư mục, gần như đều 3 ảnh mỗi thư mục. Cả 27.884 ảnh đều mở được.</td></tr>
+      <tr><td>Bao nhiêu thực thể có ảnh?</td><td class="num">9.301 trên 15.000 (62%). Cả 9.301 thư mục đều khớp được với một thực thể.</td></tr>
+      <tr><td>Có tên thực thể không?</td><td class="num">Có, đủ 15.000. Mỗi thực thể có mã Wikidata và tên DBpedia.</td></tr>
+      <tr><td>Có mô tả văn bản không?</td><td class="num">14.150 thực thể có đoạn mô tả tiếng Anh. 8.461 thực thể có cả ảnh lẫn mô tả.</td></tr>
+      <tr><td>Bao nhiêu bộ ba test dùng được?</td><td class="num">56,6% bộ ba test có ảnh cho thực thể đáp án, tức khoảng 2.400 trên 4.274.</td></tr>
+      <tr><td>Đồ thị nói về gì?</td><td>Chủ yếu là phim và âm nhạc. Quan hệ “cast member” chiếm 19% bộ ba train; 10 quan hệ lớn nhất chiếm 59%.</td></tr>
+      <tr><td>Đồ thị dày cỡ nào?</td><td class="num">Trung bình 4,56 cạnh mỗi thực thể, trung vị 3. Có một đỉnh nối tới 3.534 cạnh.</td></tr>
+    </table>
+  </div>
+  <p>Kết luận: giữ quyết định. Tập ảnh ứng viên là 9.301 thực thể có ảnh. Thực thể không có ảnh vẫn nằm trong đồ thị để truyền thông tin, chỉ không làm đáp án.</p>
+</section>
+
+<section>
+  <h2>Cách chọn subset</h2>
+  <p>Không cắt bớt đồ thị. Thứ được chọn lọc là <strong>bộ ba nào được biến thành truy vấn</strong>. Mọi ngưỡng đều tính trên tập train và nằm trong <span class="mono">configs/data/mkg_w.yaml</span>.</p>
+
+  <div class="tablewrap">
+    <table>
+      <tr><th>Thành phần</th><th>Giữ lại gì</th><th>Lý do</th></tr>
+      <tr><td>Đồ thị</td><td>Đủ 15.000 thực thể và 34.196 bộ ba train</td><td>Thực thể không có ảnh vẫn truyền thông tin cho hàng xóm</td></tr>
+      <tr><td>Ứng viên truy hồi</td><td>9.301 thực thể có ảnh, mỗi thực thể 3 ảnh</td><td>Đáp án phải là thứ nhìn thấy được</td></tr>
+      <tr><td>Chia tập</td><td>Giữ nguyên train / val / test gốc của bộ ba</td><td>Khớp với AdaMF-MAT; bộ ba test không nằm trong đồ thị train</td></tr>
+    </table>
+  </div>
+
+  <h3>Mỗi bộ ba cho hai câu hỏi</h3>
+  <div class="example">
+    <div class="triple"><span class="node">My Darling Clementine</span><span class="rel">director</span><span class="node">John Ford</span></div>
+    <p>Hỏi đuôi: “the director of My Darling Clementine”, đáp án là John Ford.<br>Hỏi đầu: “a film directed by John Ford”, đáp án là bộ phim.</p>
+  </div>
+
+  <h3>Ba luật loại truy vấn</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Luật</th><th>Ví dụ bị loại</th><th>Vì sao loại</th></tr>
+      <tr><td>Đáp án là một lớp chung. Loại hướng hỏi nào mà cứ đoán 10 đáp án phổ biến nhất đã trúng hơn 30% bộ ba train.</td><td>“nghề nghiệp của X” → Politician (đoán mò trúng 93%)<br>“X là một…” → Film (99%)<br>“quốc gia xuất xứ của X” → United States (99%)</td><td>Không cần đọc tên X vẫn đoán được, nên không đo khả năng dùng quan hệ. Ảnh của “Politician” cũng không phải thứ đáng truy hồi.</td></tr>
+      <tr><td>Câu hỏi có quá nhiều đáp án. Loại truy vấn có hơn 10 đáp án đúng.</td><td>“một thứ là Film” có 4.442 đáp án<br>“một công dân Mỹ” có hàng trăm đáp án</td><td>Câu hỏi quá mơ hồ. Đây là trường hợp lớp chung nằm ở phía câu hỏi.</td></tr>
+      <tr><td>Quan hệ quá hiếm. Loại quan hệ có dưới 200 bộ ba train.</td><td>139 trong 169 quan hệ</td><td>Quá ít để học và mỗi quan hệ chỉ còn vài truy vấn test. 30 quan hệ còn lại vẫn phủ 90% bộ ba train.</td></tr>
+    </table>
+  </div>
+  <p>Thêm một điều kiện hiển nhiên: đáp án phải có ảnh. Kết quả là 45 hướng hỏi được giữ, 15 hướng bị loại vì đáp án là lớp chung.</p>
+
+  <h3>Truy vấn trực tiếp</h3>
+  <p>Mỗi thực thể có ảnh cho một truy vấn bằng tên (“Kanye West”) và một truy vấn bằng câu đầu của đoạn mô tả. Vì không gắn với bộ ba nào, chúng được chia ngẫu nhiên 70 / 15 / 15 theo thực thể, seed 13.</p>
+
+  <h3>Subset thu được</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Nhóm</th><th>Train</th><th>Val</th><th>Test</th></tr>
+      <tr><td>Gián tiếp, hỏi qua quan hệ</td><td class="num">14.441</td><td class="num">2.462</td><td class="num">2.444</td></tr>
+      <tr><td>Trực tiếp, bằng tên</td><td class="num">6.511</td><td class="num">1.395</td><td class="num">1.395</td></tr>
+      <tr><td>Trực tiếp, bằng mô tả</td><td class="num">6.161</td><td class="num">1.316</td><td class="num">1.315</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li>Không có đáp án test nào trùng với cạnh trong đồ thị train (đã đếm: 0).</li>
+    <li>57% truy vấn gián tiếp có đúng một đáp án. Với truy vấn nhiều đáp án, các đáp án đã biết ở tập khác được ghi trong <span class="mono">known_ids</span> để bỏ qua khi xếp hạng.</li>
+    <li>5% truy vấn test có thực thể được nhắc tên không nối với cạnh train nào. Ở các câu này đồ thị không giúp được.</li>
+    <li>Truy vấn test nhiều nhất là “diễn viên của phim X” (493 câu); 17 hướng hỏi có dưới 20 câu test, nên chỉ báo số gộp cho chúng.</li>
+  </ul>
+
+  <h3>Cách chấm</h3>
+  <p>Chấm theo thực thể. Điểm đồ thị giống nhau cho cả 3 ảnh của một thực thể, vì đồ thị chỉ trả lời “đáp án là ai”. Điểm của một thực thể là điểm cao nhất trong các ảnh của nó, và thứ tự giữa 3 ảnh do điểm CLIP quyết định.</p>
+</section>
+
+<section>
+  <h2>Đồ thị có đảm bảo nhiều hop không</h2>
+  <p>Không đảm bảo cho mọi câu. Với mỗi truy vấn gián tiếp, tôi đo đường đi ngắn nhất trong đồ thị train từ thực thể được nhắc tên tới đáp án. Cạnh đang được hỏi không nằm trong đồ thị train, nên đường đi tìm được là bằng chứng mô hình có thể dùng.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Khoảng cách tới đáp án</th><th>Truy vấn test</th><th>Tỉ lệ</th><th>Nếu không đi qua 13 đỉnh trung tâm</th></tr>
+      <tr><td>1 hop (một quan hệ khác nối thẳng hai thực thể)</td><td class="num">567</td><td class="num">23%</td><td class="num">23%</td></tr>
+      <tr><td>2 hop</td><td class="num">276</td><td class="num">11%</td><td class="num">7%</td></tr>
+      <tr><td>3 hop</td><td class="num">1.034</td><td class="num">42%</td><td class="num">24%</td></tr>
+      <tr><td>Xa hơn 3 hop hoặc không có đường</td><td class="num">567</td><td class="num">23%</td><td class="num">46%</td></tr>
+    </table>
+  </div>
+  <p class="muted">Đỉnh trung tâm là 13 đỉnh có hơn 100 cạnh, như Film hay United States. Đường đi qua chúng nối gần như mọi thứ với nhau nên ít ý nghĩa.</p>
+
+  <div class="two">
+    <div class="example">
+      <span class="tag">2 hop · đường đi có nghĩa</span>
+      <p class="quote">“the performer of Doggfather”</p>
+      <div class="triples">
+        <div class="triple"><span class="node">Doggfather</span><span class="rel">follows</span><span class="node">Vapors (song)</span></div>
+        <div class="triple"><span class="node">Vapors (song)</span><span class="rel">performer</span><span class="node">Snoop Dogg</span></div>
+      </div>
+      <p class="muted">Bài hát ra ngay trước đó do Snoop Dogg trình bày.</p>
+    </div>
+    <div class="example">
+      <span class="tag">3 hop · đường đi ngẫu nhiên</span>
+      <p class="quote">“an actor in Uttar Dakshin”</p>
+      <div class="triples">
+        <div class="triple"><span class="node">Uttar Dakshin</span><span class="rel">cast member</span><span class="node">Madhuri Dixit</span></div>
+        <div class="triple"><span class="node">Madhuri Dixit</span><span class="rel">place of birth</span><span class="node">Mumbai</span></div>
+        <div class="triple"><span class="node">Jackie Shroff</span><span class="rel">place of birth</span><span class="node">Mumbai</span></div>
+      </div>
+      <p class="muted">Hai diễn viên chỉ chung nơi sinh. Có đường đi không có nghĩa là đường đi đó giải thích được đáp án.</p>
+    </div>
+  </div>
+  <ul>
+    <li>GraphSAGE 3 lớp nhìn được tối đa 3 hop, nên 77% truy vấn test nằm trong tầm với. Bỏ đỉnh trung tâm thì còn 54%.</li>
+    <li>Mỗi truy vấn đã được gắn nhãn số hop (trường <span class="mono">hops</span>), để báo cáo tách được kết quả theo 1, 2, 3 hop và nhóm ngoài tầm.</li>
+    <li>Nhóm “xa hơn 3 hop hoặc không có đường” là nhóm đối chứng: đồ thị không thể giúp ở đó, nên nếu mô hình đồ thị vẫn tăng điểm thì phần tăng không đến từ đường đi.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>CLIP thuần làm được đến đâu</h2>
+  <p>Đo ngày 20/11 với CLIP ViT-B/32 đóng băng, cùng mô hình với tập VG ∩ COCO. Ứng viên là cả 9.301 thực thể có ảnh. Số dưới đây là tập test.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Nhóm truy vấn</th><th>Số đáp án chấm</th><th>R@1</th><th>R@10</th><th>MRR</th><th>Đáp án lọt top-100</th><th>Lọt top-1000</th></tr>
+      <tr><td>Trực tiếp, bằng tên</td><td class="num">1.395</td><td class="num">0,498</td><td class="num">0,658</td><td class="num">0,558</td><td class="num">79%</td><td class="num">94%</td></tr>
+      <tr><td>Trực tiếp, bằng mô tả</td><td class="num">1.315</td><td class="num">0,554</td><td class="num">0,757</td><td class="num">0,625</td><td class="num">91%</td><td class="num">98%</td></tr>
+      <tr><td><strong>Gián tiếp</strong></td><td class="num">2.626</td><td class="num"><strong>0,027</strong></td><td class="num">0,096</td><td class="num">0,055</td><td class="num"><strong>28%</strong></td><td class="num">69%</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li><strong>Giả thuyết được xác nhận.</strong> CLIP tìm đúng hơn một nửa truy vấn trực tiếp nhưng chỉ 2,7% truy vấn gián tiếp. Đây là khoảng trống mà đồ thị có thể lấp, điều tập VG ∩ COCO không có.</li>
+    <li><strong>CLIP trả về chính thực thể được nhắc tên.</strong> Ở 33% truy vấn gián tiếp có ảnh của thực thể được nhắc tên, CLIP xếp thực thể đó lên đầu. Hỏi “diễn viên của phim X” thì ra poster phim X.</li>
+    <li><strong>Top-k của CLIP là nút cổ chai.</strong> Chỉ 28% đáp án gián tiếp lọt top-100 và 69% lọt top-1000. Nếu giữ đúng quy trình “CLIP lấy top-k rồi đồ thị chấm lại” với k nhỏ thì đồ thị không cứu được phần lớn truy vấn.</li>
+    <li>CLIP không khá hơn ở truy vấn gần: R@1 là 0,035 ở nhóm 1 hop và 0,018 ở nhóm 3 hop. CLIP không dùng được cấu trúc đồ thị.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Thêm điểm đồ thị, chưa train gì</h2>
+  <p>Quyết định ngày 20/11: chấm trên cả 9.301 thực thể, và để top-k tự chọn trên validation trong lưới 10, 100, 1.000, 9.301, giống cách làm ở VG ∩ COCO.</p>
+  <p>Điểm đồ thị ở bước này là <strong>điểm đường đi</strong>: đếm có trọng số các đường đi dài tối đa 3 cạnh trong đồ thị train, từ thực thể được nhắc tên tới từng ứng viên. Đường đi qua đỉnh có nhiều cạnh bị giảm trọng số. Không có tham số nào được train.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Truy vấn gián tiếp, tập test</th><th>R@1</th><th>R@10</th><th>MRR</th></tr>
+      <tr><td>CLIP thuần</td><td class="num">0,027</td><td class="num">0,096</td><td class="num">0,055</td></tr>
+      <tr><td><strong>CLIP + điểm đường đi</strong></td><td class="num"><strong>0,156</strong></td><td class="num">0,351</td><td class="num">0,226</td></tr>
+      <tr><td>CLIP + điểm đường đi trên đồ thị xáo cạnh</td><td class="num">0,024</td><td class="num">0,096</td><td class="num">0,053</td></tr>
+    </table>
+  </div>
+  <p class="muted">Validation chọn alpha = 0,65, top-k = 9.301 và hệ số giảm theo độ dài = 1,0 cho đồ thị thật. Truy vấn trực tiếp không đổi (R@1 0,525), nên R@1 trên toàn bộ tập test tăng từ 0,280 lên 0,344.</p>
+
+  <h3>Tách theo số hop</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Khoảng cách tới đáp án</th><th>Số đáp án</th><th>R@1 CLIP</th><th>R@1 có đồ thị</th><th>R@10 CLIP</th><th>R@10 có đồ thị</th></tr>
+      <tr><td>1 hop</td><td class="num">597</td><td class="num">0,035</td><td class="num"><strong>0,591</strong></td><td class="num">0,136</td><td class="num">0,968</td></tr>
+      <tr><td>2 hop</td><td class="num">311</td><td class="num">0,055</td><td class="num">0,106</td><td class="num">0,132</td><td class="num">0,489</td></tr>
+      <tr><td>3 hop</td><td class="num">1.128</td><td class="num">0,018</td><td class="num">0,012</td><td class="num">0,074</td><td class="num">0,133</td></tr>
+      <tr><td>Xa hơn 3 hop hoặc không có đường</td><td class="num">590</td><td class="num">0,022</td><td class="num">0,017</td><td class="num">0,080</td><td class="num">0,073</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li><strong>Phần tăng đến từ cấu trúc quan hệ.</strong> Giữ nguyên số cạnh của mỗi đỉnh nhưng nối ngẫu nhiên thì điểm quay về mức CLIP. Đây là phép thử “thay bằng cạnh ngẫu nhiên” của mức 1, và trên tập này nó cho kết quả rõ ràng.</li>
+    <li><strong>Nhóm đối chứng hành xử đúng.</strong> Ở nhóm không có đường đi trong 3 hop, đồ thị không giúp gì.</li>
+    <li><strong>Đường đi dài giúp ít.</strong> Phần tăng dồn vào nhóm 1 hop; nhóm 3 hop, chiếm 43% truy vấn, gần như không tăng ở R@1. Đếm đường đi không biết câu hỏi đang hỏi quan hệ nào, nên không phân biệt được đạo diễn với diễn viên của cùng một phim.</li>
+    <li><strong>Đây là chỗ cho mô hình học được.</strong> GraphSAGE hoặc AdaMF-MAT biết loại quan hệ, nên mục tiêu của chúng là tăng điểm ở nhóm 2 và 3 hop so với mốc 0,156 này.</li>
+  </ul>
+  <p class="muted">Hai giới hạn: mô hình đọc sẵn thực thể được nhắc tên từ trường <span class="mono">anchor_id</span> của truy vấn, tức coi việc nhận diện tên là đã giải xong. Hệ số giảm 1,0 nằm ở mép lưới tìm kiếm.</p>
+</section>
+
+<section>
+  <h2>Train GraphSAGE: chưa vượt được điểm đường đi</h2>
+  <p>Train xong sáng 20/11. Mô hình là GraphSAGE 3 lớp biết loại quan hệ, mỗi lớp gộp hàng xóm cách một cạnh nên 3 lớp nhìn được 3 hop. Đặc trưng đầu vào của mỗi thực thể là vector CLIP của tên. Mô hình học sao cho vector câu truy vấn gần vector thực thể đáp án. Khi train một truy vấn, bộ ba sinh ra chính truy vấn đó bị gỡ khỏi đồ thị.</p>
+  <p>Ba biến thể chỉ khác nhau ở đồ thị được nhìn: đồ thị thật, đồ thị xáo cạnh, và không có cạnh nào. Mỗi biến thể train 3 seed (13, 37, 97); alpha và top-k chọn trên validation theo từng seed. Số dưới đây là R@1 trên tập test sau khi ghép với CLIP, trung bình ± độ lệch chuẩn qua 3 seed.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Phương pháp</th><th>Trực tiếp R@1</th><th>Gián tiếp R@1</th><th>Gián tiếp R@10</th><th>Gián tiếp MRR</th><th>Toàn bộ R@1</th></tr>
+      <tr><td>CLIP thuần</td><td class="num">0,525</td><td class="num">0,027</td><td class="num">0,096</td><td class="num">0,055</td><td class="num">0,280</td></tr>
+      <tr><td>CLIP + điểm đường đi</td><td class="num">0,525</td><td class="num"><strong>0,156</strong></td><td class="num">0,351</td><td class="num">0,226</td><td class="num">0,344</td></tr>
+      <tr><td><strong>CLIP + GraphSAGE, đồ thị thật</strong></td><td class="num">0,610 ± 0,002</td><td class="num"><strong>0,058 ± 0,002</strong></td><td class="num">0,244</td><td class="num">0,123</td><td class="num">0,338 ± 0,002</td></tr>
+      <tr><td>CLIP + GraphSAGE, xáo cạnh</td><td class="num">0,584 ± 0,002</td><td class="num">0,050 ± 0,004</td><td class="num">0,229</td><td class="num">0,112</td><td class="num">0,322 ± 0,001</td></tr>
+      <tr><td>CLIP + GraphSAGE, không cạnh</td><td class="num"><strong>0,873 ± 0,003</strong></td><td class="num">0,047 ± 0,002</td><td class="num">0,200</td><td class="num">0,101</td><td class="num"><strong>0,466 ± 0,002</strong></td></tr>
+    </table>
+  </div>
+  <p class="muted">Validation chọn top-k = 9.301 ở mọi lượt chạy. Alpha là 0,70 cho đồ thị thật, 0,75 cho xáo cạnh và 0,35 đến 0,50 cho bản không cạnh. Epoch tốt nhất: 10 đến 11 (thật), 10 đến 13 (xáo cạnh), 5 đến 7 (không cạnh).</p>
+
+  <h3>Tách truy vấn gián tiếp theo số hop (R@1, test)</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Khoảng cách tới đáp án</th><th>Số đáp án</th><th>CLIP</th><th>Điểm đường đi</th><th>GraphSAGE thật</th><th>Xáo cạnh</th><th>Không cạnh</th></tr>
+      <tr><td>1 hop</td><td class="num">597</td><td class="num">0,035</td><td class="num"><strong>0,591</strong></td><td class="num">0,099</td><td class="num">0,092</td><td class="num">0,064</td></tr>
+      <tr><td>2 hop</td><td class="num">311</td><td class="num">0,055</td><td class="num">0,106</td><td class="num">0,091</td><td class="num">0,065</td><td class="num">0,075</td></tr>
+      <tr><td>3 hop</td><td class="num">1.128</td><td class="num">0,018</td><td class="num">0,012</td><td class="num">0,038</td><td class="num">0,034</td><td class="num">0,038</td></tr>
+      <tr><td>Xa hơn 3 hop hoặc không có đường</td><td class="num">590</td><td class="num">0,022</td><td class="num">0,017</td><td class="num">0,038</td><td class="num">0,031</td><td class="num">0,033</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li><strong>GraphSAGE thua xa điểm đường đi ở truy vấn gián tiếp.</strong> R@1 là 0,058 so với 0,156. Ở nhóm 1 hop, nơi đáp án nằm ngay cạnh thực thể được nhắc tên, GraphSAGE đạt 0,099 còn điểm đường đi đạt 0,591.</li>
+    <li><strong>Cạnh thật giúp rất ít.</strong> Đồ thị thật hơn xáo cạnh 0,008 và hơn không cạnh 0,011 ở R@1 gián tiếp. Khoảng cách này lớn hơn độ lệch giữa các seed nhưng nhỏ so với phần tăng 0,13 của điểm đường đi. Chỗ duy nhất thấy rõ là nhóm 2 hop: 0,091 so với 0,065.</li>
+    <li><strong>Phần tăng so với CLIP không đến từ đồ thị.</strong> Bản không cạnh đã đưa R@1 gián tiếp từ 0,027 lên 0,047. Mô hình học được dạng câu hỏi nào thì đáp án thường là loại thực thể nào, không cần cạnh.</li>
+    <li><strong>Truy vấn trực tiếp: bản không cạnh thắng lớn.</strong> R@1 0,873 so với 0,610 của đồ thị thật. Truy vấn bằng tên và đặc trưng thực thể đều là vector CLIP của cùng cái tên, nên không cạnh thì chỉ cần giữ nguyên vector. Gộp hàng xóm làm nhoè vector của từng thực thể.</li>
+    <li><strong>Nhóm 3 hop vẫn chưa ai giải được.</strong> Mọi phương pháp đều dưới 0,04.</li>
+  </ul>
+  <h3>Vì sao, theo suy đoán của nhóm</h3>
+  <ul>
+    <li><strong>Mô hình không biết câu hỏi nhắc tới thực thể nào.</strong> GraphSAGE tính một vector cố định cho mỗi thực thể, không phụ thuộc truy vấn. Điểm đường đi thì xuất phát đúng từ thực thể được nhắc tên, đọc từ trường <span class="mono">anchor_id</span>. Hai phương pháp vì thế không dùng cùng thông tin đầu vào, và phép so sánh nghiêng về điểm đường đi.</li>
+    <li><strong>Tiêu chí dừng sớm bị truy vấn trực tiếp chi phối.</strong> Epoch tốt nhất chọn theo R@1 trên toàn bộ validation, trong đó một nửa là truy vấn trực tiếp.</li>
+  </ul>
+  <p class="muted">Hai điều trên chưa được kiểm chứng bằng thí nghiệm. Kết quả này cũng lặp lại hiện tượng ở VG ∩ COCO: mô hình không dùng đồ thị ngang hoặc hơn GraphSAGE. Điểm khác là trên MKG-W đã có bằng chứng đồ thị chứa tín hiệu (điểm đường đi), nên vấn đề nằm ở mô hình chứ không ở dữ liệu.</p>
+</section>
+
+<section>
+  <h2>Mô hình đường đi theo quan hệ: vượt mốc 0,156</h2>
+  <p>Train xong chiều 20/11. Mô hình xuất phát từ thực thể được nhắc tên trong câu hỏi, đặt một đơn vị điểm lên đó rồi cho điểm lan theo cạnh tối đa 3 bước. Mỗi bước qua một cạnh được nhân với một trọng số. Trọng số này phụ thuộc loại quan hệ, chiều đi của cạnh, thứ tự bước và vector CLIP của câu truy vấn. Câu “đạo diễn của X” vì thế có thể đi theo cạnh đạo diễn và bỏ qua cạnh diễn viên.</p>
+  <p>Khi chưa train, mọi trọng số bằng 1 và mô hình trùng với điểm đường đi ở mục trước. Phần học được chỉ là một lớp tuyến tính, từ vector truy vấn ra 3 × 2 × 169 trọng số. Hàm mất mát là trừ log của phần điểm rơi vào đáp án. Khi train một truy vấn, bộ ba sinh ra truy vấn đó bị gỡ khỏi đồ thị. Epoch tốt nhất chọn theo R@1 của truy vấn gián tiếp trên validation; alpha và top-k chọn trên toàn bộ validation. Truy vấn trực tiếp không có thực thể được nhắc tên nên điểm đồ thị bằng 0, CLIP tự xếp hạng.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Phương pháp (test)</th><th>Trực tiếp R@1</th><th>Gián tiếp R@1</th><th>Gián tiếp R@10</th><th>Gián tiếp MRR</th><th>Toàn bộ R@1</th></tr>
+      <tr><td>CLIP thuần</td><td class="num">0,525</td><td class="num">0,027</td><td class="num">0,096</td><td class="num">0,055</td><td class="num">0,280</td></tr>
+      <tr><td>CLIP + điểm đường đi, chưa train</td><td class="num">0,525</td><td class="num">0,156</td><td class="num">0,351</td><td class="num">0,226</td><td class="num">0,344</td></tr>
+      <tr><td>CLIP + GraphSAGE, đồ thị thật</td><td class="num">0,610</td><td class="num">0,058</td><td class="num">0,244</td><td class="num">0,123</td><td class="num">0,338</td></tr>
+      <tr><td><strong>CLIP + đường đi theo quan hệ, đồ thị thật</strong></td><td class="num">0,525</td><td class="num"><strong>0,274 ± 0,001</strong></td><td class="num"><strong>0,460</strong></td><td class="num"><strong>0,339</strong></td><td class="num">0,402 ± 0,001</td></tr>
+      <tr><td>CLIP + đường đi theo quan hệ, xáo cạnh</td><td class="num">0,525</td><td class="num">0,028 ± 0,000</td><td class="num">0,096</td><td class="num">0,055</td><td class="num">0,280</td></tr>
+    </table>
+  </div>
+  <p class="muted">Trung bình 3 seed (13, 37, 97). Đồ thị thật: alpha 0,15 đến 0,20, top-k 9.301, epoch tốt nhất 33 đến 38 trên tối đa 40. Xáo cạnh: validation chọn top-k 10, kết quả trùng với CLIP thuần.</p>
+
+  <h3>Theo số hop (R@1 gián tiếp, test)</h3>
+  <div class="tablewrap">
+    <table>
+      <tr><th>Khoảng cách tới đáp án</th><th>Số đáp án</th><th>CLIP</th><th>Điểm đường đi, chưa train</th><th>Đường đi theo quan hệ</th><th>Cùng mô hình, xáo cạnh</th></tr>
+      <tr><td>1 hop</td><td class="num">597</td><td class="num">0,035</td><td class="num">0,591</td><td class="num"><strong>0,831</strong></td><td class="num">0,037</td></tr>
+      <tr><td>2 hop</td><td class="num">311</td><td class="num">0,055</td><td class="num">0,106</td><td class="num"><strong>0,318</strong></td><td class="num">0,052</td></tr>
+      <tr><td>3 hop</td><td class="num">1.128</td><td class="num">0,018</td><td class="num">0,012</td><td class="num"><strong>0,104</strong></td><td class="num">0,017</td></tr>
+      <tr><td>Xa hơn 3 hop hoặc không có đường</td><td class="num">590</td><td class="num">0,022</td><td class="num">0,017</td><td class="num">0,014</td><td class="num">0,024</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li><strong>R@1 gián tiếp tăng từ 0,156 lên 0,274.</strong> Chỉ riêng điểm đồ thị, không ghép CLIP, đã đạt 0,265. Ba seed lệch nhau 0,001.</li>
+    <li><strong>Nhóm 2 và 3 hop tăng mạnh nhất về tỉ lệ.</strong> 2 hop: 0,106 lên 0,318. 3 hop: 0,012 lên 0,104, lần đầu có phương pháp vượt 0,04 ở nhóm này. R@10 của nhóm 3 hop là 0,344.</li>
+    <li><strong>Phần tăng đến từ cạnh thật.</strong> Cùng mô hình, cùng cách train, trên đồ thị xáo cạnh thì điểm đồ thị một mình cho R@1 bằng 0, và sau khi ghép chỉ còn đúng mức CLIP.</li>
+    <li><strong>Truy vấn trực tiếp không đổi</strong> (0,525), vì mô hình không chấm điểm cho chúng. GraphSAGE không cạnh vẫn giữ mức cao nhất ở nhóm này (0,873).</li>
+    <li><strong>Nhóm không có đường đi trong 3 hop vẫn ở mức CLIP.</strong> Mô hình không có gì để lan tới đáp án.</li>
+  </ul>
+  <h3>Giới hạn cần ghi rõ</h3>
+  <ul>
+    <li><strong>Thực thể được nhắc tên lấy từ nhãn có sẵn</strong> (<span class="mono">anchor_id</span>). Coi như bước dò tên trong câu đã làm đúng 100%. GraphSAGE không được dùng thông tin này, nên hai dòng trong bảng không cùng đầu vào.</li>
+    <li><strong>Hai trên ba seed dừng ở giới hạn 40 epoch</strong> khi validation còn nhích lên. Con số có thể tăng thêm một ít nếu train lâu hơn; nhóm chưa thử.</li>
+    <li><strong>Tối đa 3 bước.</strong> Đáp án xa hơn không bao giờ được chấm điểm.</li>
+  </ul>
+
+  <h3>Đổi tiêu chí chọn epoch cho GraphSAGE: không giúp</h3>
+  <p>Mục trước đoán rằng GraphSAGE kém ở truy vấn gián tiếp một phần vì epoch tốt nhất được chọn trên cả truy vấn trực tiếp. Nhóm đã train lại đồ thị thật, chọn epoch theo R@1 của riêng truy vấn gián tiếp trên validation.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>GraphSAGE, đồ thị thật (test)</th><th>Trực tiếp R@1</th><th>Gián tiếp R@1</th><th>Gián tiếp R@10</th><th>Toàn bộ R@1</th><th>Epoch tốt nhất</th></tr>
+      <tr><td>Chọn epoch trên toàn bộ validation</td><td class="num">0,610 ± 0,002</td><td class="num">0,058 ± 0,002</td><td class="num">0,244</td><td class="num">0,338 ± 0,002</td><td class="num">10, 11</td></tr>
+      <tr><td>Chọn epoch trên truy vấn gián tiếp</td><td class="num">0,584 ± 0,038</td><td class="num">0,051 ± 0,011</td><td class="num">0,219</td><td class="num">0,322 ± 0,025</td><td class="num">14, 8, 25</td></tr>
+    </table>
+  </div>
+  <p>R@1 gián tiếp không tăng (0,051 so với 0,058, trong khoảng lệch giữa các seed) và kết quả dao động nhiều hơn. Giả thuyết “tiêu chí dừng sớm làm hỏng GraphSAGE” bị bác. Giả thuyết còn lại, mô hình không biết câu hỏi nhắc tới thực thể nào, được mô hình đường đi ở trên ủng hộ.</p>
+
+  <h3>Ép GraphSAGE học cạnh: cũng không giúp</h3>
+  <p>Cách ép lấy từ nhánh AdaMF của nhóm (<span class="mono">so0.3</span>): mỗi bước train, 30% thực thể bị bỏ vector tên của chính nó, chỉ còn thông tin từ hàng xóm và loại quan hệ. Mô hình vì thế không thể chỉ dựa vào tên. Epoch vẫn chọn theo truy vấn gián tiếp. Số là R@1 trên test sau khi ghép CLIP, 3 seed.</p>
+  <div class="tablewrap">
+    <table>
+      <tr><th>GraphSAGE (test)</th><th>Trực tiếp R@1</th><th>Gián tiếp R@1</th><th>Gián tiếp R@10</th><th>1 hop</th><th>2 hop</th><th>3 hop</th></tr>
+      <tr><td>Đồ thị thật, không ép</td><td class="num">0,584 ± 0,038</td><td class="num">0,051 ± 0,011</td><td class="num">0,219</td><td class="num">0,084</td><td class="num">0,076</td><td class="num">0,037</td></tr>
+      <tr><td>Đồ thị thật, ép 30%</td><td class="num">0,572 ± 0,020</td><td class="num">0,055 ± 0,008</td><td class="num">0,232</td><td class="num">0,085</td><td class="num">0,081</td><td class="num">0,040</td></tr>
+      <tr><td>Xáo cạnh, ép 30%</td><td class="num">0,540 ± 0,020</td><td class="num">0,043 ± 0,002</td><td class="num">0,185</td><td class="num">0,068</td><td class="num">0,051</td><td class="num">0,034</td></tr>
+      <tr><td>Đường đi theo quan hệ, để so</td><td class="num">0,525</td><td class="num"><strong>0,274</strong></td><td class="num">0,460</td><td class="num">0,831</td><td class="num">0,318</td><td class="num">0,104</td></tr>
+    </table>
+  </div>
+  <ul>
+    <li><strong>Ép học cạnh không nâng được R@1 gián tiếp.</strong> 0,055 so với 0,051 khi không ép, chênh lệch nằm trong độ lệch giữa các seed, và vẫn dưới mức 0,058 của lần train đầu.</li>
+    <li><strong>Khoảng cách thật so với xáo cạnh vẫn nhỏ.</strong> 0,055 so với 0,043, tức 0,012; lần train đầu là 0,008. Đồ thị thật có giúp, nhưng ít.</li>
+    <li><strong>Chỉ tính điểm đồ thị, không ghép CLIP, thì thật và xáo cạnh gần bằng nhau</strong> ở R@1 gián tiếp (0,069 và 0,068). Phần hơn của đồ thị thật chỉ lộ ra sau khi ghép.</li>
+    <li><strong>Kết luận cho GraphSAGE trên MKG-W:</strong> cả hai cách sửa trong khâu train đều không đổi được bức tranh. Thứ tạo khác biệt là cho mô hình biết thực thể được nhắc tên, như mô hình đường đi đã làm.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Rủi ro đã biết</h2>
+  <div class="risk">
+    <div class="block"><h3>Chỉ 62% thực thể có ảnh</h3><p>Con số 14.463 thực thể có ảnh trong các bài khảo sát là số embedding tính sẵn, không phải ảnh gốc. Số của AdaMF-MAT trong paper tính trên cả 15.000 thực thể, nên không so thẳng được với số truy hồi ảnh ở đây.</p></div>
+    <div><h3>Ngưỡng do nhóm đặt</h3><p>Các ngưỡng 30%, 10 đáp án và 200 bộ ba là lựa chọn của nhóm, đặt trước khi chạy mô hình. Đổi 30% thành 50% chỉ thêm khoảng 4% truy vấn.</p></div>
+    <div><h3>Lệch về phim ảnh</h3><p>Phần lớn truy vấn gián tiếp sẽ là diễn viên, đạo diễn, nhà soạn nhạc của một bộ phim. Một phim có nhiều diễn viên, nên một truy vấn có nhiều đáp án đúng.</p></div>
+    <div><h3>Đồ thị thưa</h3><p>Trung vị 3 cạnh mỗi thực thể. GraphSAGE có ít hàng xóm để gộp, và cần xử lý đỉnh bậc rất cao.</p></div>
+    <div><h3>Thế cờ có thể đảo ngược</h3><p>Trên MMKG, đồ thị thường lấn át còn ảnh đóng góp ít. Báo cáo nên đặt hai tập như hai thái cực.</p></div>
+    <div><h3>Truy vấn sinh theo mẫu</h3><p>Câu gián tiếp được viết từ bộ ba, nên vẫn cụt như bộ 1.408 truy vấn hiện tại.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Việc tiếp theo</h2>
+  <ul>
+    <li>Ghép hai mô hình: GraphSAGE không cạnh cho truy vấn trực tiếp (0,873), đường đi theo quan hệ cho truy vấn gián tiếp (0,274).</li>
+    <li>Tăng giới hạn epoch của mô hình đường đi, vì hai seed chưa hội tụ.</li>
+    <li>Chạy AdaMF-MAT trên MKG-W làm phương pháp 2024+ của mức 2.</li>
+    <li>Thay <span class="mono">anchor_id</span> có sẵn bằng bước tự dò tên thực thể trong câu, rồi đo lại để biết bước này làm mất bao nhiêu điểm.</li>
+    <li>Hiển thị đường đi đã dùng làm lời giải thích, và che cạnh để đo độ trung thực.</li>
+    <li>Viết mẫu câu tiếng Việt cho 30 quan hệ nếu cần truy vấn tiếng Việt.</li>
+    <li>Cập nhật <span class="mono">task.md</span> và phase 5 của kế hoạch: hiện vẫn ghi tập thứ hai là FB15k-237-IMG.</li>
+  </ul>
+</section>
+
+<footer>
+  <span>Nguồn số liệu VG ∩ COCO: phase 5 của kế hoạch và phiên “Giải thích lựa chọn”.</span>
+  <span>Nguồn thống kê dataset: <a href="https://arxiv.org/pdf/2501.15688">Link-Aware MMKGC</a>, <a href="https://arxiv.org/pdf/2506.00826">HERGC</a>, <a href="https://arxiv.org/pdf/2205.02357">MKGformer</a>, <a href="https://github.com/zjukg/AdaMF-MAT">AdaMF-MAT</a>, <a href="https://github.com/quqxui/MMRNS">MMRNS</a>.</span>
+</footer>
+
+</div>

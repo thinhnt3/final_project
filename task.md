@@ -1,11 +1,11 @@
 # Bảng việc
 
-Cập nhật: 18/11/2026.
+Cập nhật: 21/11/2026.
 
 ## Dữ liệu
 
 - Dataset 1 - Visual Genome ∩ COCO - done
-- Dataset 2 - investigate - chưa ai nhận
+- Dataset 2 - MKG-W - đã dựng dữ liệu, mã hoá CLIP và chạy CLIP, GraphSAGE, path score, relation path scorer, AdaMF-MAT ([kết quả](docs/mkg-w-results.md)); chưa commit
 
 ## Mức 1
 
@@ -15,8 +15,8 @@ Cập nhật: 18/11/2026.
 
 ## Mức 2
 
-- Thuật toán từ 2024 trở về sau: AdaMF-MAT - đang làm - Thịnh
-- Bộ 20 truy vấn, tách nhóm trực tiếp và gián tiếp - chưa ai nhận
+- Thuật toán từ 2024 trở về sau: AdaMF-MAT - trên MKG-W đã tái lập đủ 3 seed (MRR 34,58 so với 35,85 của bài báo); ablation của bài báo đang chạy - Thịnh
+- Bộ 20 truy vấn, tách nhóm trực tiếp và gián tiếp - MKG-W: báo cáo đã tách hai nhóm; có 30 câu gián tiếp viết tay chỉ để đánh giá (`data/splits/mkg_w_handwritten_queries.yaml`); VG ∩ COCO chưa ai nhận
 - Ablation - Nghị
 
 ## Mức 3

@@ -8,6 +8,8 @@ Cho một câu mô tả, hệ thống tìm ảnh khớp nhất. CLIP chọn ra c
 
 Điểm đồ thị lấy từ GraphSAGE: mạng này mã hoá đồ thị của mỗi ảnh thành một vector trong không gian CLIP.
 
+Phần dưới mô tả dataset thứ nhất (Visual Genome ∩ COCO). Dataset thứ hai là đồ thị tri thức MKG-W, tóm tắt ở mục [Kết quả trên MKG-W](#kết-quả-trên-mkg-w).
+
 ## Kết quả cấp độ 1: GraphSAGE
 
 Bảng dưới là lượt chạy ban đầu ngày 17/11. Lượt khôi phục local ngày 18/11
@@ -45,8 +47,8 @@ File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng see
 
 ### Chưa có
 
-- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi và fidelity perturbation đã có (xem tài liệu bên dưới).
-- Backbone thứ hai (OpenCLIP) và tập dữ liệu công khai thứ hai.
+- Ablation xử lý hub; ablation cốt lõi và fidelity perturbation đã có (xem tài liệu bên dưới).
+- Backbone thứ hai (OpenCLIP).
 - Phân tích 5 truy vấn thành công và 5 truy vấn thất bại.
 
 ## Cấp độ 2: AdaMF-MAT
@@ -187,6 +189,32 @@ Cách đọc:
 - Nhiễu từ bộ sinh scene graph thật (cần GPU), thay cho nhiễu mô phỏng.
 
 Số liệu R@K, MRR, α, k: `runs/benchmark/adamf_mat-*.json`. Các bảng relation queries, ablation khác và bootstrap lấy từ báo cáo [plans/reports/ablation-261120-0650-relation-suite.md](plans/reports/ablation-261120-0650-relation-suite.md); file kết quả thô của chúng không được lưu trong repo. Bảng indirect queries lấy từ output của `scripts/eval_indirect_queries.py` lúc chạy; file kết quả thô cũng không được lưu.
+## Kết quả trên MKG-W
+
+Dataset thứ hai: đồ thị tri thức đa phương thức MKG-W (15.000 thực thể, 169 quan hệ, 9.301 thực thể có ảnh). Đáp án là một thực thể có ảnh. Có hai nhóm câu hỏi: trực tiếp (nêu tên hoặc mô tả đáp án) và gián tiếp (nêu một thực thể khác, gọi là anchor, và một quan hệ: "the performer of Doggfather"). Sự kiện được hỏi trong câu test không có trong đồ thị train.
+
+Tập test, R@1 sau khi xếp hạng lại cùng CLIP. α và k chọn trên validation; đơn vị %; ± là độ lệch chuẩn qua 3 seed.
+
+| Phương pháp | Đọc gì từ câu hỏi | Gián tiếp (2.626 cặp) | Trực tiếp (2.710 cặp) | Toàn bộ |
+|---|---|---|---|---|
+| CLIP ViT-B/32 | câu chữ | 2,70 | 52,51 | 28,00 |
+| CLIP + GraphSAGE | câu chữ | 5,81 ± 0,16 | 60,96 ± 0,23 | 33,82 ± 0,17 |
+| CLIP + GraphSAGE, không cạnh | câu chữ | 4,70 ± 0,21 | **87,27 ± 0,30** | **46,63 ± 0,18** |
+| CLIP + path score (không huấn luyện) | anchor | 15,61 | 52,51 | 34,35 |
+| CLIP + RotatE (chỉ cấu trúc) | anchor + quan hệ | 26,18 ± 0,48 | 52,51 | 39,56 ± 0,24 |
+| CLIP + AdaMF-MAT (phương pháp 2024) | anchor + quan hệ | 24,77 ± 0,42 | 52,51 | 38,86 ± 0,20 |
+| CLIP + relation path scorer | câu chữ + anchor | **27,44 ± 0,12** | 52,51 | 40,17 ± 0,06 |
+
+Cách đọc bảng:
+
+- CLIP gần như không trả lời được câu hỏi gián tiếp: đáp án không được mô tả trong câu, và ảnh không cho thấy sự kiện được hỏi.
+- GraphSAGE mã hoá mỗi thực thể thành một vector cố định, không biết câu hỏi nhắc tới thực thể nào, nên chỉ hơn CLIP 3,1 điểm ở nhóm gián tiếp. Bỏ cạnh hay xáo cạnh gần như không đổi kết quả của nó.
+- Ba mô hình xuất phát từ anchor hơn hẳn. Khi xáo cạnh, path score và relation path scorer rơi về mức CLIP (2,44 và 2,75), nên phần tăng đến từ cạnh thật.
+- AdaMF-MAT (Zhang et al., COLING 2024) được tái lập trên bài toán gốc trước khi dùng cho truy hồi: MRR link prediction 34,58 ± 0,07 so với 35,85 trong bài báo. Ảnh và văn bản giúp link prediction (RotatE chỉ cấu trúc: 29,96) và R@10 truy hồi, nhưng R@1 gián tiếp của AdaMF-MAT lại thấp hơn RotatE 1,4 điểm.
+- Anchor và quan hệ đang được đọc từ nhãn của câu hỏi. Khi tự tìm anchor trong câu chữ cho mọi câu hỏi, chưa có cấu hình nào giữ được cả hai nhóm: hoặc trực tiếp tụt còn 11,2, hoặc gián tiếp tụt còn 10,7.
+- Trên hai bộ kiểm tra thêm, relation path scorer (anchor từ nhãn) đạt 3,9 với câu hỏi cần hai triple nối nhau và 20,0 với 30 câu viết tay (CLIP: 0,96 và 0,00).
+
+Cách dựng dữ liệu, ablation, kết quả theo khoảng cách từ anchor, chi tiết AdaMF-MAT, giới hạn và lệnh chạy lại: [docs/mkg-w-results.md](docs/mkg-w-results.md).
 
 ## Dữ liệu
 
@@ -225,13 +253,14 @@ python -m scripts.train_graphsage                        # huấn luyện 3 seed
 python -m scripts.run_benchmark --method graphsage       # CLIP + GraphSAGE
 python -m scripts.explain_retrieval --sample 5           # kết quả kèm relation giải thích
 
-pytest                                                   # 334 test, không cần mạng
+pytest                                                   # 393 test, không cần mạng
 ```
 
 Lưu ý:
 
 - `embed_vg_coco` cần 10.000 file ảnh trong `data/processed/vg_coco/images/`. Ảnh (1,4 GB) không nằm trong repo. Script tải ảnh và xây dữ liệu (`scripts/build_vg_coco.py`) hiện cũng không nằm trong repo; các file JSON nó sinh ra (ảnh, truy vấn, đồ thị, split) thì có.
 - `train_graphsage` báo cáo lên Weights & Biases. Đổi `wandb.mode` trong `configs/retrieval/vg_coco.yaml` thành `offline` hoặc `disabled` nếu không dùng.
+- Lệnh cho MKG-W nằm ở [docs/mkg-w-results.md](docs/mkg-w-results.md#chạy-lại).
 - Biến thể đỉnh ảnh mang CLIP: `python -m scripts.train_graphsage --image-node clip_image`, rồi `python -m scripts.run_benchmark --method graphsage --run directed-clip_image-l3-h512`.
 
 Cấp độ 2 (AdaMF), mỗi seed khoảng 5 phút trên CPU:

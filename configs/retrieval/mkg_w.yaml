@@ -1,0 +1,112 @@
+# Retrieval experiments on MKG-W.
+# All paths are relative to the repository root; run commands from there.
+
+# Dataset build config: gives the processed data directory.
+data_config: configs/data/mkg_w.yaml
+
+# Same frozen CLIP as the VG ∩ COCO experiments, so the two datasets are comparable.
+# device: auto picks cuda, then mps, then cpu.
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+
+# One sub-directory per CLIP model is created under this directory.
+embeddings_dir: data/processed/mkg_w/embeddings
+
+# recall_ks: reported Recall@K. candidate_ks: how often an answer is inside the top-k CLIP
+# candidates, i.e. the ceiling of any reranker that only reorders that list.
+benchmark:
+  recall_ks: [1, 5, 10]
+  candidate_ks: [20, 50, 100, 200, 500, 1000]
+  # Reranking search, on validation only: final score = alpha * CLIP + (1 - alpha) * graph
+  # over the top-k CLIP candidates. 9301 is the whole gallery: CLIP's top-100 holds only 28%
+  # of the answers to relation queries, so small k cannot be the only option.
+  alpha_step: 0.05
+  top_k_grid: [10, 100, 1000, 9301]
+
+# Path score, no training: weighted count of train-graph paths from the entity the query
+# names to each candidate, up to query_rules.max_hops edges. A path of n edges weighs
+# decay^n; edge weights are degree-normalized so hub nodes do not dominate.
+# shuffle_seed: seed of the control graph whose tails are permuted across triples.
+path_score:
+  decay_grid: [0.25, 0.5, 1.0]
+  shuffle_seed: 13
+
+# Anchors found in the query text instead of read from the query record.
+# self_weight_grid: graph score given to the named entity itself, relative to the best entity
+#   its walks reach (which scores 1). 0 means a query never returns the entity it names; a
+#   name query needs more than 0, a relation query is hurt by it. Chosen on validation.
+anchor_linking:
+  self_weight_grid: [0.0, 0.5, 1.0, 2.0, 4.0]
+
+# Graph encoder: GraphSAGE over the train graph, one vector per entity. Each layer reaches
+# one hop further; messages carry a learned vector of their relation.
+# structure_only_rate: share of entities encoded from their neighbours alone at each training
+#   step (their own name vector is left out), so the model cannot solve everything by name.
+#   0 turns it off; `train_mkg_w_graphsage --structure-only-rate` overrides it for one run.
+# selection_queries: validation queries that pick the best epoch, all | indirect. Half of
+#   validation is name/description queries, which need no graph; `indirect` keeps them out.
+kg_graphsage:
+  hidden_dim: 512
+  num_layers: 3
+  structure_only_rate: 0.0
+  selection_queries: indirect
+
+# Relation path scorer: walks of up to max_hops edges from the entity the query names. Each
+# step is weighted per relation and direction, and the weights are predicted from the query
+# text. Other training values come from `training`.
+relation_paths:
+  max_hops: 3
+  batch_size: 256
+  learning_rate: 0.01
+
+# Training of the graph encoder; same values as the VG ∩ COCO runs. Tune on validation only.
+# selection_metric: validation metric of the graph score alone that picks the best epoch.
+training:
+  seeds: [13, 37, 97]
+  device: cpu
+  batch_size: 512
+  max_epochs: 40
+  patience: 5
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+
+# AdaMF-MAT (Zhang et al., COLING 2024) as a link-prediction model over the train triples.
+# Values marked "paper" are the MKG-W settings of the released code (scripts/run_mkgw.sh, args.py).
+# dim: size of a relation phase vector; entity embeddings are twice that (paper: 200).
+# margin, epsilon, negatives, adversarial_temperature: RotatE loss (paper: 12, 2, 128, 2).
+# adaptive_fusion / mat / mu: the paper's two parts; `train_mkg_w_adamf_mat` flags switch them
+#   off for ablations. The paper searches mu; the released script passes 0.
+# noise_dim, generator_hidden_dim, generator_learning_rate: MAT generators (paper: 64, 512, 1e-4).
+# batch_size: paper 1024. learning_rate, max_epochs: the paper trains 1000 epochs at 2e-5 on a
+#   GPU. Here 1e-3: in the seed-13 probe the full model stopped improving on validation by
+#   epoch 80 (test MRR 0.345, paper 0.359); structure-only RotatE was still rising at 100.
+# eval_every / patience: validation link prediction every eval_every epochs; stop after
+#   `patience` validations without a better MRR.
+adamf_mat:
+  dim: 200
+  margin: 12.0
+  epsilon: 2.0
+  negatives: 128
+  adversarial_temperature: 2.0
+  adaptive_fusion: true
+  mat: true
+  mu: 1.0
+  noise_dim: 64
+  generator_hidden_dim: 512
+  generator_learning_rate: 0.0001
+  device: cpu
+  batch_size: 1024
+  learning_rate: 0.001
+  max_epochs: 200
+  eval_every: 20
+  patience: 2
+  eval_batch_size: 32
+
+# Benchmark results and trained models are written under this directory.
+runs_dir: runs/mkg_w

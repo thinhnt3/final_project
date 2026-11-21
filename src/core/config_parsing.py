@@ -31,7 +31,7 @@ def require_section(raw: dict[str, Any], key: str) -> dict[str, Any]:
 def require_field(raw: dict[str, Any], key: str, kind: type | tuple[type, ...]) -> Any:
     """Return `raw[key]` if it has the given type; raise ConfigError otherwise."""
     value = raw.get(key)
-    # bool is a subclass of int; reject it so `workers: true` fails.
-    if not isinstance(value, kind) or isinstance(value, bool):
+    # bool is a subclass of int; reject it so `workers: true` fails, unless a bool is asked for.
+    if not isinstance(value, kind) or (isinstance(value, bool) and kind is not bool):
         raise ConfigError(f"field '{key}' must be {kind}, got {value!r}")
     return value

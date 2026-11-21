@@ -1,0 +1,174 @@
+# Hand-written evaluation queries for MKG-W. Evaluation only: never used for training or for
+# choosing alpha / top-k.
+#
+# Each query is free text written by a person, not produced from a template. Entities are
+# named the way a person would write them, so a name can differ from the dataset's
+# ("Signs", not "Signs (film)"); the anchor linker then misses it, which is part of what
+# this set measures.
+#
+# `steps` is the fact pattern that defines the correct answers; `build_mkg_w_extra_queries`
+# checks it against the triples and fails when a declared answer does not satisfy it, has no
+# image, or already follows from the train graph alone.
+#   single:        one step, from the anchor to the answer.
+#   chain:         the first step leads from the anchor to an unnamed entity, the second from
+#                  that entity to the answer.
+#   intersection:  every step has its own anchor; the answer satisfies all of them.
+# `answer_is` says which end of the triple the step's result is (head or tail).
+queries:
+  # --- one fact ---
+  - text: "Which country is Ankara in?"
+    kind: single
+    answers: ["Turkey"]
+    steps: [{anchor: "Ankara", relation: P17, answer_is: tail}]
+  - text: "On which continent does Turkey lie?"
+    kind: single
+    answers: ["Asia"]
+    steps: [{anchor: "Turkey", relation: P30, answer_is: tail}]
+  - text: "What country was David Bowie a citizen of?"
+    kind: single
+    answers: ["United Kingdom"]
+    steps: [{anchor: "David Bowie", relation: P27, answer_is: tail}]
+  - text: "Where was the actor Lionel Barrymore born?"
+    kind: single
+    answers: ["Philadelphia"]
+    steps: [{anchor: "Lionel Barrymore", relation: P19, answer_is: tail}]
+  - text: "Which comedian influenced Buster Keaton?"
+    kind: single
+    answers: ["Roscoe Arbuckle"]
+    steps: [{anchor: "Buster Keaton", relation: P737, answer_is: tail}]
+  - text: "Where did the director Samuel Fuller die?"
+    kind: single
+    answers: ["Hollywood"]
+    steps: [{anchor: "Samuel Fuller", relation: P20, answer_is: tail}]
+  - text: "Who wrote the music for the TV show Angel?"
+    kind: single
+    answers: ["Christophe Beck"]
+    steps: [{anchor: "Angel (1999 TV series)", relation: P86, answer_is: tail}]
+  - text: "a 1995 western starring Gene Hackman"
+    kind: single
+    answers: ["The Quick and the Dead (1995 film)"]
+    steps: [{anchor: "Gene Hackman", relation: P161, answer_is: head}]
+  - text: "Who was the cinematographer on M. Night Shyamalan's Signs?"
+    kind: single
+    answers: ["Tak Fujimoto"]
+    steps: [{anchor: "Signs (film)", relation: P344, answer_is: tail}]
+  - text: "Where was the rapper Tinchy Stryder born?"
+    kind: single
+    answers: ["Accra"]
+    steps: [{anchor: "Tinchy Stryder", relation: P19, answer_is: tail}]
+  - text: "Who edited the war film Black Hawk Down?"
+    kind: single
+    answers: ["Pietro Scalia"]
+    steps: [{anchor: "Black Hawk Down (film)", relation: P1040, answer_is: tail}]
+  - text: "Which record label put out the song Xxplosive?"
+    kind: single
+    answers: ["Aftermath Entertainment"]
+    steps: [{anchor: "Xxplosive", relation: P264, answer_is: tail}]
+  - text: "the movie that Beethoven's 2nd is a sequel to"
+    kind: single
+    answers: ["Beethoven (film)"]
+    steps: [{anchor: "Beethoven's 2nd (film)", relation: P155, answer_is: tail}]
+  - text: "Who composed the score of A King in New York?"
+    kind: single
+    answers: ["Charlie Chaplin"]
+    steps: [{anchor: "A King in New York", relation: P86, answer_is: tail}]
+
+  # --- two facts in a row ---
+  - text: "another film written by the man who directed Arthur and the Revenge of Maltazard"
+    kind: chain
+    answers: ["The Big Blue"]
+    steps:
+      - {anchor: "Arthur and the Revenge of Maltazard", relation: P57, answer_is: tail}
+      - {relation: P58, answer_is: head}
+  - text: "a horror film from the director of Phenomena"
+    kind: chain
+    answers: ["Trauma (1993 film)"]
+    steps:
+      - {anchor: "Phenomena (film)", relation: P57, answer_is: tail}
+      - {relation: P57, answer_is: head}
+  - text: "a movie written by the screenwriter of Avatar"
+    kind: chain
+    answers: ["The Abyss"]
+    steps:
+      - {anchor: "Avatar (2009 film)", relation: P58, answer_is: tail}
+      - {relation: P58, answer_is: head}
+  - text: "an early film by the director of The Comancheros"
+    kind: chain
+    answers: ["Tenderloin (film)"]
+    steps:
+      - {anchor: "The Comancheros (film)", relation: P57, answer_is: tail}
+      - {relation: P57, answer_is: head}
+  - text: "a film written by the director of Scream 3"
+    kind: chain
+    answers: ["Swamp Thing (film)"]
+    steps:
+      - {anchor: "Scream 3", relation: P57, answer_is: tail}
+      - {relation: P58, answer_is: head}
+  - text: "a comedy shot by the cinematographer of Catch Me If You Can"
+    kind: chain
+    answers: ["How Do You Know"]
+    steps:
+      - {anchor: "Catch Me If You Can", relation: P344, answer_is: tail}
+      - {relation: P344, answer_is: head}
+  - text: "a musician born in the Ghanaian city twinned with Johannesburg"
+    kind: chain
+    answers: ["Tinchy Stryder"]
+    steps:
+      - {anchor: "Johannesburg", relation: P190, answer_is: tail}
+      - {relation: P19, answer_is: head}
+  - text: "someone who died in the German sister city of Ann Arbor, Michigan"
+    kind: chain
+    answers: ["Herbert Wilhelmy"]
+    steps:
+      - {anchor: "Ann Arbor, Michigan", relation: P190, answer_is: tail}
+      - {relation: P20, answer_is: head}
+  - text: "an Italian comedy shot by the cinematographer of Barabbas"
+    kind: chain
+    answers: ["Non me lo dire!"]
+    steps:
+      - {anchor: "Barabbas (1961 film)", relation: P344, answer_is: tail}
+      - {relation: P344, answer_is: head}
+
+  # --- two facts about the same answer ---
+  - text: "the screenwriter of both The Battle of the River Plate and Ill Met by Moonlight"
+    kind: intersection
+    answers: ["Emeric Pressburger"]
+    steps:
+      - {anchor: "The Battle of the River Plate (film)", relation: P58, answer_is: tail}
+      - {anchor: "Ill Met by Moonlight (film)", relation: P58, answer_is: tail}
+  - text: "the hockey player who played for both Metallurg Novokuznetsk and HC Neftekhimik Nizhnekamsk"
+    kind: intersection
+    answers: ["Evgeny Muratov"]
+    steps:
+      - {anchor: "Metallurg Novokuznetsk", relation: P54, answer_is: head}
+      - {anchor: "HC Neftekhimik Nizhnekamsk", relation: P54, answer_is: head}
+  - text: "the city twinned with Tel Aviv where Alexander Andreyevich Svechin died"
+    kind: intersection
+    answers: ["Moscow"]
+    steps:
+      - {anchor: "Tel Aviv", relation: P190, answer_is: tail}
+      - {anchor: "Alexander Andreyevich Svechin", relation: P20, answer_is: tail}
+  - text: "the studio that produced RV and distributed Bucky Larson: Born to Be a Star"
+    kind: intersection
+    answers: ["Columbia Pictures"]
+    steps:
+      - {anchor: "RV (film)", relation: P272, answer_is: tail}
+      - {anchor: "Bucky Larson: Born to Be a Star", relation: P750, answer_is: tail}
+  - text: "the film school attended by both Naseeruddin Shah and Shakti Kapoor"
+    kind: intersection
+    answers: ["Film and Television Institute of India"]
+    steps:
+      - {anchor: "Naseeruddin Shah", relation: P69, answer_is: tail}
+      - {anchor: "Shakti Kapoor", relation: P69, answer_is: tail}
+  - text: "the Italian director who made both Trauma and Phenomena"
+    kind: intersection
+    answers: ["Dario Argento"]
+    steps:
+      - {anchor: "Trauma (1993 film)", relation: P57, answer_is: tail}
+      - {anchor: "Phenomena (film)", relation: P57, answer_is: tail}
+  - text: "the filmmaker who wrote The Abyss and directed Avatar"
+    kind: intersection
+    answers: ["James Cameron"]
+    steps:
+      - {anchor: "The Abyss", relation: P58, answer_is: tail}
+      - {anchor: "Avatar (2009 film)", relation: P57, answer_is: tail}
