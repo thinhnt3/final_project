@@ -265,7 +265,7 @@ python -m scripts.eval_relation_queries                                         
 python -m scripts.adamf_weight_stats --run adamf-mat-d256-mu1                         # trọng số và phần đóng góp từng modality
 ```
 
-Báo cáo W&B ([link](https://forge.coreweave.com/wandb/thinhnt3-vnggames/vg-coco-graph-retrieval/reports/x--VmlldzoxODM0MjcyMA)) dựng từ các file kết quả local, không train lại:
+Báo cáo W&B ([link](https://forge.coreweave.com/wandb/thinhnt3-vnggames/vg-coco-graph-retrieval/reports/x--VmlldzoxODM0MjcyMA); danh sách link và mục lục ở [wandb-reports.md](wandb-reports.md)) dựng từ các file kết quả local, không train lại:
 
 ```bash
 python -m scripts.upload_report_runs                       # run tổng hợp + đường học lên W&B, bỏ qua run đã có
