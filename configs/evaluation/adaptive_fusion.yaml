@@ -11,9 +11,10 @@ retrieval_config: configs/retrieval/ablations/full.yaml
 # random: control with the same bucket sizes and the same number of selected parameters.
 features: [clip_margin, random]
 
-# Buckets are cut at quantiles of the validation feature. 1 is the official fixed-alpha
-# reranker; it must reproduce the benchmark's selection and is the baseline of every comparison.
-n_buckets: [1, 2, 3, 4]
+# Buckets are cut at quantiles of the validation feature; every count must be >= 2. The
+# baseline, the official fixed-alpha reranker, always runs: it must reproduce the benchmark's
+# selection, and every bucketing is compared with it.
+n_buckets: [2, 3, 4]
 
 # A bucket needs this many validation queries to select its own (alpha, top_k).
 min_bucket_queries: 500

@@ -10,13 +10,13 @@ import pytest
 import scripts.evaluate_adaptive_fusion as script
 from src.core.exceptions import ConfigError, DataError
 from src.data.schemas import Split
+from src.data.yaml_io import write_yaml
 from src.evaluation.benchmark import SplitData
 from src.evaluation.metrics import ranks_of_relevant
 from src.retrieval.adaptive_fusion import (
     AdaptiveFusion,
     AdaptiveFusionConfig,
     BucketFeature,
-    BucketSetting,
     adaptive_scores,
     assign_buckets,
     bucket_edges,
@@ -25,7 +25,7 @@ from src.retrieval.adaptive_fusion import (
     random_feature,
 )
 from src.retrieval.config import RetrievalConfig
-from src.retrieval.rerank import rerank_scores, sweep_alpha_and_k
+from src.retrieval.rerank import SweepPoint, rerank_scores, sweep_alpha_and_k
 
 ALPHAS = tuple(round(i / 100, 2) for i in range(101))
 
@@ -111,7 +111,7 @@ def test_each_bucket_gets_its_own_setting_where_one_alpha_cannot_serve_both():
     clip, graph, relevant = _conflicting()
     data = _split(relevant)
     fixed = _fit(clip, graph, data, 1)
-    assert fixed.settings[0].val_metrics["recall@1"] == 0.5
+    assert fixed.settings[0].metrics["recall@1"] == 0.5
     adaptive = _fit(clip, graph, data, 2)
     unsure, sure = adaptive.settings
     assert unsure.alpha <= 0.83 and sure.alpha >= 0.96
@@ -150,7 +150,7 @@ def test_scoring_another_split_uses_the_validation_edges():
 def test_alpha_one_in_every_bucket_keeps_the_clip_ranking():
     rng = np.random.default_rng(1)
     clip, graph = rng.uniform(-1, 1, (20, 6)), rng.uniform(-1, 1, (20, 6))
-    settings = (BucketSetting(1.0, 2, 1, {}), BucketSetting(1.0, 6, 1, {}))
+    settings = (SweepPoint(1.0, 2, {}), SweepPoint(1.0, 6, {}))
     fusion = AdaptiveFusion(BucketFeature.CLIP_MARGIN, 0, (float(np.median(clip_margin(clip))),), settings)
     fused, buckets = adaptive_scores(fusion, clip, graph, tuple(f"q{i}" for i in range(20)))
     assert set(buckets.tolist()) == {0, 1}
@@ -159,14 +159,14 @@ def test_alpha_one_in_every_bucket_keeps_the_clip_ranking():
 
 def test_a_fitted_fusion_needs_one_setting_per_bucket():
     with pytest.raises(DataError):
-        AdaptiveFusion(BucketFeature.CLIP_MARGIN, 0, (0.1,), (BucketSetting(0.5, 2, 1, {}),))
+        AdaptiveFusion(BucketFeature.CLIP_MARGIN, 0, (0.1,), (SweepPoint(0.5, 2, {}),))
 
 
 def _raw_config(**overrides):
     raw = {
         "retrieval_config": "configs/retrieval/ablations/full.yaml",
         "features": ["clip_margin", "random"],
-        "n_buckets": [1, 2, 4],
+        "n_buckets": [2, 4],
         "min_bucket_queries": 500,
         "feature_seed": 2026,
         "bootstrap_repeats": 2000,
@@ -176,21 +176,17 @@ def _raw_config(**overrides):
     return {**raw, **overrides}
 
 
-def test_config_requires_the_fixed_baseline():
-    with pytest.raises(ConfigError):
-        AdaptiveFusionConfig.from_dict(_raw_config(n_buckets=[2, 4]))
-
-
 @pytest.mark.parametrize(
     "overrides",
     [
         {"features": ["clip_margin", "magic"]},
         {"features": ["random", "random"]},
         {"features": []},
-        {"n_buckets": [1, 2, 2]},
-        {"n_buckets": [1, True]},
+        {"n_buckets": []},
+        {"n_buckets": [2, 2]},
+        {"n_buckets": [2, True]},
         {"n_buckets": 3},
-        {"n_buckets": [1, 0]},
+        {"n_buckets": [1, 2]},  # the fixed baseline always runs; it is not a bucketing
         {"min_bucket_queries": 0},
         {"bootstrap_repeats": 0},
         {"output": 5},
@@ -203,7 +199,7 @@ def test_config_rejects_invalid_values(overrides):
 
 def test_shipped_config_is_valid():
     config = AdaptiveFusionConfig.from_yaml("configs/evaluation/adaptive_fusion.yaml")
-    assert 1 in config.n_buckets
+    assert config.n_buckets == (2, 3, 4)
     assert config.features == (BucketFeature.CLIP_MARGIN, BucketFeature.RANDOM)
 
 
@@ -236,12 +232,7 @@ def _script_world(monkeypatch, tmp_path):
     for name, fake in fakes.items():
         monkeypatch.setattr(script, name, fake)
     config, output = tmp_path / "adaptive_fusion.yaml", tmp_path / "adaptive_fusion.json"
-    config.write_text(
-        "retrieval_config: configs/retrieval/ablations/full.yaml\nfeatures: [clip_margin, random]\n"
-        "n_buckets: [1, 2]\nmin_bucket_queries: 5\nfeature_seed: 0\nbootstrap_repeats: 50\n"
-        f"bootstrap_seed: 0\noutput: {output}\n",
-        encoding="utf-8",
-    )
+    write_yaml(config, _raw_config(n_buckets=[2], min_bucket_queries=5, bootstrap_repeats=50, output=str(output)))
     monkeypatch.setattr(sys, "argv", ["evaluate_adaptive_fusion", "--config", str(config)])
     return benchmark, output
 

@@ -5,18 +5,19 @@ Run from the repository root after train_graphsage and run_benchmark for the con
     python -m scripts.evaluate_adaptive_fusion
     python -m scripts.evaluate_adaptive_fusion --config configs/evaluation/adaptive_fusion.yaml
 
-For every training seed and every (feature, number of buckets):
-- buckets are cut on the validation feature;
-- (alpha, top_k) is selected per bucket on validation;
+For every training seed:
+- the baseline is the official fixed-alpha reranker, selected on all validation queries; it
+  must reproduce the benchmark's selection;
+- for every (feature, number of buckets), buckets are cut on the validation feature and
+  (alpha, top_k) is selected per bucket on validation;
 - validation and test are then scored once with those settings.
 
-One bucket is the official fixed-alpha reranker and must reproduce the benchmark's selection.
 The random feature is a control with the same number of selected parameters. Nothing is
 retrained and nothing is selected on test.
 
-Writes the JSON named by `output` in the config: per-bucket settings and metrics, mean ± std
-over seeds, and a paired, image-clustered bootstrap of each bucketing against the
-fixed-alpha baseline on test.
+Writes the JSON named by `output` in the config: the selected settings, metrics overall and
+per bucket, mean ± std over seeds, and a paired, image-clustered bootstrap of each bucketing
+against the fixed-alpha baseline on test.
 """
 
 from __future__ import annotations
@@ -34,79 +35,62 @@ from src.data.config import DataConfig
 from src.data.json_io import read_json, write_json
 from src.data.schemas import Split
 from src.data.sources import sha256_of
-from src.embeddings.store import META_FILE, load_table, verify_inputs_unchanged
+from src.embeddings.store import META_FILE, load_table, table_paths, verify_inputs_unchanged
 from src.evaluation.ablation_analysis import paired_analysis
 from src.evaluation.benchmark import aggregate_runs, build_split_data, clip_scores, graph_vector_scores
 from src.evaluation.metrics import ranks_of_relevant, retrieval_metrics
 from src.models.checkpoint import GRAPH_VECTORS, SETTINGS_FILE
 from src.models.run_validation import validate_artifact_inputs, validate_run
-from src.retrieval.adaptive_fusion import (
-    AdaptiveFusion,
-    AdaptiveFusionConfig,
-    BucketFeature,
-    adaptive_scores,
-    fit_adaptive_fusion,
-)
+from src.retrieval.adaptive_fusion import AdaptiveFusionConfig, adaptive_scores, fit_adaptive_fusion
 from src.retrieval.config import RetrievalConfig
+from src.retrieval.rerank import SweepPoint, rerank_scores, sweep_alpha_and_k
 
 log = logging.getLogger("evaluate_adaptive_fusion")
 
 DEFAULT_CONFIG = "configs/evaluation/adaptive_fusion.yaml"
 EVAL_SPLITS = (Split.VAL, Split.TEST)
 FIXED = "fixed"
-_DECIMALS = 4
-_ALPHA_TOLERANCE = 1e-9
 
 
-def _key(feature: BucketFeature, n_buckets: int) -> str:
-    return FIXED if n_buckets == 1 else f"{feature.value}-b{n_buckets}"
-
-
-def _check_official(fusion: AdaptiveFusion, benchmark: dict[str, Any], seed: int, label: str) -> None:
-    """With one bucket the selection must equal what run_benchmark selected for this seed."""
+def _check_official(selected: SweepPoint, benchmark: dict[str, Any], seed: int, label: str) -> None:
+    """The baseline must be exactly what run_benchmark selected for this seed."""
     official = benchmark["seeds"][str(seed)]["selected_on_validation"]
-    (setting,) = fusion.settings
-    if abs(setting.alpha - float(official["alpha"])) > _ALPHA_TOLERANCE or setting.top_k != int(official["top_k"]):
+    if (selected.alpha, selected.top_k) != (official["alpha"], official["top_k"]):
         raise DataError(
-            f"seed {seed}: one bucket selected alpha={setting.alpha}, top_k={setting.top_k}, but {label} "
+            f"seed {seed}: the official sweep selected alpha={selected.alpha}, top_k={selected.top_k}, but {label} "
             f"selected alpha={official['alpha']}, top_k={official['top_k']}; the grids or inputs differ"
         )
 
 
 def _bucket_rows(
-    ranks: np.ndarray, fixed_ranks: np.ndarray, buckets: np.ndarray, fusion: AdaptiveFusion
+    ranks: np.ndarray, fixed_ranks: np.ndarray, buckets: np.ndarray, n_buckets: int
 ) -> list[dict[str, Any]]:
-    """Per bucket: size, setting, and Recall@1 of this bucketing and of the fixed baseline on the same queries."""
+    """Size and Recall@1 of each bucket, in the order of `fit.buckets`, next to the fixed baseline's."""
     rows = []
-    for bucket, setting in enumerate(fusion.settings):
+    for bucket in range(n_buckets):
         mask = buckets == bucket
-        count = int(mask.sum())
         rows.append(
             {
-                "bucket": bucket,
-                "queries": count,
-                "alpha": setting.alpha,
-                "top_k": setting.top_k,
-                "recall@1": round(float((ranks[mask] == 1).mean()), _DECIMALS) if count else None,
-                "fixed_recall@1": round(float((fixed_ranks[mask] == 1).mean()), _DECIMALS) if count else None,
+                "queries": int(mask.sum()),
+                "recall@1": float((ranks[mask] == 1).mean()) if mask.any() else None,
+                "fixed_recall@1": float((fixed_ranks[mask] == 1).mean()) if mask.any() else None,
             }
         )
     return rows
 
 
-def _summary(entry: dict[str, Any], seeds: tuple[int, ...]) -> dict[str, Any]:
-    """Mean and sample std over seeds of every metric, per split."""
-    return {
-        split.value: {
-            metric: {stat: round(value, _DECIMALS) for stat, value in stats.items()}
-            for metric, stats in aggregate_runs([entry["seeds"][str(s)][split.value]["metrics"] for s in seeds]).items()
-        }
-        for split in EVAL_SPLITS
-    }
+def _log_seed(seed: int, key: str, result: dict[str, Any]) -> None:
+    log.info(
+        "seed %d %-16s val R@1 %.4f  test R@1 %.4f",
+        seed,
+        key,
+        result[Split.VAL.value]["metrics"]["recall@1"],
+        result[Split.TEST.value]["metrics"]["recall@1"],
+    )
 
 
 def run(config: AdaptiveFusionConfig, config_path: str) -> None:
-    """Fit every bucketing on validation per seed, score validation and test, and write the report."""
+    """Fit the baseline and every bucketing on validation per seed, score validation and test, write the report."""
     retrieval = RetrievalConfig.from_yaml(config.retrieval_config)
     data_config = DataConfig.from_yaml(retrieval.data_config)
     processed = data_config.paths.processed_dir
@@ -118,7 +102,7 @@ def run(config: AdaptiveFusionConfig, config_path: str) -> None:
     data = {split: build_split_data(split, images, queries, image_table, query_table) for split in EVAL_SPLITS}
     clip = {split: clip_scores(split_data) for split, split_data in data.items()}
 
-    # The benchmark of this run supplies the official selection that one bucket must reproduce.
+    # The benchmark of this run supplies the official selection that the baseline must reproduce.
     name = retrieval.graphsage.run_name()
     benchmark_path = retrieval.runs_dir / "benchmark" / f"graphsage-{name}.json"
     benchmark = read_json(benchmark_path)
@@ -132,19 +116,33 @@ def run(config: AdaptiveFusionConfig, config_path: str) -> None:
         benchmark_path,
     ]
 
-    # The fixed baseline first: every other bucketing is compared with it on the same queries.
-    plans = [(BucketFeature.CLIP_MARGIN, 1)] + [(f, b) for f in config.features for b in config.n_buckets if b > 1]
-    entries: dict[str, dict[str, Any]] = {}
-    test_ranks: dict[str, list[np.ndarray]] = {}
+    plans = {f"{feature.value}-b{n}": (feature, n) for feature in config.features for n in config.n_buckets}
+    entries: dict[str, dict[str, Any]] = {FIXED: {"seeds": {}}}
+    entries |= {key: {"feature": feature.value, "n_buckets": n, "seeds": {}} for key, (feature, n) in plans.items()}
+    test_ranks: dict[str, list[np.ndarray]] = {key: [] for key in entries}
     for seed in retrieval.training.seeds:
         run_dir = retrieval.runs_dir / "graphsage" / name / f"seed{seed}"
         validate_run(run_dir, retrieval, seed)
-        inputs += [run_dir / SETTINGS_FILE, run_dir / f"{GRAPH_VECTORS}.npy"]
+        inputs += [run_dir / SETTINGS_FILE, *table_paths(run_dir, GRAPH_VECTORS)]
         table = load_table(run_dir, GRAPH_VECTORS)
         graph = {split: graph_vector_scores(split_data, table) for split, split_data in data.items()}
+
+        # The baseline is the official reranker: one (alpha, top_k) for every query.
+        selected, _ = sweep_alpha_and_k(
+            clip[Split.VAL], graph[Split.VAL], data[Split.VAL], grid.alpha_grid, grid.top_k_grid, grid.recall_ks
+        )
+        _check_official(selected, benchmark, seed, str(benchmark_path))
+        fixed: dict[str, Any] = {"fit": {"alpha": selected.alpha, "top_k": selected.top_k}}
         fixed_ranks: dict[Split, np.ndarray] = {}
-        for feature, n_buckets in plans:
-            key = _key(feature, n_buckets)
+        for split in EVAL_SPLITS:
+            fused = rerank_scores(clip[split], graph[split], selected.alpha, selected.top_k)
+            fixed_ranks[split] = ranks_of_relevant(fused, data[split].relevant_columns)
+            fixed[split.value] = {"metrics": retrieval_metrics(fixed_ranks[split], grid.recall_ks)}
+        entries[FIXED]["seeds"][str(seed)] = fixed
+        test_ranks[FIXED].append(fixed_ranks[Split.TEST])
+        _log_seed(seed, FIXED, fixed)
+
+        for key, (feature, n_buckets) in plans.items():
             fusion = fit_adaptive_fusion(
                 clip[Split.VAL],
                 graph[Split.VAL],
@@ -157,43 +155,32 @@ def run(config: AdaptiveFusionConfig, config_path: str) -> None:
                 feature_seed=config.feature_seed,
                 ks=grid.recall_ks,
             )
-            if n_buckets == 1:
-                _check_official(fusion, benchmark, seed, str(benchmark_path))
             result: dict[str, Any] = {"fit": fusion.to_dict()}
             for split in EVAL_SPLITS:
                 fused, buckets = adaptive_scores(fusion, clip[split], graph[split], data[split].query_ids)
                 ranks = ranks_of_relevant(fused, data[split].relevant_columns)
-                if n_buckets == 1:
-                    fixed_ranks[split] = ranks
                 result[split.value] = {
                     "metrics": retrieval_metrics(ranks, grid.recall_ks),
-                    "buckets": _bucket_rows(ranks, fixed_ranks[split], buckets, fusion),
+                    "buckets": _bucket_rows(ranks, fixed_ranks[split], buckets, len(fusion.settings)),
                 }
                 if split is Split.TEST:
-                    test_ranks.setdefault(key, []).append(ranks)
-            entry = entries.setdefault(
-                key, {"feature": None if n_buckets == 1 else feature.value, "n_buckets": n_buckets, "seeds": {}}
-            )
-            entry["seeds"][str(seed)] = result
-            log.info(
-                "seed %d %-16s buckets %d  val R@1 %.4f  test R@1 %.4f",
-                seed,
-                key,
-                len(fusion.settings),
-                result[Split.VAL.value]["metrics"]["recall@1"],
-                result[Split.TEST.value]["metrics"]["recall@1"],
-            )
+                    test_ranks[key].append(ranks)
+            entries[key]["seeds"][str(seed)] = result
+            _log_seed(seed, key, result)
 
     # Paired comparison with the fixed baseline: same queries, same seeds, captions clustered by image.
     test = data[Split.TEST]
     true_images = np.asarray(test.image_ids)[test.relevant_columns]
-    fixed = np.stack(test_ranks[FIXED])
+    fixed_test_ranks = np.stack(test_ranks[FIXED])
     for key, entry in entries.items():
-        entry["summary"] = _summary(entry, retrieval.training.seeds)
+        entry["summary"] = {
+            split.value: aggregate_runs([result[split.value]["metrics"] for result in entry["seeds"].values()])
+            for split in EVAL_SPLITS
+        }
         if key != FIXED:
             entry["paired_vs_fixed_test"] = paired_analysis(
                 np.stack(test_ranks[key]),
-                fixed,
+                fixed_test_ranks,
                 true_images,
                 repeats=config.bootstrap_repeats,
                 seed=config.bootstrap_seed,
@@ -210,9 +197,9 @@ def run(config: AdaptiveFusionConfig, config_path: str) -> None:
                 "config": config_path,
                 "retrieval_config": config.retrieval_config,
                 "training_seeds": list(retrieval.training.seeds),
+                "fixed": "the official reranker: one (alpha, top_k) for all queries, equal to the benchmark's",
                 "selection": "per bucket on validation with the official alpha/top_k sweep and tie-break",
                 "buckets": "edges at quantiles of the validation feature; test queries use the validation edges",
-                "fixed": "one bucket; reproduces the benchmark's selection for every seed",
                 "control": "random feature: same bucket sizes and parameter count, no information",
                 "paired_vs_fixed_test": "first = this bucketing, second = fixed; delta_r1_pp = bucketing − fixed",
                 "min_bucket_queries": config.min_bucket_queries,

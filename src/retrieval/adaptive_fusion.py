@@ -19,7 +19,7 @@ Bucket features:
 
 from __future__ import annotations
 
-import hashlib
+import random
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from enum import StrEnum
@@ -33,11 +33,7 @@ from src.core.exceptions import ConfigError, DataError
 from src.data.schemas import Split
 from src.evaluation.benchmark import SplitData
 from src.evaluation.metrics import DEFAULT_KS
-from src.retrieval.rerank import rerank_scores, sweep_alpha_and_k
-
-# Eight bytes of a sha256 digest give a uniform number in [0, 1).
-_HASH_BYTES = 8
-_HASH_SCALE = float(2 ** (8 * _HASH_BYTES))
+from src.retrieval.rerank import SweepPoint, rerank_scores, sweep_alpha_and_k
 
 
 class BucketFeature(StrEnum):
@@ -58,16 +54,12 @@ def clip_margin(clip_scores: np.ndarray) -> np.ndarray:
 
 
 def random_feature(query_ids: Sequence[str], seed: int) -> np.ndarray:
-    """A number in [0, 1) per query, from a hash of (seed, query id).
+    """A number in [0, 1) per query, drawn from a private RNG seeded with (seed, query id).
 
     The value of a query does not depend on the order of the queries or on which split they
     come from, so validation and test draw from the same distribution.
     """
-    values = [
-        int.from_bytes(hashlib.sha256(f"{seed}:{query_id}".encode()).digest()[:_HASH_BYTES], "big") / _HASH_SCALE
-        for query_id in query_ids
-    ]
-    return np.asarray(values, dtype=np.float64)
+    return np.array([random.Random(f"{seed}:{query_id}").random() for query_id in query_ids], dtype=np.float64)
 
 
 def query_feature(feature: BucketFeature, clip_scores: np.ndarray, query_ids: Sequence[str], seed: int) -> np.ndarray:
@@ -76,7 +68,9 @@ def query_feature(feature: BucketFeature, clip_scores: np.ndarray, query_ids: Se
         raise DataError(f"{len(query_ids)} query ids but CLIP scores have shape {clip_scores.shape}")
     if feature is BucketFeature.CLIP_MARGIN:
         return clip_margin(clip_scores)
-    return random_feature(query_ids, seed)
+    if feature is BucketFeature.RANDOM:
+        return random_feature(query_ids, seed)
+    raise ConfigError(f"bucket feature '{feature}' has no implementation")
 
 
 def bucket_edges(values: np.ndarray, n_buckets: int) -> tuple[float, ...]:
@@ -103,23 +97,13 @@ def assign_buckets(values: np.ndarray, edges: Sequence[float]) -> np.ndarray:
 
 
 @dataclass(frozen=True)
-class BucketSetting:
-    """The validation-selected setting of one bucket."""
-
-    alpha: float
-    top_k: int
-    val_queries: int
-    val_metrics: Mapping[str, float]
-
-
-@dataclass(frozen=True)
 class AdaptiveFusion:
-    """A fitted bucketing: the feature, its edges cut on validation, and one setting per bucket."""
+    """A fitted bucketing: the feature, its edges cut on validation, and the selected setting of each bucket."""
 
     feature: BucketFeature
     feature_seed: int
     edges: tuple[float, ...]
-    settings: tuple[BucketSetting, ...]
+    settings: tuple[SweepPoint, ...]
 
     def __post_init__(self) -> None:
         if len(self.settings) != len(self.edges) + 1:
@@ -131,23 +115,16 @@ class AdaptiveFusion:
             "feature": self.feature.value,
             "feature_seed": self.feature_seed,
             "edges": list(self.edges),
-            "buckets": [
-                {
-                    "alpha": s.alpha,
-                    "top_k": s.top_k,
-                    "val_queries": s.val_queries,
-                    "val_metrics": dict(s.val_metrics),
-                }
-                for s in self.settings
-            ],
+            "buckets": [{"alpha": setting.alpha, "top_k": setting.top_k} for setting in self.settings],
         }
 
 
 def _subset(data: SplitData, rows: np.ndarray) -> SplitData:
     """The same gallery with only the selected queries."""
     query_ids = tuple(query_id for query_id, keep in zip(data.query_ids, rows, strict=True) if keep)
-    vectors = data.query_vectors[rows] if data.query_vectors.shape[0] == len(data.query_ids) else data.query_vectors
-    return replace(data, query_ids=query_ids, relevant_columns=data.relevant_columns[rows], query_vectors=vectors)
+    return replace(
+        data, query_ids=query_ids, relevant_columns=data.relevant_columns[rows], query_vectors=data.query_vectors[rows]
+    )
 
 
 def fit_adaptive_fusion(
@@ -189,7 +166,7 @@ def fit_adaptive_fusion(
                 f"fewer than min_bucket_queries={min_bucket_queries}"
             )
         best, _ = sweep_alpha_and_k(clip_scores[rows], graph_scores[rows], _subset(data, rows), alphas, top_ks, ks)
-        settings.append(BucketSetting(alpha=best.alpha, top_k=best.top_k, val_queries=count, val_metrics=best.metrics))
+        settings.append(best)
     return AdaptiveFusion(feature=feature, feature_seed=feature_seed, edges=edges, settings=tuple(settings))
 
 
@@ -232,10 +209,8 @@ class AdaptiveFusionConfig:
     def __post_init__(self) -> None:
         if not self.features or len(set(self.features)) != len(self.features):
             raise ConfigError("features must be a non-empty list without duplicates")
-        if len(set(self.n_buckets)) != len(self.n_buckets) or any(b < 1 for b in self.n_buckets):
-            raise ConfigError("n_buckets must be distinct integers >= 1")
-        if 1 not in self.n_buckets:
-            raise ConfigError("n_buckets must include 1: the fixed-alpha baseline every bucketing is compared with")
+        if not self.n_buckets or len(set(self.n_buckets)) != len(self.n_buckets) or min(self.n_buckets) < 2:
+            raise ConfigError("n_buckets must be distinct integers >= 2; the fixed-alpha baseline always runs")
         if self.min_bucket_queries < 1 or self.bootstrap_repeats < 1:
             raise ConfigError("min_bucket_queries and bootstrap_repeats must be >= 1")
 
@@ -256,9 +231,9 @@ class AdaptiveFusionConfig:
         if unknown:
             raise ConfigError(f"unknown features {unknown}; choose from {sorted(known)}")
         n_buckets = mapping.get("n_buckets")
-        if not isinstance(n_buckets, list):
-            raise ConfigError("n_buckets must be a list of integers")
-        if not all(isinstance(b, int) and not isinstance(b, bool) for b in n_buckets):
+        if not isinstance(n_buckets, list) or not all(
+            isinstance(b, int) and not isinstance(b, bool) for b in n_buckets
+        ):
             raise ConfigError("n_buckets must be a list of integers")
         return cls(
             retrieval_config=require_field(mapping, "retrieval_config", str),

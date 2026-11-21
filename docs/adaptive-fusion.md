@@ -34,7 +34,7 @@ Nhưng không phải truy vấn nào cũng cần đồ thị như nhau:
 ## Cách làm
 
 1. **Đặc trưng.** Với mỗi truy vấn, tính *margin* = điểm CLIP của ảnh hạng 1 − điểm CLIP của ảnh hạng 2. Đặc trưng này không dùng nhãn, nên tính được cả lúc chạy thật.
-2. **Chia nhóm trên validation.** Cắt validation thành B nhóm tại các phân vị của margin, với B ∈ {1, 2, 3, 4}. Ví dụ B = 2 cắt tại trung vị.
+2. **Chia nhóm trên validation.** Cắt validation thành B nhóm tại các phân vị của margin, với B ∈ {2, 3, 4}. Ví dụ B = 2 cắt tại trung vị. Mốc so sánh là α cố định, tức bộ xếp hạng chính thức; script luôn chạy mốc này.
 3. **Chọn tham số cho từng nhóm.** Mỗi nhóm chọn (α, k) riêng bằng **đúng** hàm quét chính thức `sweep_alpha_and_k`: lưới α bước 0,01, lưới k {10, …, 1.500}. Luật hoà cũng giữ nguyên: R@1, rồi MRR, rồi α lớn hơn, rồi k nhỏ hơn.
 4. **Chấm test.** Tính margin cho từng truy vấn test, xếp truy vấn vào nhóm theo **mốc chia của validation**, rồi dùng (α, k) của nhóm đó. Test chỉ được chấm một lần.
 
@@ -50,7 +50,7 @@ $$
 
 - **Mốc chia và (α, k) chỉ lấy từ validation.** Hàm `fit_adaptive_fusion` từ chối mọi tập khác validation.
 - **Margin không dùng nhãn.** Nó chỉ dùng điểm CLIP của chính truy vấn, thông tin vốn có sẵn lúc chạy thật.
-- **Trường hợp B = 1 là bộ xếp hạng chính thức.** Script so (α, k) chọn được với lựa chọn trong file benchmark của `run_benchmark` cho từng seed, và **dừng nếu khác**. Nhờ vậy mọi so sánh đều dùng đúng mốc chính thức.
+- **Mốc α cố định là bộ xếp hạng chính thức.** Script chọn (α, k) bằng đúng hàm quét chính thức trên toàn bộ validation, so với lựa chọn trong file benchmark của `run_benchmark` cho từng seed, và **dừng nếu khác**. Nhờ vậy mọi so sánh đều dùng đúng mốc chính thức.
 - **Test chấm một lần,** sau khi đã chốt mọi thứ trên validation.
 
 Các test tự động kiểm những điều trên:
@@ -60,7 +60,7 @@ Các test tự động kiểm những điều trên:
 - việc chọn tham số bị từ chối trên tập khác validation;
 - α = 1 ở mọi nhóm giữ nguyên thứ hạng CLIP;
 - nhóm quá nhỏ bị từ chối;
-- chạy cả script trên dữ liệu dựng tay: nếu (α, k) của B = 1 khác file benchmark thì script dừng với exit 1 và không ghi file kết quả; chênh lệch ghép cặp được tính đúng chiều (cách chia − α cố định).
+- chạy cả script trên dữ liệu dựng tay: nếu (α, k) của mốc α cố định khác file benchmark thì script dừng với exit 1 và không ghi file kết quả; chênh lệch ghép cặp được tính đúng chiều (cách chia − α cố định).
 
 Một test dựng sẵn ví dụ mà **không α cố định nào phục vụ được cả hai loại truy vấn**: loại "CLIP phân vân" cần α < 0,834, loại "CLIP chắc chắn" cần α > 0,952. Ở ví dụ này, α cố định chỉ đạt R@1 50%, còn chia nhóm đạt 100%.
 
@@ -73,18 +73,18 @@ python -m scripts.evaluate_adaptive_fusion                 # dùng configs/evalu
 pytest tests/retrieval/test_adaptive_fusion.py             # test, không cần dữ liệu thật
 ```
 
-Script không huấn luyện lại và không cần GPU. Với config mặc định, mỗi seed quét lưới α, k trên toàn bộ validation 7 lần: 1 lần cho α cố định, cộng 2 đặc trưng × 3 số nhóm. Ước tính cả lượt chạy (3 seed, 7.500 truy vấn validation) mất khoảng 5–10 phút trên CPU. Kết quả được ghi ra `runs/analysis/adaptive_fusion.json`; thư mục này bị `.gitignore` bỏ qua, nên muốn commit thì dùng `git add -f`.
+Script không huấn luyện lại và không cần GPU. Với config mặc định, mỗi seed quét lưới α, k trên toàn bộ validation 7 lần: 1 lần cho α cố định, cộng 2 đặc trưng × 3 số nhóm. Một lần quét trên 7.500 truy vấn validation mất khoảng 25–30 giây trên CPU (đo trên Apple M3), nên cả lượt chạy 3 seed mất khoảng 10–15 phút. Kết quả được ghi ra `runs/analysis/adaptive_fusion.json`; thư mục này bị `.gitignore` bỏ qua, nên muốn commit thì dùng `git add -f`.
 
 ## Đọc file kết quả
 
-`results` có một mục cho mỗi cách chia: `fixed` (B = 1), `clip_margin-b2`, `clip_margin-b3`, …, `random-b2`, … Mỗi mục gồm:
+`results` có mục `fixed` cho α cố định, và một mục cho mỗi cách chia: `clip_margin-b2`, `clip_margin-b3`, …, `random-b2`, … Mỗi mục gồm:
 
 | Trường | Nội dung |
 |---|---|
-| `seeds.<seed>.fit` | Mốc chia (`edges`) và, cho từng nhóm: α, k, số truy vấn validation |
-| `seeds.<seed>.val` và `.test` | R@1/5/10, MRR; theo từng nhóm: số truy vấn, R@1 của cách chia này và của α cố định trên **cùng** các truy vấn đó |
+| `seeds.<seed>.fit` | Với `fixed`: α, k chọn trên toàn bộ validation. Với cách chia: mốc chia (`edges`) và α, k của từng nhóm (`buckets`) |
+| `seeds.<seed>.val` và `.test` | `metrics`: R@1/5/10, MRR. Với cách chia, thêm `buckets`, theo đúng thứ tự trong `fit.buckets`: số truy vấn, R@1 của cách chia này và của α cố định trên **cùng** các truy vấn đó |
 | `summary` | Trung bình ± độ lệch chuẩn qua 3 seed |
-| `paired_vs_fixed_test` | Chênh lệch R@1 so với α cố định trên test (`delta_r1_pp`, đơn vị điểm phần trăm) và khoảng 95% của bootstrap ghép cặp, gom theo ảnh đúng. Đây là cùng thủ tục mà `analyze_ablation` dùng |
+| `paired_vs_fixed_test` | Chỉ có ở các cách chia. Chênh lệch R@1 so với α cố định trên test (`delta_r1_pp`, đơn vị điểm phần trăm) và khoảng 95% của bootstrap ghép cặp, gom theo ảnh đúng. Đây là cùng thủ tục mà `analyze_ablation` dùng. Trong `per_seed`, "full" là cách chia và "variant" là α cố định |
 
 ## Bảng kết quả (điền sau khi chạy)
 
