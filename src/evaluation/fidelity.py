@@ -18,6 +18,9 @@ from torch import nn
 from src.core.exceptions import DataError
 from src.models.explain import score_graph_variants
 
+# Joint deletion removes at least two relations and keeps at least one.
+MIN_RELATIONS = 3
+
 
 def remove_relations(
     graph: Mapping[str, Any],
@@ -40,8 +43,12 @@ def joint_relation_fidelity(
     random_repeats: int,
     random_seed: int,
     batch_size: int = 64,
+    importance: Sequence[float] | None = None,
 ) -> dict[str, Any]:
-    """Compare top single-drop relations removed jointly against equal-budget random groups.
+    """Compare the top-ranked relations removed jointly against equal-budget random groups.
+
+    Relations are ranked by `importance` (one value per relation, larger = more important)
+    when given, e.g. from GNNExplainer; otherwise by their single-deletion score drops.
 
     At least two relations are removed; at least one remains. Graphs with <3
     relations cannot support this contrast and are reported as skipped. Negative
@@ -52,7 +59,7 @@ def joint_relation_fidelity(
 
     # Joint deletion needs at least two removed relations and one remaining.
     n = len(graph["triplets"])
-    if n < 3:
+    if n < MIN_RELATIONS:
         return {"status": "skipped", "reason": "fewer_than_three_relations", "relations": n}
 
     # Rank relations by their individual signed score drops.
@@ -69,7 +76,11 @@ def joint_relation_fidelity(
     )
     baseline = float(single[0])
     drops = baseline - single[1:]
-    order = np.argsort(-drops, kind="stable")
+    if importance is not None and (len(importance) != n or not np.isfinite(importance).all()):
+        raise DataError("importance needs one finite value per relation")
+    order = np.argsort(-(drops if importance is None else np.asarray(importance, dtype=float)), kind="stable")
+    # Top single-deletion relations at each budget, to report how far another ranking departs from them.
+    deletion_order = np.argsort(-drops, kind="stable")
     rng = random.Random(random_seed)
     outputs = []
     for fraction in fractions:
@@ -100,6 +111,7 @@ def joint_relation_fidelity(
                 "fraction_actual": budget / n,
                 "selected_indices": chosen,
                 "single_drops": [float(drops[i]) for i in chosen],
+                "overlap_with_single_deletion": len({*chosen} & {int(i) for i in deletion_order[:budget]}) / budget,
                 "random_indices": controls,
                 "selected_score": float(scores[0]),
                 "random_scores": scores[1:].tolist(),
