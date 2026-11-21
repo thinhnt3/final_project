@@ -62,12 +62,32 @@ Cách đọc bảng, đặt cạnh VG ∩ COCO:
 - **So khớp từ có R@1 cao nhất ở tập con** (45,01). Caption hay nhắc nguyên văn tên hàng xóm và đồ thị chứa đúng tên đó. Các mô hình học hơn nó ở R@10 và MRR.
 - **Độ lệch giữa các seed lớn hơn VG ∩ COCO** (0,4–0,9 so với 0,1–0,5 ở R@1) vì tập nhỏ. Các dòng từ 41 đến 43,4 cách nhau ít hơn hai lần độ lệch, nên thứ tự giữa GraphSAGE, so0.3 và sl0.1 chưa chắc.
 
+### Vì sao AdaMF-MAT không vượt GraphSAGE ở tập con
+
+AdaMF-MAT không vượt GraphSAGE ở tập con (41,16 so với 43,35), trái với VG ∩ COCO. Ba phép đo dưới đây chỉ ra nguyên nhân: modality image chiếm chỗ trong vector trộn mà không mang thêm thông tin.
+
+| Cấu hình trên tập con (3 seed; dòng đầu 5 seed) | R@1 sau khi xếp hạng lại | Chỉ điểm mô hình, R@1 |
+|---|---|---|
+| AdaMF, không MAT, L2 | 41,70 ± 0,92 | 34,29 ± 1,34 |
+| bỏ image | **44,37 ± 0,68** | 31,25 ± 0,26 |
+| bỏ structure | 41,12 ± 0,80 | 32,62 ± 2,11 |
+| bỏ text | 40,44 ± 1,62 | 31,97 ± 1,71 |
+| GraphSAGE (đỉnh ảnh học được), để so | 43,35 ± 0,54 | 28,19 ± 1,08 |
+
+- **Ảnh ở tập con không chứa điều caption hỏi.** Linear adapter, tức chỉ học lại vector CLIP của ảnh, đạt 35,75, ngang CLIP 35,60. Ở VG ∩ COCO nó đạt 49,76, hơn CLIP 5,9 điểm, vì caption COCO tả đúng thứ có trong ảnh.
+- **AdaMF vẫn dành khoảng 40% vector trộn cho image.** Trọng số trung bình của ba modality trong bản L2 là structure 0,21, image 0,40, text 0,39 (`scripts/adamf_weight_stats.py`). Phần 40% đó lặp lại điều CLIP đã biết.
+- **Điểm trùng với CLIP thì cộng vào CLIP không thêm gì.** Xét riêng điểm mô hình, AdaMF cao hơn GraphSAGE (34,29 so với 28,19). Nhưng điểm cuối là α·CLIP + (1 − α)·điểm mô hình, và điểm của AdaMF đã lẫn CLIP ảnh nên bổ sung cho CLIP ít hơn. GraphSAGE không nhìn ảnh, điểm của nó độc lập với CLIP nên cộng vào được nhiều hơn.
+- **Bỏ image là đủ để AdaMF vượt GraphSAGE.** Điểm mô hình giảm (34,29 xuống 31,25) nhưng R@1 sau khi xếp hạng lại tăng 2,7 điểm, lên 44,37, hơn GraphSAGE 1,0 điểm. Ở VG ∩ COCO, bỏ image làm tụt 3,9 điểm.
+- **Bản đầy đủ của bài báo còn thêm một vấn đề đã thấy ở VG ∩ COCO:** không chuẩn hoá thì trọng số structure chỉ khoảng 0,004 trong khi vector của nó dài gấp khoảng 40 lần hai modality kia, phần đóng góp thật khoảng 15%.
+
+Giới hạn của kết luận: các dòng ablation chạy 3 seed trên 882 câu truy vấn, và khoảng cách 1,0 điểm giữa "bỏ image" và GraphSAGE nằm trong tầm hai lần độ lệch giữa các seed. Điều chắc hơn là chiều thay đổi: bỏ image làm tăng 2,7 điểm ở tập con và làm giảm 3,9 điểm ở VG ∩ COCO.
+
 File kết quả: `runs/mkg_w_captions/benchmark/*.json`. Lịch sử huấn luyện từng seed: `runs/mkg_w_captions/<graphsage hoặc adamf_mat>/<tên lượt chạy>/seed<n>/history.json`.
 
 ### Chưa có
 
 - Ablation bỏ cạnh và cạnh ngẫu nhiên trên tập con này.
-- Bảng ablation của AdaMF-MAT (bỏ từng modality, trộn bằng trung bình) và bộ relation queries.
+- Ablation trộn bằng trung bình của AdaMF-MAT và bộ relation queries.
 - Lát cắt chỉ gồm phim (khoảng 1.300 mục) để báo cáo riêng.
 - Giải thích bằng quan hệ và fidelity.
 
@@ -137,6 +157,11 @@ python -m scripts.train_graphsage --config $C5 --model adamf_mat --no-mat --norm
 python -m scripts.run_benchmark --method adamf_mat --run adamf-d256-l2-so0.3 --config $C5
 python -m scripts.train_graphsage --config $C5 --model adamf_mat --no-mat --normalize-modalities --structure-loss-weight 0.1
 python -m scripts.run_benchmark --method adamf_mat --run adamf-d256-l2-sl0.1 --config $C5
+for D in image structure text; do                                        # ablation bỏ từng modality
+  python -m scripts.train_graphsage --config $C --model adamf_mat --no-mat --normalize-modalities --drop-modality $D
+  python -m scripts.run_benchmark --method adamf_mat --run adamf-d256-l2-no-$D --config $C
+done
+python -m scripts.adamf_weight_stats --run adamf-d256-l2 --config $C     # trọng số từng modality
 ```
 
 Chấm biến thể đỉnh ảnh mang CLIP cần một bản config có `graphsage.image_node: clip_image`; với config mặc định, `run_benchmark --run directed-clip_image-l3-h512` dừng với lỗi "architecture/ablation does not match the requested config".

@@ -97,6 +97,26 @@ Cùng lệnh và cùng tham số, chạy trên một tập con của MKG-W đư�
 
 Hai dataset cho hai bức tranh ngược nhau. Ở VG ∩ COCO, mức tăng đến từ modality image (linear adapter đã hơn CLIP 5,9 điểm). Ở tập con, linear adapter chỉ ngang CLIP, còn GraphSAGE không nhìn ảnh lại hơn CLIP 7,8 điểm: phần tăng đến từ đồ thị. Bảng đủ cột, cách dựng tập con và giới hạn: [docs/mkg-w-captions-results.md](docs/mkg-w-captions-results.md).
 
+#### Vì sao AdaMF-MAT không vượt GraphSAGE ở tập con
+
+AdaMF-MAT không vượt GraphSAGE ở tập con (41,16 so với 43,35), trái với VG ∩ COCO. Ba phép đo dưới đây chỉ ra nguyên nhân: modality image chiếm chỗ trong vector trộn mà không mang thêm thông tin.
+
+| Cấu hình trên tập con (3 seed; dòng đầu 5 seed) | R@1 sau khi xếp hạng lại | Chỉ điểm mô hình, R@1 |
+|---|---|---|
+| AdaMF, không MAT, L2 | 41,70 ± 0,92 | 34,29 ± 1,34 |
+| bỏ image | **44,37 ± 0,68** | 31,25 ± 0,26 |
+| bỏ structure | 41,12 ± 0,80 | 32,62 ± 2,11 |
+| bỏ text | 40,44 ± 1,62 | 31,97 ± 1,71 |
+| GraphSAGE (đỉnh ảnh học được), để so | 43,35 ± 0,54 | 28,19 ± 1,08 |
+
+- **Ảnh ở tập con không chứa điều caption hỏi.** Linear adapter, tức chỉ học lại vector CLIP của ảnh, đạt 35,75, ngang CLIP 35,60. Ở VG ∩ COCO nó đạt 49,76, hơn CLIP 5,9 điểm, vì caption COCO tả đúng thứ có trong ảnh.
+- **AdaMF vẫn dành khoảng 40% vector trộn cho image.** Trọng số trung bình của ba modality trong bản L2 là structure 0,21, image 0,40, text 0,39 (`scripts/adamf_weight_stats.py`). Phần 40% đó lặp lại điều CLIP đã biết.
+- **Điểm trùng với CLIP thì cộng vào CLIP không thêm gì.** Xét riêng điểm mô hình, AdaMF cao hơn GraphSAGE (34,29 so với 28,19). Nhưng điểm cuối là α·CLIP + (1 − α)·điểm mô hình, và điểm của AdaMF đã lẫn CLIP ảnh nên bổ sung cho CLIP ít hơn. GraphSAGE không nhìn ảnh, điểm của nó độc lập với CLIP nên cộng vào được nhiều hơn.
+- **Bỏ image là đủ để AdaMF vượt GraphSAGE.** Điểm mô hình giảm (34,29 xuống 31,25) nhưng R@1 sau khi xếp hạng lại tăng 2,7 điểm, lên 44,37, hơn GraphSAGE 1,0 điểm. Ở VG ∩ COCO, bỏ image làm tụt 3,9 điểm.
+- **Bản đầy đủ của bài báo còn thêm một vấn đề đã thấy ở VG ∩ COCO:** không chuẩn hoá thì trọng số structure chỉ khoảng 0,004 trong khi vector của nó dài gấp khoảng 40 lần hai modality kia, phần đóng góp thật khoảng 15%.
+
+Giới hạn của kết luận: các dòng ablation chạy 3 seed trên 882 câu truy vấn, và khoảng cách 1,0 điểm giữa "bỏ image" và GraphSAGE nằm trong tầm hai lần độ lệch giữa các seed. Điều chắc hơn là chiều thay đổi: bỏ image làm tăng 2,7 điểm ở tập con và làm giảm 3,9 điểm ở VG ∩ COCO.
+
 ### Ablation của AdaMF-MAT
 
 R@1 sau khi xếp hạng lại, 3 seed:
