@@ -106,8 +106,8 @@ class GraphImageEncoder(nn.Module):
             self.image_token = nn.Parameter(torch.randn(dim) / dim**0.5)
 
         # Direction ablation reuses the existing undirected layer.
-        use_direction = config.directed and config.ablation is not Ablation.UNDIRECTED
-        layer = DirectedSAGELayer if use_direction else UndirectedSAGELayer
+        self.uses_edge_direction = config.directed and config.ablation is not Ablation.UNDIRECTED
+        layer = DirectedSAGELayer if self.uses_edge_direction else UndirectedSAGELayer
         sizes = [dim] + [config.hidden_dim] * config.num_layers
         self.layers = nn.ModuleList(layer(sizes[i], sizes[i + 1]) for i in range(config.num_layers))
         self.project = nn.Linear(config.hidden_dim, dim)
@@ -128,14 +128,18 @@ class GraphImageEncoder(nn.Module):
             features[is_image] = self.image_token.to(features.dtype)
         return features
 
-    def image_node_state(self, batch: Batch) -> torch.Tensor:
-        """State of each image node after the last layer, shape (graphs, hidden dim)."""
-        x = self.node_features(batch)
+    def message_passing(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
+        """State of every node after the GraphSAGE layers, before the projection."""
         for position, layer in enumerate(self.layers):
-            x = layer(x, batch.edge_index)
+            x = layer(x, edge_index)
             # No ReLU after the last layer: CLIP vectors have negative components, so must these.
             if position < len(self.layers) - 1:
                 x = torch.relu(x)
+        return x
+
+    def image_node_state(self, batch: Batch) -> torch.Tensor:
+        """State of each image node after the last layer, shape (graphs, hidden dim)."""
+        x = self.message_passing(self.node_features(batch), batch.edge_index)
         image_nodes = batch.ptr[:-1]  # the image is the first node of every sub-graph
         return x[image_nodes]
 

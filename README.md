@@ -43,9 +43,27 @@ Cách đọc bảng:
 
 File kết quả: `runs/benchmark/*.json`. Lịch sử huấn luyện từng seed: `runs/graphsage/<tên lượt chạy>/seed<n>/history.json`.
 
+### Ablation: bỏ cạnh và cạnh ngẫu nhiên
+
+Mỗi biến thể được huấn luyện lại 3 seed với cùng thiết lập, α và k chọn riêng trên validation (lượt ngày 18/11). Định nghĩa từng phép can thiệp: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#intervention-contract).
+
+| Biến thể | R@1 sau khi xếp hạng lại | So với CLIP (43,88%) | R@1 chỉ dùng điểm đồ thị |
+|---|---|---|---|
+| Đầy đủ | 48,12 ± 0,23% | +4,24 | 27,54 ± 0,50% |
+| Bỏ cạnh, chỉ giữ vật thể (`objects_only`) | 47,56 ± 0,16% | +3,67 | 26,16 ± 0,45% |
+| Cạnh ngẫu nhiên (`random_edges`) | 47,79 ± 0,18% | +3,91 | 27,38 ± 0,26% |
+| Bỏ nhãn vị từ (`drop_predicates`) | 48,06 ± 0,28% | +4,18 | 27,35 ± 0,49% |
+| Không hướng (`undirected`) | 47,84 ± 0,15% | +3,96 | 28,16 ± 0,58% |
+
+![Ablation cấp độ 1: R@1 tăng so với CLIP và R@1 chỉ dùng điểm đồ thị, theo từng biến thể](reports/ablation/level1-ablation.png)
+
+- Đồ thị nâng R@1 thêm 4,24 điểm so với CLIP, nhưng bỏ hết cạnh vẫn còn +3,67. Khoảng 0,6 điểm đến từ cạnh; phần còn lại đến từ danh sách vật thể trong ảnh.
+- Bản đầy đủ hơn bản bỏ cạnh 0,56 điểm, khoảng 95% [0,05; 1,06]. So với cạnh ngẫu nhiên, chênh 0,33 điểm với khoảng [−0,09; 0,74], chưa tách được khỏi 0. Các khoảng này lấy từ phân tích theo cặp trong tài liệu thiết kế.
+- Kết luận: trên caption COCO, vốn chủ yếu kể tên vật thể, cấu trúc quan hệ đóng góp ít. Phép thử trực tiếp hơn cho câu hỏi mô hình có đọc cạnh hay không là bộ relation queries của cấp độ 2 (mục "Mô hình có đọc cạnh không" bên dưới).
+
 ### Chưa có
 
-- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi và fidelity perturbation đã có (xem tài liệu bên dưới).
+- Dataset thứ hai và ablation xử lý hub; ablation cốt lõi, fidelity và sparsity đã có ([kết quả](#kết-quả-đánh-giá-giải-thích-cấp-độ-3)), validity mới có nhãn AI, chưa có người chấm.
 - Backbone thứ hai (OpenCLIP) và tập dữ liệu công khai thứ hai.
 - Phân tích 5 truy vấn thành công và 5 truy vấn thất bại.
 
@@ -282,9 +300,41 @@ python -m scripts.train_graphsage --config configs/retrieval/ablations/objects_o
 python -m scripts.run_benchmark --method graphsage --config configs/retrieval/ablations/objects_only.yaml
 python -m scripts.analyze_ablation
 python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+python -m scripts.evaluate_explanation_quality
 ```
 
-Report giải thích tương tác là tài liệu local trong `private/`, không thuộc repository.
+### Kết quả đánh giá giải thích (cấp độ 3)
+
+Báo cáo có biểu đồ và đồ thị con của 10 truy vấn: [reports/explanation-quality/index.html](reports/explanation-quality/index.html) (mở bằng trình duyệt).
+
+Giải thích của một cặp truy vấn và ảnh là các relation làm điểm đồ thị giảm nhiều nhất khi bỏ riêng từng cái. Bảng dưới xoá đồng thời cả nhóm đó khỏi đồ thị của ảnh đứng đầu, giữ nguyên CLIP và điểm của mọi ảnh khác, rồi so với 20 nhóm ngẫu nhiên cùng số relation. 200 truy vấn test, trung bình 3 seed, lượt ngày 21/11 trên mô hình huấn luyện lại từ `configs/retrieval/ablations/full.yaml`.
+
+| Mức xoá | Mất vị trí đầu | Ngẫu nhiên | Điểm đồ thị giảm | Ngẫu nhiên | Sparsity | Giữ vị trí đầu khi chỉ giữ nhóm giải thích | Ngẫu nhiên |
+|---|---|---|---|---|---|---|---|
+| 10% | 18,23% | 4,66% | 0,0236 | 0,0022 | 79,58% | 91,83% | 81,06% |
+| 25% | 25,05% | 6,64% | 0,0327 | 0,0034 | 69,57% | 96,59% | 85,52% |
+
+![Fidelity: mất vị trí đầu và điểm đồ thị giảm khi xoá nhóm giải thích so với xoá ngẫu nhiên](reports/explanation-quality/figures/fidelity.png)
+
+- **Fidelity**: xoá nhóm giải thích làm ảnh mất vị trí đầu nhiều gấp khoảng 4 lần xoá ngẫu nhiên, và điểm đồ thị giảm nhiều gấp khoảng 10 lần.
+- **Sparsity**: giải thích gồm 2,1 (mức 10%) và 3,7 (mức 25%) trên trung bình 13,0 relation của ảnh. Mức 10% thực tế lấy khoảng 20% vì luôn lấy ít nhất hai relation.
+
+![Sparsity: giữ vị trí đầu khi chỉ giữ nhóm giải thích so với giữ nhóm ngẫu nhiên](reports/explanation-quality/figures/keep-only.png)
+
+- **Validity**: nhãn do AI chấm, chưa có người chấm. Một trợ lý AI xem ảnh và chấm 20 truy vấn với 42 relation (seed 13, mức 10%, 10 ảnh trả về đúng và 10 sai) ngày 21/11. 38/42 relation đúng với ảnh, 4 chưa rõ, không có cái nào sai. Tỷ lệ đạt cả hai tiêu chí là 35/42 (83,3%) nếu "liên quan" nghĩa là relation chạm tới vật thể, hành động hoặc ràng buộc được hỏi, và 14/42 (33,3%) nếu relation phải nói đúng quan hệ hoặc hành động được hỏi. Cần chốt tiêu chí rồi nhờ người chấm; form chấm ở `tools/validity-review/`. File nhãn nằm local trong `runs/`, không thuộc repository.
+
+![Validity: nhãn AI trên 42 relation của 20 truy vấn, theo hai cách đọc tiêu chí liên quan](reports/explanation-quality/figures/validity-ai.png)
+
+Đối chứng cho giới hạn "cách chọn tự chấm chính nó": chọn relation bằng GNNExplainer (mask học trên cạnh, không dùng phép xoá) rồi chạy cùng giao thức. Nhóm nó chọn vẫn vượt ngẫu nhiên (mất vị trí đầu 8,52% ở mức 10% và 12,78% ở mức 25%) nhưng yếu hơn cách bỏ từng relation. Chi tiết: [docs/graphsage-design-decisions.md](docs/graphsage-design-decisions.md#gnnexplainer-làm-cách-chọn-độc-lập).
+
+![Đối chứng GNNExplainer: ba phép đo so với cách bỏ từng relation và ngẫu nhiên](reports/explanation-quality/figures/gnn-explainer-control.png)
+
+```bash
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity_gnn_explainer.yaml
+python -m scripts.evaluate_explanation_quality --config configs/evaluation/explanation_quality_gnn_explainer.yaml
+```
+
+Report giải thích tương tác của lượt 18/11 là tài liệu local trong `private/`, không thuộc repository.
 
 Các output mới trong `runs/` và report local trong `private/` được Git-ignore.
 Những file lịch sử đã tracked trong `runs/` vẫn được Git theo dõi.

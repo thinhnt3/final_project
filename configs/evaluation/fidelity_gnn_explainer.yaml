@@ -1,0 +1,17 @@
+# Same frozen protocol as fidelity.yaml (queries, budgets, random groups); only the way the
+# explanation relations are ranked differs: a GNNExplainer edge mask instead of single deletions.
+retrieval_config: configs/retrieval/ablations/full.yaml
+split: test
+sample_queries: 200
+sample_seed: 2026
+fractions: [0.1, 0.25]
+random_repeats: 20
+random_seed: 731
+batch_size: 64
+selector: gnn_explainer
+# epochs, learning_rate: PyG defaults of GNNExplainer. The mask is fitted to the training logit
+# (cosine / training.temperature of the retrieval config).
+gnn_explainer:
+  epochs: 100
+  learning_rate: 0.01
+output: runs/fidelity/full-joint-test-gnn-explainer.json

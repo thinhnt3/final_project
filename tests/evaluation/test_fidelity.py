@@ -141,3 +141,16 @@ def test_invalid_protocol_is_rejected(
             repeats,
             7,
         )
+
+
+def test_supplied_importance_replaces_the_deletion_ranking_but_not_the_controls():
+    model = _SumOfNodes()
+    by_deletion = joint_relation_fidelity(model, GRAPH3, 0, _axis(4), [0.5], 5, 7)["budgets"][0]
+    # Importance that puts relation 2 first and relation 0, the one deletion ranks first, last.
+    by_mask = joint_relation_fidelity(model, GRAPH3, 0, _axis(4), [0.5], 5, 7, importance=[0.1, 0.5, 0.9])["budgets"][0]
+    assert by_deletion["overlap_with_single_deletion"] == 1.0
+    assert by_mask["selected_indices"] == [2, 1]
+    assert by_mask["overlap_with_single_deletion"] == 0.5
+    assert by_mask["random_indices"] == by_deletion["random_indices"]
+    with pytest.raises(DataError):
+        joint_relation_fidelity(model, GRAPH3, 0, _axis(4), [0.5], 5, 7, importance=[0.1, 0.5])

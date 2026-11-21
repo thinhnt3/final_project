@@ -2,6 +2,11 @@
 """Frozen full-model joint-deletion diagnostic; no retraining or parameter selection.
 
 python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity.yaml
+python -m scripts.evaluate_fidelity --config configs/evaluation/fidelity_gnn_explainer.yaml
+
+`selector` in the protocol picks how relations are ranked before they are removed:
+single_deletion (default) or gnn_explainer. Queries, budgets and random groups are the same
+for both, so the two outputs compare row by row.
 """
 
 from __future__ import annotations
@@ -10,6 +15,7 @@ import argparse
 import logging
 import random
 import sys
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -24,15 +30,32 @@ from src.data.schemas import Split
 from src.data.sources import sha256_of
 from src.embeddings.store import load_table, verify_inputs_unchanged
 from src.evaluation.benchmark import build_split_data, clip_scores, graph_vector_scores
-from src.evaluation.fidelity import joint_relation_fidelity, ranking_effects
+from src.evaluation.fidelity import MIN_RELATIONS, joint_relation_fidelity, ranking_effects
 from src.models.ablations import Ablation
 from src.models.checkpoint import RunDirectory
+from src.models.gnn_explainer import GnnExplainerConfig, gnn_explainer_relation_scores
 from src.models.graphsage import GraphImageEncoder
 from src.models.run_validation import validate_artifact_inputs, validate_run
 from src.retrieval.config import RetrievalConfig
 from src.retrieval.rerank import rerank_scores
 
 log = logging.getLogger(__name__)
+
+class Selector(StrEnum):
+    """How the relations of an explanation are ranked before the joint deletion."""
+
+    SINGLE_DELETION = "single_deletion"
+    GNN_EXPLAINER = "gnn_explainer"
+
+
+LIMITATIONS = {
+    Selector.SINGLE_DELETION: (
+        "Selected by single-deletion graph score; joint/rank tests are still selection-dependent diagnostics"
+    ),
+    Selector.GNN_EXPLAINER: (
+        "Selected by a learned GNNExplainer edge mask, independent of deletion; the mask depends on its random start"
+    ),
+}
 
 
 def run(path: str) -> None:
@@ -50,6 +73,15 @@ def run(path: str) -> None:
     batch_size = require_field(protocol, "batch_size", int)
     sample_seed = require_field(protocol, "sample_seed", int)
     random_seed = require_field(protocol, "random_seed", int)
+    selector = Selector(protocol.get("selector", Selector.SINGLE_DELETION.value))
+    explainer_config = None
+    if selector is Selector.GNN_EXPLAINER:
+        settings = require_field(protocol, "gnn_explainer", dict)
+        explainer_config = GnnExplainerConfig(
+            require_field(settings, "epochs", int),
+            float(require_field(settings, "learning_rate", float)),
+            config.training.temperature,
+        )
     fractions = protocol.get("fractions")
     if (
         not isinstance(fractions, list)
@@ -125,15 +157,23 @@ def run(path: str) -> None:
             # Perturb the original prediction while all rival scores stay fixed.
             target = int(np.argmax(final[row]))
             image_id = data.image_ids[target]
+            query_vector = torch.from_numpy(data.query_vectors[row])
+            image_row = image_table.row_of()[image_id]
+            importance = None
+            if explainer_config is not None and len(graphs[image_id]["triplets"]) >= MIN_RELATIONS:
+                importance = gnn_explainer_relation_scores(
+                    model, graphs[image_id], image_row, query_vector, explainer_config, random_seed + row
+                ).tolist()
             result = joint_relation_fidelity(
                 model,
                 graphs[image_id],
-                image_table.row_of()[image_id],
-                torch.from_numpy(data.query_vectors[row]),
+                image_row,
+                query_vector,
                 fractions,
                 repeats,
                 random_seed + row,
                 batch_size,
+                importance,
             )
             result.update(
                 query_id=data.query_ids[row],
@@ -180,6 +220,7 @@ def run(path: str) -> None:
                 "random_rank_increase_mean",
                 "selected_top1_lost",
                 "random_top1_lost_rate",
+                "overlap_with_single_deletion",
             )
             summary.append(
                 {
@@ -197,9 +238,8 @@ def run(path: str) -> None:
         "sampled_query_ids": [data.query_ids[i] for i in rows],
         "seeds": records,
         "target": "original_predicted_top1_image; all rival scores and CLIP candidates frozen",
-        "limitation": (
-            "Selected by single-deletion graph score; joint/rank tests are still selection-dependent diagnostics"
-        ),
+        "selector": selector.value,
+        "limitation": LIMITATIONS[selector],
         "inputs_sha256": {str(p): sha256_of(p) for p in inputs},
     }
     write_json(

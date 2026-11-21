@@ -1,0 +1,9 @@
+# Additional diagnostics on the existing frozen fidelity sample; no test tuning.
+fidelity_input: runs/fidelity/full-joint-test-gnn-explainer.json
+batch_size: 64
+review_model_seed: 13
+review_fraction: 0.1
+review_per_stratum: 10
+review_sample_seed: 20261118
+output: runs/explanation-quality/full-test-gnn-explainer.json
+review_output: runs/explanation-quality/validity-cases-gnn-explainer.json
