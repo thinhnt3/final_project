@@ -137,8 +137,12 @@ class GraphImageEncoder(nn.Module):
                 x = torch.relu(x)
         return x
 
-    def forward(self, batch: Batch) -> torch.Tensor:
-        """Unit-length graph vector of each image in the batch, shape (graphs, clip dim)."""
+    def image_node_state(self, batch: Batch) -> torch.Tensor:
+        """State of each image node after the last layer, shape (graphs, hidden dim)."""
         x = self.message_passing(self.node_features(batch), batch.edge_index)
         image_nodes = batch.ptr[:-1]  # the image is the first node of every sub-graph
-        return nn.functional.normalize(self.project(x[image_nodes]), dim=-1)
+        return x[image_nodes]
+
+    def forward(self, batch: Batch) -> torch.Tensor:
+        """Unit-length graph vector of each image in the batch, shape (graphs, clip dim)."""
+        return nn.functional.normalize(self.project(self.image_node_state(batch)), dim=-1)

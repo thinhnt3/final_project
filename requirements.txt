@@ -15,3 +15,5 @@ types-PyYAML>=6.0
 tqdm>=4.66
 types-tqdm>=4.66
 wandb>=0.18
+nltk>=3.8  # WordNet IsA edges (scripts.build_kg_variant); then: python -m nltk.downloader wordnet
+wandb-workspaces>=0.4  # W&B report builder (scripts.build_wandb_report)

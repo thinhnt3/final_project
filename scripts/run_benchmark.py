@@ -5,6 +5,7 @@ Run from the repository root after `embed_vg_coco`:
     python -m scripts.run_benchmark --method clip
     python -m scripts.run_benchmark --method graph_lexical
     python -m scripts.run_benchmark --method graphsage            # after train_graphsage
+    python -m scripts.run_benchmark --method adamf_mat            # after train_graphsage --model adamf_mat
 
 Writes <runs_dir>/benchmark/<method>.json. Graph methods are reported on their own and fused
 with CLIP at the alpha and top_k selected on validation. `graphsage` reads the graph vectors
@@ -49,16 +50,21 @@ EVAL_SPLITS = (Split.VAL, Split.TEST)
 _METRIC_DECIMALS = 4
 GRAPH_DIR = "graph"
 GRAPH_FILES = ("image_graphs", "concepts", "predicates")
-TRAINING_RUNS_SUBDIR = "graphsage"
 
 
 class Method(StrEnum):
-    """Retrieval methods. All but `graphsage` have no training or sampling: one run is exact."""
+    """Retrieval methods. Those without training or sampling are exact in one run."""
 
     CLIP = "clip"
     GRAPH_LEXICAL = "graph_lexical"  # caption words vs concept and predicate words
     GRAPH_LEXICAL_OBJECTS = "graph_lexical_objects"  # caption words vs concept words only
     GRAPHSAGE = "graphsage"  # learned graph vectors, one run per seed
+    ADAMF_MAT = "adamf_mat"  # adaptive fusion of graph, image and label text, one run per seed
+    GRAPHSAGE_LABEL_TEXT = "graphsage_label_text"  # GraphSAGE + label-text branch, control for AdaMF-MAT
+
+
+# Methods whose graph vectors come from training runs; the value is also their runs sub-directory.
+TRAINED_METHODS = (Method.GRAPHSAGE, Method.ADAMF_MAT, Method.GRAPHSAGE_LABEL_TEXT)
 
 
 def _rounded(metrics: dict[str, float]) -> dict[str, float]:
@@ -99,8 +105,9 @@ def _log_evaluation(prefix: str, evaluation: RerankEvaluation) -> None:
         log.info("%sclip + graph  %-4s %s", prefix, split.value, _rounded(evaluation.reranked[split]))
 
 
-def _graphsage_seeds(
+def _trained_seeds(
     config: RetrievalConfig,
+    method: Method,
     name: str,
     clip: dict[Split, np.ndarray],
     data: dict[Split, SplitData],
@@ -110,7 +117,7 @@ def _graphsage_seeds(
     evaluations: dict[int, RerankEvaluation] = {}
     inputs: list[Path] = []
     for seed in config.training.seeds:
-        run_dir = config.runs_dir / TRAINING_RUNS_SUBDIR / name / f"seed{seed}"
+        run_dir = config.runs_dir / method.value / name / f"seed{seed}"
         if not (run_dir / RESULT_FILE).is_file():
             raise DataError(f"seed {seed} of run '{name}' has not finished training: {run_dir / RESULT_FILE} not found")
 
@@ -177,9 +184,12 @@ def run(config: RetrievalConfig, method: Method, run_name: str | None = None) ->
         log.info("clip          %-4s %s", split.value, result["clip"][split.value])
 
     sweep = (benchmark.alpha_grid, benchmark.top_k_grid, benchmark.recall_ks)
-    if method is Method.GRAPHSAGE:
-        name = run_name or config.graphsage.run_name()
-        seeds, seed_inputs = _graphsage_seeds(config, name, clip, data, sweep)
+    if method in TRAINED_METHODS:
+        if run_name is None and method is not Method.ADAMF_MAT and method is not Method.GRAPHSAGE:
+            raise DataError(f"--run is required with --method {method.value}")
+        default_name = config.adamf_mat.run_name() if method is Method.ADAMF_MAT else config.graphsage.run_name()
+        name = run_name or default_name
+        seeds, seed_inputs = _trained_seeds(config, method, name, clip, data, sweep)
         result |= {"run_name": name, "deterministic": False, **seeds}
         inputs += seed_inputs
     elif method is not Method.CLIP:
@@ -195,7 +205,7 @@ def run(config: RetrievalConfig, method: Method, run_name: str | None = None) ->
         _log_evaluation("", evaluation)
 
     result["inputs_sha256"] = {str(p): sha256_of(p) for p in inputs}
-    suffix = f"-{result['run_name']}" if method is Method.GRAPHSAGE else ""
+    suffix = f"-{result['run_name']}" if method in TRAINED_METHODS else ""
     out_file = config.runs_dir / "benchmark" / f"{method.value}{suffix}.json"
     write_json(out_file, result)
     log.info("wrote %s", out_file)
@@ -206,7 +216,7 @@ def main() -> int:
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--method", required=True, choices=[m.value for m in Method])
     parser.add_argument(
-        "--run", help="training run to score with --method graphsage; default: the config's architecture"
+        "--run", help="training run to score with --method graphsage or adamf_mat; default: the config's architecture"
     )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")

@@ -3,10 +3,12 @@
 import copy
 from collections import Counter
 
+import pytest
 import torch
 from torch_geometric.data import Batch
 
-from src.models.ablations import Ablation, ablate_graph
+from src.core.exceptions import DataError
+from src.models.ablations import Ablation, Corruption, ablate_graph, corrupt_graph, remove_triplet
 from src.models.checkpoint import changed_settings
 from src.models.graph_data import NodeKind, image_graph_to_data
 from src.models.graphsage import GraphImageEncoder, GraphSageConfig, ImageNodeFeature
@@ -188,3 +190,38 @@ def test_run_snapshot_serializes_variant_to_yaml(tmp_path):
         path = tmp_path / "config.yaml"
         write_yaml(path, settings)
         assert read_mapping(path)["graphsage"]["ablation"] == variant.value
+
+
+def test_remove_triplet_keeps_objects_and_rejects_absent_triplet():
+    original = graph()
+    masked = remove_triplet(original, [1, 1, 2])
+    assert masked["triplets"] == [[0, 0, 1], [2, 0, 0], [0, 1, 2]]
+    assert masked["concept_ids"] == original["concept_ids"]
+    assert original["triplets"][1] == [1, 1, 2]
+    with pytest.raises(DataError):
+        remove_triplet(masked, [1, 1, 2])
+
+
+def test_clean_corruption_is_identity():
+    assert corrupt_graph(graph(), Corruption(), n_concepts=10, seed=0) == graph()
+
+
+def test_corruption_is_deterministic_and_seeded():
+    noise = Corruption(drop_edge=0.5, drop_node=0.3, flip_label=0.5)
+    first = corrupt_graph(graph(), noise, n_concepts=10, seed=1)
+    assert corrupt_graph(graph(), noise, n_concepts=10, seed=1) == first
+    others = [corrupt_graph(graph(), noise, n_concepts=10, seed=s) for s in range(2, 12)]
+    assert any(other != first for other in others)
+
+
+def test_dropping_every_node_drops_every_relation():
+    noisy = corrupt_graph(graph(), Corruption(drop_node=1.0), n_concepts=10, seed=0)
+    assert noisy["concept_ids"] == [] and noisy["triplets"] == []
+
+
+def test_flipped_labels_stay_unique_and_relations_follow():
+    noisy = corrupt_graph(graph(), Corruption(flip_label=1.0), n_concepts=10, seed=0)
+    assert len(set(noisy["concept_ids"])) == 3
+    assert not set(noisy["concept_ids"]) & {0, 1, 2}
+    assert len(noisy["triplets"]) == 4
+    assert all(s in noisy["concept_ids"] and o in noisy["concept_ids"] for s, _, o in noisy["triplets"])

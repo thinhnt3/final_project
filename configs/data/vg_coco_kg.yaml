@@ -1,0 +1,121 @@
+# KG variant: the base images, captions and split, with WordNet IsA edges in the image graphs.
+# Visual Genome ∩ COCO dataset build.
+# All paths are relative to the repository root; run commands from there.
+
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim/vg_coco
+  manifest_file: data/raw/MANIFEST.json
+  split_file: data/splits/vg_coco.json
+  processed_dir: data/processed/vg_coco_kg
+  # Written by `--stage graph`: graph sizes and keep rates, committed next to the split file.
+  graph_card_file: data/splits/vg_coco_graph.yaml
+
+# Raw files. `target` is relative to raw_dir. When the URL is a zip archive,
+# `archive_member` names the single file to extract from it.
+sources:
+  - name: vg_image_data
+    url: https://homes.cs.washington.edu/~ranjay/visualgenome/data/dataset/image_data.json.zip
+    target: visual_genome/image_data.json
+    archive_member: image_data.json
+  - name: vg_scene_graphs
+    url: https://homes.cs.washington.edu/~ranjay/visualgenome/data/dataset/scene_graphs.json.zip
+    target: visual_genome/scene_graphs.json
+    archive_member: scene_graphs.json
+  - name: karpathy_coco
+    url: https://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip
+    target: coco/dataset_coco.json
+    archive_member: dataset_coco.json
+
+join:
+  captions_per_image: 5
+
+# Objects without a VG synset borrow the synset of other objects with the same raw name
+# when that name has >= backfill_min_count annotated objects and one synset covers
+# >= backfill_min_share of them.
+normalize:
+  backfill_min_count: 5
+  backfill_min_share: 0.9
+
+# Test is drawn only from Karpathy-test images; train/val from the other Karpathy splits.
+# Each draw is stratified by relation-count quantile (n_strata bins).
+# exclude_ids: images to leave out (e.g. failed downloads); add ids, then rerun from `split`.
+split:
+  seed: 13
+  sizes:
+    train: 7000
+    val: 1500
+    test: 1500
+  min_relations: 1
+  n_strata: 4
+  exclude_ids: []
+
+# Image download for the split images (VG copies, so bbox coordinates match the graphs).
+download:
+  workers: 8
+  retries: 3
+  timeout_s: 60
+
+# Graph vocabulary (built from train images only, so val/test never shape it).
+# min_train_images: a concept or predicate must appear in at least this many train images.
+# junk_names: objects whose raw name is one of these are dropped even when VG gave them a
+# synset (VG maps `he` to helium, `it` to information technology). Function words, bare
+# colors, bare positions. Ambiguous nouns such as `orange`, `rose`, `light` are kept.
+# A concept whose most common train name is in this list is dropped as a whole, including
+# its other names (`right side`, `backs`).
+graph:
+  min_train_images: 5
+  junk_names:
+    - the
+    - a
+    - an
+    - this
+    - that
+    - these
+    - those
+    - it
+    - its
+    - they
+    - them
+    - she
+    - he
+    - her
+    - his
+    - is
+    - are
+    - was
+    - "on"
+    - in
+    - of
+    - up
+    - down
+    - something
+    - thing
+    - stuff
+    - bad sentence
+    - white
+    - black
+    - green
+    - blue
+    - red
+    - brown
+    - yellow
+    - pink
+    - purple
+    - grey
+    - gray
+    - silver
+    - gold
+    - tan
+    - beige
+    - dark
+    - wooden
+    - top
+    - front
+    - left
+    - right
+    - side
+    - back
+    - bottom
+    - middle
+    - center
