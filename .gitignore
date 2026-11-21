@@ -21,6 +21,9 @@ data/processed/vg_coco/images/
 # Rebuild with `python -m scripts.build_mkg_w --stage all`.
 data/processed/mkg_w/images/
 data/processed/mkg_w/embeddings/
+# MKG-W caption subset: JSON is committed; rebuild images with `python -m scripts.build_mkg_w_captions`.
+data/processed/mkg_w_captions/images/
+data/processed/mkg_w_captions/embeddings/
 
 # EDA review byproducts (regenerate with scripts/review_vg_coco.py + archify).
 # Only files referenced by reports/data-review/{index,sample}.html are committed.

@@ -14,6 +14,7 @@ _DBPEDIA_PREFIX = "http://dbpedia.org/resource/"
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])")
 # Shorter cuts are usually abbreviations ("Dr. ", "St. "), not the end of the first sentence.
 _MIN_SENTENCE_CHARS = 40
+_INITIAL_END = re.compile(r"(?:^|\s)[A-Z]\.$")
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,24 @@ def first_sentence(text: str, max_chars: int = 300) -> str:
     if len(sentence) > max_chars:
         sentence = sentence[:max_chars].rsplit(" ", 1)[0]
     return sentence.strip()
+
+
+def split_sentences(text: str, min_chars: int = _MIN_SENTENCE_CHARS) -> list[str]:
+    """Sentences of a description; a piece that is not a whole sentence is joined to the next one.
+
+    A piece shorter than `min_chars` is usually cut at an abbreviation ("Dr. ", "St. "), and
+    one ending in a single capital letter at a name initial ("Edward G. Robinson").
+    """
+    sentences: list[str] = []
+    pending = ""
+    for piece in _SENTENCE_END.split(text.strip()):
+        pending = f"{pending} {piece}".strip()
+        if len(pending) >= min_chars and not _INITIAL_END.search(pending):
+            sentences.append(pending)
+            pending = ""
+    if pending:
+        sentences.append(pending)
+    return sentences
 
 
 def match_folders(names: Mapping[int, str], folders: Iterable[str]) -> dict[int, str]:

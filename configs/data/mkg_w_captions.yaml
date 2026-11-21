@@ -1,0 +1,66 @@
+# MKG-W reshaped like VG ∩ COCO: one item per entity, with one image, captions and its own graph.
+# Built by `python -m scripts.build_mkg_w_captions` from the processed MKG-W dataset.
+# All paths are relative to the repository root; run commands from there.
+
+# Read by the build script and by the retrieval scripts (embed_vg_coco, run_benchmark,
+# train_graphsage), which find the data through processed_dir and split_file.
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim/mkg_w_captions
+  manifest_file: data/raw/MANIFEST.json
+  split_file: data/splits/mkg_w_captions.json
+  processed_dir: data/processed/mkg_w_captions
+  # Written by the build: sizes of the subset and of its graphs.
+  graph_card_file: data/splits/mkg_w_captions_card.yaml
+
+# Which entities become items and how their captions are made.
+# source_config: MKG-W build config; its processed directory supplies entities, triples, images.
+# min_triples: an item needs this many triples (any split of the knowledge graph) so that its
+#   graph is not nearly empty. All triples are used: the graph describes the item, like a
+#   scene graph describes its image; nothing is predicted from it.
+# captions_per_item: every item gets exactly this many captions, the first usable sentences
+#   of its description; an entity with fewer is left out (COCO has 5 per image). 2 keeps 90%
+#   of the candidates; later sentences rarely say what the entity is.
+# min_caption_chars: shorter sentences say too little to identify an item.
+# mask_text: replaces the entity's name in its captions and labels the item's own graph node,
+#   so neither CLIP nor the graph can match a caption to its item by the title.
+# fractions: random split of the items.
+subset:
+  source_config: configs/data/mkg_w.yaml
+  min_triples: 5
+  captions_per_item: 2
+  min_caption_chars: 40
+  mask_text: this entity
+  fractions:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+
+# split.seed seeds the item split and the caption-image alignment check of the embedding step.
+# split.sizes and the sections below belong to the VG ∩ COCO build. This dataset does not use
+# them; they are present because the retrieval scripts load this file with that schema.
+split:
+  seed: 13
+  sizes:
+    train: 2055
+    val: 440
+    test: 441
+  min_relations: 1
+  n_strata: 4
+  exclude_ids: []
+sources:
+  - name: mkg_w_processed
+    url: file://data/processed/mkg_w
+    target: mkg_w
+join:
+  captions_per_image: 2
+normalize:
+  backfill_min_count: 5
+  backfill_min_share: 0.9
+download:
+  workers: 1
+  retries: 1
+  timeout_s: 60
+graph:
+  min_train_images: 1
+  junk_names: []
