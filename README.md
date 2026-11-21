@@ -80,6 +80,23 @@ AdaMF chọn α khoảng 0,5–0,6 (GraphSAGE khoảng 0,8), tức điểm mô h
 
 "Linear adapter" là AdaMF bỏ cả structure lẫn text: một lớp Linear trên vector CLIP ảnh, không dùng đồ thị. Nó là mốc để tách phần đóng góp của đồ thị: GraphSAGE đỉnh ảnh mang CLIP chỉ ngang adapter (49,43 so với 49,76), nghĩa là phép gộp hàng xóm không thêm gì; phần lớn mức tăng so với CLIP đến từ việc học lại vector ảnh.
 
+### Cùng benchmark trên MKG-W caption subset
+
+Cùng lệnh và cùng tham số, chạy trên một tập con của MKG-W được dựng theo khuôn của dataset này (mỗi mục một ảnh, 2 caption, một đồ thị riêng; 441 mục test). R@1 sau khi xếp hạng lại, đơn vị %.
+
+| Phương pháp | VG ∩ COCO | MKG-W caption subset |
+|---|---|---|
+| CLIP ViT-B/32 | 43,89 | 35,60 |
+| CLIP + GraphSAGE (đỉnh ảnh học được) | 48,12 ± 0,23 | 43,35 ± 0,54 |
+| CLIP + GraphSAGE (đỉnh ảnh mang CLIP) | 49,43 ± 0,46 | 39,98 ± 0,40 |
+| CLIP + linear adapter (chỉ modality image, không đồ thị) | 49,76 ± 0,08 | 35,75 ± 0,43 |
+| CLIP + AdaMF-MAT (bản đầy đủ của bài báo) | 51,42 ± 0,32 | 41,16 ± 0,59 |
+| CLIP + AdaMF, không MAT, chuẩn hoá L2 từng modality (5 seed) | 51,93 ± 0,32 | 41,70 ± 0,92 |
+| + structure-only dropout 30% (`so0.3`, 5 seed) | 52,74 ± 0,26 | 43,29 ± 0,65 |
+| + structure-only loss, trọng số 0,1 (`sl0.1`, 5 seed) | **53,1** | 43,08 ± 0,59 |
+
+Hai dataset cho hai bức tranh ngược nhau. Ở VG ∩ COCO, mức tăng đến từ modality image (linear adapter đã hơn CLIP 5,9 điểm). Ở tập con, linear adapter chỉ ngang CLIP, còn GraphSAGE không nhìn ảnh lại hơn CLIP 7,8 điểm: phần tăng đến từ đồ thị. Bảng đủ cột, cách dựng tập con và giới hạn: [docs/mkg-w-captions-results.md](docs/mkg-w-captions-results.md).
+
 ### Ablation của AdaMF-MAT
 
 R@1 sau khi xếp hạng lại, 3 seed:
