@@ -1,0 +1,1946 @@
+{
+  "Q1031051": {
+    "vi": "Cẩm Phả",
+    "en": "Cẩm Phả"
+  },
+  "Q1048241": {
+    "vi": "Mê Linh",
+    "en": "Mê Linh"
+  },
+  "Q1048642": {
+    "vi": "Tây Hồ",
+    "en": "Tây Hồ"
+  },
+  "Q1048785": {
+    "vi": "Bảo tàng Lịch sử Quân sự Việt Nam",
+    "en": "Vietnam Military History Museum"
+  },
+  "Q1052867": {
+    "vi": "Đồng bằng sông Cửu Long",
+    "en": "Mekong Delta"
+  },
+  "Q1068273": {
+    "vi": "Hải Châu",
+    "en": "Hải Châu"
+  },
+  "Q1068842": {
+    "vi": "cầu bộ hành",
+    "en": "footbridge"
+  },
+  "Q1070290": {
+    "vi": "",
+    "en": "prisoner-of-war camp"
+  },
+  "Q10733188": {
+    "vi": "An Hải, Đà Nẵng",
+    "en": "An Hải, Đà Nẵng"
+  },
+  "Q10733269": {
+    "vi": "An Ninh Đông",
+    "en": "An Ninh Đông"
+  },
+  "Q10742477": {
+    "vi": "Bình Minh",
+    "en": "Bình Minh"
+  },
+  "Q10743447": {
+    "vi": "Bến Thành",
+    "en": "Bến Thành"
+  },
+  "Q10743988": {
+    "vi": "Cam Bình",
+    "en": "Cam Bình"
+  },
+  "Q10747294": {
+    "vi": "Chiềng Ơn",
+    "en": "Chiềng Ơn"
+  },
+  "Q10748252": {
+    "vi": "Tiên Sơn",
+    "en": "Tiên Sơn"
+  },
+  "Q10748583": {
+    "vi": "chùa Việt Nam",
+    "en": "Buddhist temple in Vietnam"
+  },
+  "Q10753291": {
+    "vi": "Bảo vật quốc gia của Việt Nam",
+    "en": "National Treasures of Vietnam"
+  },
+  "Q10755057": {
+    "vi": "Di tích Việt Nam",
+    "en": "Vietnamese heritage sites"
+  },
+  "Q10755061": {
+    "vi": "Di tích quốc gia đặc biệt",
+    "en": "Special National Site"
+  },
+  "Q10767737": {
+    "vi": "Hoa Lư",
+    "en": "Hoa Lư"
+  },
+  "Q10768920": {
+    "vi": "Hoàng Hoa Thám",
+    "en": "Hoàng Hoa Thám"
+  },
+  "Q10768953": {
+    "vi": "Hoàng Liệt",
+    "en": "Hoàng Liệt"
+  },
+  "Q10769129": {
+    "vi": "Hoàng thành Huế",
+    "en": "Imperial City of Hue"
+  },
+  "Q10771083": {
+    "vi": "Long Hoa",
+    "en": "Long Hoa"
+  },
+  "Q10771910": {
+    "vi": "Học viện Âm nhạc Huế",
+    "en": "Hue Academy of Music"
+  },
+  "Q1077294": {
+    "vi": "Hà Tây",
+    "en": "Hà Tây"
+  },
+  "Q10774400": {
+    "vi": "K'Bang",
+    "en": "K'Bang"
+  },
+  "Q10784259": {
+    "vi": "Lam Sơn",
+    "en": "Lam Sơn"
+  },
+  "Q10786838": {
+    "vi": "Long Hưng A",
+    "en": "Long Hưng A"
+  },
+  "Q10787435": {
+    "vi": "Lào Cai",
+    "en": "Lào Cai"
+  },
+  "Q10787540": {
+    "vi": "Lãnh Binh Thăng",
+    "en": ""
+  },
+  "Q10787857": {
+    "vi": "Lê Thị Riêng",
+    "en": "Lê Thị Riêng"
+  },
+  "Q10796210": {
+    "vi": "Mão Điền",
+    "en": "Mão Điền"
+  },
+  "Q10797087": {
+    "vi": "Nam Kỳ Lục tỉnh",
+    "en": "Six Provinces of Southern Vietnam"
+  },
+  "Q10801331": {
+    "vi": "Ninh Giang",
+    "en": "Ninh Giang"
+  },
+  "Q10805924": {
+    "vi": "Đông Ba",
+    "en": "Đông Ba"
+  },
+  "Q10806126": {
+    "vi": "Phú Thọ Hòa",
+    "en": "Phú Thọ Hòa"
+  },
+  "Q10807060": {
+    "vi": "Phạm Văn Hai",
+    "en": "Phạm Văn Hai"
+  },
+  "Q10810325": {
+    "vi": "Quản Bạ",
+    "en": "Quản Bạ"
+  },
+  "Q10810560": {
+    "vi": "Quần thể di tích Cố đô Huế",
+    "en": "Complex of Huế Monuments"
+  },
+  "Q1081138": {
+    "vi": "di tích lịch sử",
+    "en": "historic site"
+  },
+  "Q10823351": {
+    "vi": "Sơn Mỹ",
+    "en": "Sơn Mỹ"
+  },
+  "Q10824733": {
+    "vi": "Thanh Chương",
+    "en": "Thanh Chương"
+  },
+  "Q10824791": {
+    "vi": "Thanh Liêm",
+    "en": "Thanh Liêm"
+  },
+  "Q10825836": {
+    "vi": "Tháp Chăm",
+    "en": "Champa tower"
+  },
+  "Q10826558": {
+    "vi": "Thọ Quang (phường)",
+    "en": "Thọ Quang"
+  },
+  "Q10826620": {
+    "vi": "Thổ Sơn",
+    "en": "Thổ Sơn"
+  },
+  "Q10827320": {
+    "vi": "Tiền Hải",
+    "en": "Tiền Hải"
+  },
+  "Q10828919": {
+    "vi": "Thủ Đức",
+    "en": "Thủ Đức"
+  },
+  "Q10831060": {
+    "vi": "Tây Mỗ",
+    "en": "Tây Mỗ"
+  },
+  "Q10831631": {
+    "vi": "tỉnh Việt Nam thời Pháp thuộc",
+    "en": "province of French Indochina"
+  },
+  "Q10831826": {
+    "vi": "Tứ Hiệp",
+    "en": "Tứ Hiệp"
+  },
+  "Q10833569": {
+    "vi": "Vĩnh Hưng A",
+    "en": "Vĩnh Hưng A"
+  },
+  "Q10833628": {
+    "vi": "Vĩnh Ninh",
+    "en": "Vĩnh Ninh"
+  },
+  "Q10835135": {
+    "vi": "Xuân Trường - Đà Lạt",
+    "en": "Xuân Trường - Đà Lạt"
+  },
+  "Q10838227": {
+    "vi": "Yên Đồng",
+    "en": "Yên Đồng"
+  },
+  "Q10840023": {
+    "vi": "Đakrông",
+    "en": "Đakrông"
+  },
+  "Q10840222": {
+    "vi": "Điện Biên",
+    "en": "Điện Biên"
+  },
+  "Q10841104": {
+    "vi": "Đại Kim",
+    "en": "Đại Kim"
+  },
+  "Q10864761": {
+    "vi": "",
+    "en": "Qilian Yu"
+  },
+  "Q10878982": {
+    "vi": "Cụm Sinh Tồn",
+    "en": "Union Banks"
+  },
+  "Q1088552": {
+    "vi": "nhà thờ Công giáo",
+    "en": "Catholic church building"
+  },
+  "Q1091048": {
+    "vi": "Chùa Bút Tháp",
+    "en": "Bút Tháp Temple"
+  },
+  "Q10911930": {
+    "vi": "Cụm Song Tử",
+    "en": "North Danger Reefs"
+  },
+  "Q109607": {
+    "vi": "tàn tích",
+    "en": "ruins"
+  },
+  "Q111384093": {
+    "vi": "",
+    "en": "South China and Eastern Archipelagic Seas"
+  },
+  "Q11177771": {
+    "vi": "kỹ thuật nghệ thuật",
+    "en": "artistic technique"
+  },
+  "Q11315": {
+    "vi": "trung tâm thương mại",
+    "en": "shopping center"
+  },
+  "Q1132490": {
+    "vi": "Phật giáo Việt Nam",
+    "en": "Buddhism in Vietnam"
+  },
+  "Q1134500": {
+    "vi": "Gia Lâm",
+    "en": "Gia Lâm"
+  },
+  "Q1134529": {
+    "vi": "Hoàn Kiếm",
+    "en": "Hoàn Kiếm"
+  },
+  "Q1181413": {
+    "vi": "Cung văn hóa",
+    "en": "palace of culture"
+  },
+  "Q1200957": {
+    "vi": "điểm đến du lịch",
+    "en": "tourist destination"
+  },
+  "Q1202019": {
+    "vi": "Văn Miếu – Quốc Tử Giám",
+    "en": "Temple of Literature"
+  },
+  "Q12042110": {
+    "vi": "cầu thép",
+    "en": "steel bridge"
+  },
+  "Q120560": {
+    "vi": "tiểu vương cung thánh đường",
+    "en": "minor basilica"
+  },
+  "Q1210334": {
+    "vi": "",
+    "en": "railway bridge"
+  },
+  "Q12104174": {
+    "vi": "bảo tàng dân tộc ký",
+    "en": "ethnographic museum"
+  },
+  "Q1220959": {
+    "vi": "",
+    "en": "building of public administration"
+  },
+  "Q1221725": {
+    "vi": "Hà Khẩu",
+    "en": "Hekou Yao Autonomous County"
+  },
+  "Q122395435": {
+    "vi": "vườn quốc gia tại Việt Nam",
+    "en": "national park of Vietnam"
+  },
+  "Q12280": {
+    "vi": "cầu",
+    "en": "bridge"
+  },
+  "Q1239": {
+    "vi": "Ấn Độ Dương",
+    "en": "Indian Ocean"
+  },
+  "Q12518": {
+    "vi": "tháp",
+    "en": "tower"
+  },
+  "Q12570": {
+    "vi": "cầu dây võng",
+    "en": "suspension bridge"
+  },
+  "Q1268134": {
+    "vi": "",
+    "en": "Beaux-Arts"
+  },
+  "Q127771": {
+    "vi": "máy bay tiêm kích",
+    "en": "fighter aircraft"
+  },
+  "Q128267": {
+    "vi": "Thánh Giuse",
+    "en": "Saint Joseph"
+  },
+  "Q130324": {
+    "vi": "Hòa Bình",
+    "en": "Hòa Bình"
+  },
+  "Q131366792": {
+    "vi": "Thuận Hóa",
+    "en": "Thuận Hóa"
+  },
+  "Q131417547": {
+    "vi": "Hoa Lư",
+    "en": "Hoa Lư"
+  },
+  "Q131681": {
+    "vi": "hồ chứa nước",
+    "en": "reservoir"
+  },
+  "Q131746469": {
+    "vi": "Thừa Thiên - Huế",
+    "en": "Thừa Thiên Huế"
+  },
+  "Q1319796": {
+    "vi": "Phú Tân",
+    "en": "Phú Tân"
+  },
+  "Q1319891": {
+    "vi": "Quận 10",
+    "en": "District 10"
+  },
+  "Q1319931": {
+    "vi": "Quận 6",
+    "en": "District 6"
+  },
+  "Q1320413": {
+    "vi": "Quảng Trị",
+    "en": "Quảng Trị"
+  },
+  "Q1322134": {
+    "vi": "vịnh biển",
+    "en": "gulf"
+  },
+  "Q132456930": {
+    "vi": "",
+    "en": "Mỹ Sơn Group G"
+  },
+  "Q132456931": {
+    "vi": "",
+    "en": "Mỹ Sơn Groups E and F"
+  },
+  "Q132456943": {
+    "vi": "",
+    "en": "Mỹ Sơn Groups B, C and D"
+  },
+  "Q132510": {
+    "vi": "chợ",
+    "en": "market"
+  },
+  "Q1328612": {
+    "vi": "Trường Sa",
+    "en": "Trường Sa"
+  },
+  "Q133056": {
+    "vi": "đèo",
+    "en": "mountain pass"
+  },
+  "Q13406463": {
+    "vi": "bài viết danh sách Wikimedia",
+    "en": "Wikimedia list article"
+  },
+  "Q134889257": {
+    "vi": "Lai Vung",
+    "en": "Lai Vung"
+  },
+  "Q135026770": {
+    "vi": "Sài Gòn",
+    "en": "Saigon"
+  },
+  "Q135672028": {
+    "vi": "Đông Anh",
+    "en": "Đông Anh district"
+  },
+  "Q136449969": {
+    "vi": "Phước Long",
+    "en": "Phước Long"
+  },
+  "Q1365138": {
+    "vi": "Sơn Tây",
+    "en": "Sơn Tây"
+  },
+  "Q1370598": {
+    "vi": "nơi thờ phụng",
+    "en": "structure of worship"
+  },
+  "Q1404472": {
+    "vi": "Phục hưng Ý",
+    "en": "Italian Renaissance"
+  },
+  "Q142127987": {
+    "vi": "",
+    "en": "military history museum"
+  },
+  "Q1425560": {
+    "vi": "cầu vượt",
+    "en": "overpass"
+  },
+  "Q1429218": {
+    "vi": "",
+    "en": "cantilever bridge"
+  },
+  "Q14316796": {
+    "vi": "Trung Bộ",
+    "en": "Central Vietnam"
+  },
+  "Q1435771": {
+    "vi": "",
+    "en": "gopuram"
+  },
+  "Q14378": {
+    "vi": "tân cổ điển",
+    "en": "Neoclassicism"
+  },
+  "Q1442181": {
+    "vi": "Quần đảo Thổ Chu",
+    "en": "Thổ Chu Islands"
+  },
+  "Q1459900": {
+    "vi": "",
+    "en": "Tentative World Heritage Site"
+  },
+  "Q146695": {
+    "vi": "Phú Quốc",
+    "en": "Phú Quốc"
+  },
+  "Q1497375": {
+    "vi": "quần thể kiến trúc",
+    "en": "architectural ensemble"
+  },
+  "Q1515971": {
+    "vi": "Sông Hương",
+    "en": "Perfume River"
+  },
+  "Q152298": {
+    "vi": "Gherman Stepanovich Titov",
+    "en": "Gherman Titov"
+  },
+  "Q15239622": {
+    "vi": "lãnh thổ bị tranh chấp",
+    "en": "disputed territory"
+  },
+  "Q1525": {
+    "vi": "vòng xuyến",
+    "en": "roundabout"
+  },
+  "Q1530022": {
+    "vi": "tổ chức tôn giáo",
+    "en": "religious organization"
+  },
+  "Q153562": {
+    "vi": "nhà hát opera",
+    "en": "opera house"
+  },
+  "Q1542314": {
+    "vi": "tham quan",
+    "en": "sightseeing"
+  },
+  "Q158218": {
+    "vi": "cầu giàn",
+    "en": "truss bridge"
+  },
+  "Q158454": {
+    "vi": "Khu dự trữ sinh quyển thế giới",
+    "en": "biosphere reserve"
+  },
+  "Q158555": {
+    "vi": "cầu dây văng",
+    "en": "cable-stayed bridge"
+  },
+  "Q1626255": {
+    "vi": "Thoại Sơn",
+    "en": "Thoại Sơn"
+  },
+  "Q162875": {
+    "vi": "lăng",
+    "en": "mausoleum"
+  },
+  "Q163900": {
+    "vi": "Phanxicô Xaviê",
+    "en": "Francis Xavier"
+  },
+  "Q16480212": {
+    "vi": "Tràng Tiền",
+    "en": "Tràng Tiền"
+  },
+  "Q16481184": {
+    "vi": "Kỳ Lợi",
+    "en": "Kỳ Lợi"
+  },
+  "Q16560": {
+    "vi": "cung điện",
+    "en": "palace"
+  },
+  "Q16735822": {
+    "vi": "bảo tàng lịch sử",
+    "en": "history museum"
+  },
+  "Q167477": {
+    "vi": "Antôn thành Padova",
+    "en": "Anthony of Padua"
+  },
+  "Q16887036": {
+    "vi": "",
+    "en": "gap"
+  },
+  "Q16970": {
+    "vi": "nhà thờ Kitô giáo",
+    "en": "church building"
+  },
+  "Q17018380": {
+    "vi": "vũng biển",
+    "en": "bight"
+  },
+  "Q170321": {
+    "vi": "đất ngập nước",
+    "en": "wetland"
+  },
+  "Q1707610": {
+    "vi": "",
+    "en": "war cemetery"
+  },
+  "Q173387": {
+    "vi": "mộ",
+    "en": "grave"
+  },
+  "Q1735471": {
+    "vi": "cầu dầm hộp",
+    "en": "box girder bridge"
+  },
+  "Q173782": {
+    "vi": "Art Deco",
+    "en": "Art Deco"
+  },
+  "Q17431399": {
+    "vi": "bảo tàng quốc gia",
+    "en": "national museum"
+  },
+  "Q174782": {
+    "vi": "quảng trường",
+    "en": "square"
+  },
+  "Q17485079": {
+    "vi": "",
+    "en": "church ruin"
+  },
+  "Q1749724": {
+    "vi": "Vũ Quang",
+    "en": "Vũ Quang"
+  },
+  "Q176483": {
+    "vi": "kiến trúc Gothic",
+    "en": "Gothic architecture"
+  },
+  "Q1785071": {
+    "vi": "đồn",
+    "en": "fort"
+  },
+  "Q179049": {
+    "vi": "khu bảo tồn thiên nhiên",
+    "en": "nature reserve"
+  },
+  "Q179700": {
+    "vi": "tượng",
+    "en": "statue"
+  },
+  "Q1802963": {
+    "vi": "dinh thự",
+    "en": "mansion"
+  },
+  "Q1818274": {
+    "vi": "Vũng Tàu",
+    "en": "Vũng Tàu"
+  },
+  "Q1825472": {
+    "vi": "cầu mái che",
+    "en": "covered bridge"
+  },
+  "Q1841": {
+    "vi": "Công giáo",
+    "en": "Catholicism"
+  },
+  "Q184358": {
+    "vi": "ám tiêu",
+    "en": "reef"
+  },
+  "Q185113": {
+    "vi": "mũi đất",
+    "en": "cape"
+  },
+  "Q1854": {
+    "vi": "Thành phố Hồ Chí Minh",
+    "en": "Ho Chi Minh City"
+  },
+  "Q1858": {
+    "vi": "Hà Nội",
+    "en": "Hanoi"
+  },
+  "Q186363": {
+    "vi": "",
+    "en": "Gothic Revival"
+  },
+  "Q187223": {
+    "vi": "phá",
+    "en": "lagoon"
+  },
+  "Q1877": {
+    "vi": "Đồng Hới",
+    "en": "Đồng Hới"
+  },
+  "Q188040": {
+    "vi": "mỏ đá",
+    "en": "quarry"
+  },
+  "Q190128": {
+    "vi": "Vịnh Hạ Long",
+    "en": "Ha Long Bay"
+  },
+  "Q19013": {
+    "vi": "Phan Rang - Tháp Chàm",
+    "en": "Phan Rang – Tháp Chàm"
+  },
+  "Q1901452": {
+    "vi": "Phú Lợi",
+    "en": "Phú Lợi"
+  },
+  "Q191992": {
+    "vi": "",
+    "en": "headland"
+  },
+  "Q1922187": {
+    "vi": "Thông Tây Hội",
+    "en": "Thông Tây Hội"
+  },
+  "Q1926820": {
+    "vi": "Quận 3",
+    "en": "District 3"
+  },
+  "Q1927178": {
+    "vi": "Châu Thành",
+    "en": "Châu Thành"
+  },
+  "Q19316": {
+    "vi": "Biên Hòa",
+    "en": "Biên Hòa"
+  },
+  "Q194195": {
+    "vi": "công viên giải trí",
+    "en": "amusement park"
+  },
+  "Q1945774": {
+    "vi": "Chợ nổi",
+    "en": "floating market"
+  },
+  "Q19491": {
+    "vi": "Nha Trang",
+    "en": "Nha Trang"
+  },
+  "Q1961493": {
+    "vi": "",
+    "en": "guild house"
+  },
+  "Q19646448": {
+    "vi": "Cụm Nam Yết",
+    "en": "Tizard Bank"
+  },
+  "Q19683138": {
+    "vi": "",
+    "en": "Ramsar site"
+  },
+  "Q1971570": {
+    "vi": "cột cờ",
+    "en": "flagpole"
+  },
+  "Q1987998": {
+    "vi": "Hạnh Thông",
+    "en": "Hạnh Thông"
+  },
+  "Q199451": {
+    "vi": "tháp",
+    "en": "pagoda"
+  },
+  "Q206219": {
+    "vi": "Hoàng thành Thăng Long",
+    "en": "Imperial Citadel of Thang Long"
+  },
+  "Q207524": {
+    "vi": "đảo nhỏ",
+    "en": "islet"
+  },
+  "Q207694": {
+    "vi": "bảo tàng nghệ thuật",
+    "en": "art museum"
+  },
+  "Q2090854": {
+    "vi": "Duy Xuyên",
+    "en": "Duy Xuyên"
+  },
+  "Q209333": {
+    "vi": "hồ móng ngựa",
+    "en": "oxbow lake"
+  },
+  "Q2097211": {
+    "vi": "Gia Định",
+    "en": "Gia Định"
+  },
+  "Q2114972": {
+    "vi": "dinh tổng thống",
+    "en": "presidential palace"
+  },
+  "Q21194": {
+    "vi": "Vũng Tàu",
+    "en": "Vũng Tàu"
+  },
+  "Q2135254": {
+    "vi": "Long Điền",
+    "en": "Long Điền"
+  },
+  "Q2135306": {
+    "vi": "Bình Đông",
+    "en": "Bình Đông"
+  },
+  "Q215664": {
+    "vi": "quần đảo Trường Sa",
+    "en": "Spratly Islands"
+  },
+  "Q2157387": {
+    "vi": "An Đông",
+    "en": "An Đông"
+  },
+  "Q216075": {
+    "vi": "Cần Thơ",
+    "en": "Cần Thơ"
+  },
+  "Q2179494": {
+    "vi": "Hòa Hưng",
+    "en": "Hòa Hưng"
+  },
+  "Q2186928": {
+    "vi": "Thủ Dầu Một",
+    "en": "Thủ Dầu Một"
+  },
+  "Q2189978": {
+    "vi": "Bình Thới",
+    "en": "Bình Thới"
+  },
+  "Q2200028": {
+    "vi": "Tân Bình",
+    "en": "Tân Bình"
+  },
+  "Q2202269": {
+    "vi": "Tân Sơn Hòa",
+    "en": "Tân Sơn Hòa"
+  },
+  "Q2202392": {
+    "vi": "Long Hải",
+    "en": "Long Hải"
+  },
+  "Q2202401": {
+    "vi": "Bà Rịa",
+    "en": "Bà Rịa"
+  },
+  "Q220659": {
+    "vi": "di vật khảo cổ",
+    "en": "archaeological artefact"
+  },
+  "Q2232001": {
+    "vi": "",
+    "en": "show cave"
+  },
+  "Q22698": {
+    "vi": "công viên",
+    "en": "park"
+  },
+  "Q22712354": {
+    "vi": "quần đảo Cát Bà",
+    "en": ""
+  },
+  "Q22746": {
+    "vi": "công viên đô thị",
+    "en": "urban park"
+  },
+  "Q2283913": {
+    "vi": "Xuân Hòa",
+    "en": "Xuân Hòa"
+  },
+  "Q2289221": {
+    "vi": "Nam Bộ",
+    "en": "Southern Vietnam"
+  },
+  "Q2299149": {
+    "vi": "Quận 1",
+    "en": "District 1"
+  },
+  "Q23091252": {
+    "vi": "",
+    "en": "Stripped Classicism"
+  },
+  "Q2332060": {
+    "vi": "Tuyên Quang",
+    "en": "Tuyên Quang"
+  },
+  "Q23397": {
+    "vi": "hồ",
+    "en": "lake"
+  },
+  "Q23442": {
+    "vi": "đảo",
+    "en": "island"
+  },
+  "Q23533": {
+    "vi": "Quảng Bình",
+    "en": "Quảng Bình"
+  },
+  "Q2376564": {
+    "vi": "nút giao thông khác mức",
+    "en": "interchange"
+  },
+  "Q23790": {
+    "vi": "",
+    "en": "natural monument"
+  },
+  "Q2393184": {
+    "vi": "",
+    "en": "hill station"
+  },
+  "Q2405555": {
+    "vi": "Chợ Lớn",
+    "en": "Cholon"
+  },
+  "Q2414481": {
+    "vi": "An Phú",
+    "en": "An Phú"
+  },
+  "Q2421186": {
+    "vi": "Cố đô Hoa Lư",
+    "en": "Hoa Lư Ancient Capital"
+  },
+  "Q2422871": {
+    "vi": "Phú Định",
+    "en": "Phú Định"
+  },
+  "Q2429414": {
+    "vi": "Phú An",
+    "en": "Phú An"
+  },
+  "Q24354": {
+    "vi": "nhà hát",
+    "en": "theatre building"
+  },
+  "Q24529780": {
+    "vi": "mũi đất",
+    "en": "point"
+  },
+  "Q2466365": {
+    "vi": "Óc Eo",
+    "en": "Óc Eo"
+  },
+  "Q2467034": {
+    "vi": "Bình Thạnh",
+    "en": "Bình Thạnh"
+  },
+  "Q2467139": {
+    "vi": "Tân Hòa",
+    "en": "Tân Hòa"
+  },
+  "Q2479493": {
+    "vi": "phong cách chiết trung",
+    "en": "eclectic architecture"
+  },
+  "Q24957202": {
+    "vi": "Nam Sơn",
+    "en": "Nam Sơn"
+  },
+  "Q24958744": {
+    "vi": "kiến trúc Việt Nam",
+    "en": "Vietnamese architecture"
+  },
+  "Q2513960": {
+    "vi": "Bình Quới",
+    "en": "Bình Quới"
+  },
+  "Q25281": {
+    "vi": "Đà Lạt",
+    "en": "Đà Lạt"
+  },
+  "Q25282": {
+    "vi": "Đà Nẵng",
+    "en": "Da Nang"
+  },
+  "Q25297630": {
+    "vi": "",
+    "en": "international bridge"
+  },
+  "Q25315": {
+    "vi": "Phan Thiết",
+    "en": "Phan Thiết"
+  },
+  "Q2546162": {
+    "vi": "Phú Lâm",
+    "en": "Phú Lâm"
+  },
+  "Q2552692": {
+    "vi": "Bình Thạnh",
+    "en": "Bình Thạnh"
+  },
+  "Q25897": {
+    "vi": "Tân An",
+    "en": "Tân An"
+  },
+  "Q26573": {
+    "vi": "Long An",
+    "en": "Long An"
+  },
+  "Q26575": {
+    "vi": "Thái Nguyên",
+    "en": "Thái Nguyên"
+  },
+  "Q26581": {
+    "vi": "Thái Nguyên",
+    "en": "Thái Nguyên"
+  },
+  "Q2668072": {
+    "vi": "bộ sưu tập",
+    "en": "collection"
+  },
+  "Q271847": {
+    "vi": "Thích Quảng Đức",
+    "en": "Thích Quảng Đức"
+  },
+  "Q274153": {
+    "vi": "tháp nước",
+    "en": "water tower"
+  },
+  "Q2744976": {
+    "vi": "Bàn Cờ",
+    "en": "Bàn Cờ"
+  },
+  "Q27566": {
+    "vi": "Vĩnh Phúc",
+    "en": "Vĩnh Phúc"
+  },
+  "Q2772772": {
+    "vi": "bảo tàng quân sự",
+    "en": "military museum"
+  },
+  "Q2777003": {
+    "vi": "Nhà Bàng",
+    "en": "Nhà Bàng"
+  },
+  "Q28194802": {
+    "vi": "",
+    "en": "tunnel network"
+  },
+  "Q28337": {
+    "vi": "bãi cạn",
+    "en": "shoal"
+  },
+  "Q29043583": {
+    "vi": "miếu",
+    "en": "Miao"
+  },
+  "Q2977": {
+    "vi": "nhà thờ chính tòa",
+    "en": "cathedral"
+  },
+  "Q2983893": {
+    "vi": "",
+    "en": "quarter"
+  },
+  "Q2986395": {
+    "vi": "Phong trào Cần Vương",
+    "en": "Can Vuong"
+  },
+  "Q30892791": {
+    "vi": "",
+    "en": "signal mast"
+  },
+  "Q30920225": {
+    "vi": "Trùng thiềm điệp ốc",
+    "en": ""
+  },
+  "Q32004794": {
+    "vi": "Đường Võ Văn Kiệt",
+    "en": "Vo Van Kiet Boulevard"
+  },
+  "Q32033230": {
+    "vi": "Thủ Dầu Một",
+    "en": "Thủ Dầu Một"
+  },
+  "Q32229505": {
+    "vi": "Tân Định",
+    "en": "Tân Định"
+  },
+  "Q327245": {
+    "vi": "tập thể",
+    "en": "team"
+  },
+  "Q32815": {
+    "vi": "Thánh đường Hồi giáo",
+    "en": "mosque"
+  },
+  "Q3285431": {
+    "vi": "",
+    "en": "mandapa"
+  },
+  "Q32880": {
+    "vi": "trường phái kiến trúc",
+    "en": "architectural style"
+  },
+  "Q330284": {
+    "vi": "chợ",
+    "en": "marketplace"
+  },
+  "Q33116": {
+    "vi": "Cam Ranh",
+    "en": "Cam Ranh"
+  },
+  "Q33204": {
+    "vi": "Móng Cái",
+    "en": "Móng Cái"
+  },
+  "Q33271": {
+    "vi": "Đồng Nai",
+    "en": "Đồng Nai"
+  },
+  "Q33304": {
+    "vi": "Quảng Ngãi",
+    "en": "Quảng Ngãi"
+  },
+  "Q33351": {
+    "vi": "Hà Tĩnh",
+    "en": "Hà Tĩnh"
+  },
+  "Q33354": {
+    "vi": "Cà Mau",
+    "en": "Cà Mau"
+  },
+  "Q33356": {
+    "vi": "Quảng Nam",
+    "en": "Quảng Nam"
+  },
+  "Q33366": {
+    "vi": "Bến Tre",
+    "en": "Bến Tre"
+  },
+  "Q33369": {
+    "vi": "Khánh Hòa",
+    "en": "Khánh Hòa"
+  },
+  "Q33373": {
+    "vi": "Lào Cai",
+    "en": "Lào Cai"
+  },
+  "Q33379": {
+    "vi": "Sơn La",
+    "en": "Sơn La"
+  },
+  "Q33381": {
+    "vi": "Bắc Ninh",
+    "en": "Bắc Ninh"
+  },
+  "Q33383": {
+    "vi": "Lạng Sơn",
+    "en": "Lạng Sơn"
+  },
+  "Q33389": {
+    "vi": "Tuyên Quang",
+    "en": "Tuyên Quang"
+  },
+  "Q33396": {
+    "vi": "Quảng Ninh",
+    "en": "Quảng Ninh"
+  },
+  "Q33403": {
+    "vi": "Lạng Sơn",
+    "en": "Lạng Sơn"
+  },
+  "Q33408": {
+    "vi": "Bắc Ninh",
+    "en": "Bắc Ninh"
+  },
+  "Q33421": {
+    "vi": "Long Xuyên",
+    "en": "Long Xuyên"
+  },
+  "Q33425": {
+    "vi": "Mỹ Tho",
+    "en": "Mỹ Tho"
+  },
+  "Q33428": {
+    "vi": "Vinh",
+    "en": "Vinh"
+  },
+  "Q33469": {
+    "vi": "Buôn Ma Thuột",
+    "en": "Buôn Ma Thuột"
+  },
+  "Q33506": {
+    "vi": "bảo tàng",
+    "en": "museum"
+  },
+  "Q33682": {
+    "vi": "Nam Định",
+    "en": "Nam Định"
+  },
+  "Q33994": {
+    "vi": "Quảng Ngãi",
+    "en": "Quảng Ngãi"
+  },
+  "Q33996": {
+    "vi": "Hà Tĩnh",
+    "en": "Hà Tĩnh"
+  },
+  "Q34038": {
+    "vi": "thác",
+    "en": "waterfall"
+  },
+  "Q346575": {
+    "vi": "",
+    "en": "Protestant church"
+  },
+  "Q34763": {
+    "vi": "bán đảo",
+    "en": "peninsula"
+  },
+  "Q34789": {
+    "vi": "Vĩnh Long",
+    "en": "Vĩnh Long"
+  },
+  "Q35509": {
+    "vi": "hang",
+    "en": "cave"
+  },
+  "Q35656": {
+    "vi": "Cao Lãnh",
+    "en": "Cao Lãnh (city)"
+  },
+  "Q358": {
+    "vi": "di sản",
+    "en": "heritage site"
+  },
+  "Q36015": {
+    "vi": "Hòa Bình",
+    "en": "Hòa Bình"
+  },
+  "Q36077": {
+    "vi": "Hạ Long",
+    "en": "Hạ Long"
+  },
+  "Q36081": {
+    "vi": "Quy Nhơn",
+    "en": "Quy Nhon"
+  },
+  "Q36160": {
+    "vi": "Hội An",
+    "en": "Hội An"
+  },
+  "Q36167": {
+    "vi": "Huế",
+    "en": "Huế"
+  },
+  "Q36175": {
+    "vi": "Thanh Hóa",
+    "en": "Thanh Hóa"
+  },
+  "Q36235": {
+    "vi": "Hưng Yên",
+    "en": "Hưng Yên"
+  },
+  "Q36315": {
+    "vi": "Kon Tum",
+    "en": "Kon Tum"
+  },
+  "Q36354": {
+    "vi": "Hải Dương",
+    "en": "Hải Dương"
+  },
+  "Q36367": {
+    "vi": "Bắc Giang",
+    "en": "Bắc Giang"
+  },
+  "Q36399": {
+    "vi": "Huế",
+    "en": "Huế"
+  },
+  "Q36404": {
+    "vi": "Bắc Kạn",
+    "en": "Bắc Kạn"
+  },
+  "Q36409": {
+    "vi": "Lai Châu",
+    "en": "Lai Châu"
+  },
+  "Q36413": {
+    "vi": "Hà Nam",
+    "en": "Hà Nam"
+  },
+  "Q36446": {
+    "vi": "Lào Cai",
+    "en": "Lào Cai"
+  },
+  "Q36485": {
+    "vi": "Hưng Yên",
+    "en": "Hưng Yên"
+  },
+  "Q36493": {
+    "vi": "Kon Tum",
+    "en": "Kon Tum"
+  },
+  "Q36497": {
+    "vi": "Thái Bình",
+    "en": "Thái Bình"
+  },
+  "Q36512": {
+    "vi": "Thanh Hóa",
+    "en": "Thanh Hóa"
+  },
+  "Q36576": {
+    "vi": "Kiên Giang",
+    "en": "Kiên Giang"
+  },
+  "Q36579": {
+    "vi": "Quảng Trị",
+    "en": "Quảng Trị"
+  },
+  "Q36587": {
+    "vi": "Nghệ An",
+    "en": "Nghệ An"
+  },
+  "Q36592": {
+    "vi": "An Giang",
+    "en": "An Giang"
+  },
+  "Q36608": {
+    "vi": "Tây Ninh",
+    "en": "Tây Ninh"
+  },
+  "Q36610": {
+    "vi": "Phú Thọ",
+    "en": "Phú Thọ"
+  },
+  "Q36635": {
+    "vi": "Bến Tre",
+    "en": "Bến Tre (city)"
+  },
+  "Q36658": {
+    "vi": "Bạc Liêu",
+    "en": "Bạc Liêu"
+  },
+  "Q36662": {
+    "vi": "Gia Lai",
+    "en": "Gia Lai"
+  },
+  "Q36666": {
+    "vi": "Tiền Giang",
+    "en": "Tiền Giang"
+  },
+  "Q36676": {
+    "vi": "Đồng Tháp",
+    "en": "Đồng Tháp"
+  },
+  "Q36681": {
+    "vi": "Thái Bình",
+    "en": "Thái Bình"
+  },
+  "Q36685": {
+    "vi": "Hà Giang",
+    "en": "Hà Giang"
+  },
+  "Q36690": {
+    "vi": "Đắk Lắk",
+    "en": "Đắk Lắk"
+  },
+  "Q36693": {
+    "vi": "Bình Định",
+    "en": "Bình Định"
+  },
+  "Q36721": {
+    "vi": "Lâm Đồng",
+    "en": "Lâm Đồng"
+  },
+  "Q36725": {
+    "vi": "Phú Yên",
+    "en": "Phu Yen"
+  },
+  "Q36729": {
+    "vi": "Hải Dương",
+    "en": "Hải Dương"
+  },
+  "Q36865": {
+    "vi": "Cao Bằng",
+    "en": "Cao Bằng"
+  },
+  "Q36869": {
+    "vi": "Bình Thuận",
+    "en": "Bình Thuận"
+  },
+  "Q36874": {
+    "vi": "Bà Rịa - Vũng Tàu",
+    "en": "Bà Rịa-Vũng Tàu"
+  },
+  "Q36900": {
+    "vi": "Ninh Bình",
+    "en": "Ninh Bình"
+  },
+  "Q36903": {
+    "vi": "Ninh Thuận",
+    "en": "Ninh Thuận"
+  },
+  "Q36907": {
+    "vi": "Nam Định",
+    "en": "Nam Định"
+  },
+  "Q36955": {
+    "vi": "Điện Biên",
+    "en": "Điện Biên"
+  },
+  "Q370746": {
+    "vi": "Côn Đảo",
+    "en": "Côn Đảo"
+  },
+  "Q3710671": {
+    "vi": "Ba Tri",
+    "en": "Ba Tri district"
+  },
+  "Q3711534": {
+    "vi": "Thuận Thành",
+    "en": "Thuận Thành"
+  },
+  "Q373214": {
+    "vi": "Châu Đốc",
+    "en": "Châu Đốc"
+  },
+  "Q37654": {
+    "vi": "thị trường",
+    "en": "market"
+  },
+  "Q37660": {
+    "vi": "Biển Đông",
+    "en": "South China Sea"
+  },
+  "Q381885": {
+    "vi": "ngôi mộ",
+    "en": "tomb"
+  },
+  "Q3839081": {
+    "vi": "thảm họa",
+    "en": "disaster"
+  },
+  "Q3901777": {
+    "vi": "Phát Diệm",
+    "en": "Phát Diệm"
+  },
+  "Q391406": {
+    "vi": "Thánh địa Mỹ Sơn",
+    "en": "My Son Sanctuary"
+  },
+  "Q39594": {
+    "vi": "vịnh",
+    "en": "bay"
+  },
+  "Q39715": {
+    "vi": "hải đăng",
+    "en": "lighthouse"
+  },
+  "Q39816": {
+    "vi": "thung lũng",
+    "en": "valley"
+  },
+  "Q40080": {
+    "vi": "bãi biển",
+    "en": "beach"
+  },
+  "Q4022": {
+    "vi": "sông",
+    "en": "river"
+  },
+  "Q40357": {
+    "vi": "nhà tù",
+    "en": "prison"
+  },
+  "Q408284": {
+    "vi": "Thánh Tâm",
+    "en": "Sacred Heart"
+  },
+  "Q41176": {
+    "vi": "tòa nhà",
+    "en": "building"
+  },
+  "Q41253": {
+    "vi": "rạp chiếu phim",
+    "en": "movie theater"
+  },
+  "Q4161959": {
+    "vi": "đình",
+    "en": "Vietnamese communal house"
+  },
+  "Q42523": {
+    "vi": "Đảo san hô vòng",
+    "en": "atoll"
+  },
+  "Q43113623": {
+    "vi": "",
+    "en": "part of UNESCO World Heritage Site"
+  },
+  "Q43194": {
+    "vi": "Vân Nam",
+    "en": "Yunnan"
+  },
+  "Q432": {
+    "vi": "Hồi giáo",
+    "en": "Islam"
+  },
+  "Q43483": {
+    "vi": "giếng khoan",
+    "en": "water well"
+  },
+  "Q4358513": {
+    "vi": "Sầm Sơn",
+    "en": "Sầm Sơn"
+  },
+  "Q4421": {
+    "vi": "rừng",
+    "en": "forest"
+  },
+  "Q44539": {
+    "vi": "đền",
+    "en": "temple"
+  },
+  "Q4457035": {
+    "vi": "Chợ Lớn",
+    "en": "Chợ Lớn"
+  },
+  "Q44613": {
+    "vi": "tu viện",
+    "en": "monastery"
+  },
+  "Q44782": {
+    "vi": "cảng",
+    "en": "port"
+  },
+  "Q45481405": {
+    "vi": "",
+    "en": "Zhao Shu"
+  },
+  "Q4616848": {
+    "vi": "Bình Tây",
+    "en": "Bình Tây"
+  },
+  "Q46169": {
+    "vi": "vườn quốc gia",
+    "en": "national park"
+  },
+  "Q46831": {
+    "vi": "dãy núi",
+    "en": "mountain range"
+  },
+  "Q470364": {
+    "vi": "đạo Cao Đài",
+    "en": "Caodaism"
+  },
+  "Q473972": {
+    "vi": "khu vực được bảo vệ",
+    "en": "protected area"
+  },
+  "Q4750166": {
+    "vi": "An Nhơn",
+    "en": "An Nhơn"
+  },
+  "Q481289": {
+    "vi": "nơi cư trú chính thức",
+    "en": "official residence"
+  },
+  "Q4830453": {
+    "vi": "kinh doanh",
+    "en": "business"
+  },
+  "Q48362": {
+    "vi": "Đại thừa",
+    "en": "Mahāyāna"
+  },
+  "Q4850009": {
+    "vi": "hồ điều hòa",
+    "en": "balancing lake"
+  },
+  "Q4857427": {
+    "vi": "Bảo Thắng",
+    "en": "Bảo Thắng"
+  },
+  "Q4857432": {
+    "vi": "Bảo Yên",
+    "en": "Bảo Yên"
+  },
+  "Q49848": {
+    "vi": "văn kiện",
+    "en": "document"
+  },
+  "Q4989906": {
+    "vi": "tượng đài",
+    "en": "monument"
+  },
+  "Q5003624": {
+    "vi": "đài tưởng niệm",
+    "en": "memorial"
+  },
+  "Q5003625": {
+    "vi": "Buôn Đôn",
+    "en": "Buôn Đôn"
+  },
+  "Q5004763": {
+    "vi": "Bà Nà",
+    "en": "Bà Nà Hills"
+  },
+  "Q5017480": {
+    "vi": "Cái Bè",
+    "en": "Cái Bè"
+  },
+  "Q5017492": {
+    "vi": "Cái Răng",
+    "en": "Cái Răng"
+  },
+  "Q5033199": {
+    "vi": "Tiên Sơn",
+    "en": "Tiên Sơn"
+  },
+  "Q5051032": {
+    "vi": "Cát Hải",
+    "en": "Cát Hải"
+  },
+  "Q5211843": {
+    "vi": "Đam Rông",
+    "en": "Đam Rông"
+  },
+  "Q5283252": {
+    "vi": "Quận 4",
+    "en": "District 4"
+  },
+  "Q5283266": {
+    "vi": "Quận 7",
+    "en": "District 7"
+  },
+  "Q5283273": {
+    "vi": "Quận 8",
+    "en": "District 8"
+  },
+  "Q53060": {
+    "vi": "cổng",
+    "en": "gate"
+  },
+  "Q5311205": {
+    "vi": "Đức Phổ",
+    "en": "Đức Phổ"
+  },
+  "Q5315878": {
+    "vi": "Dương Kinh",
+    "en": "Dương Kinh"
+  },
+  "Q5370325": {
+    "vi": "Thanh Oai",
+    "en": "Thanh Oai"
+  },
+  "Q5370348": {
+    "vi": "Sóc Sơn",
+    "en": "Sóc Sơn"
+  },
+  "Q537127": {
+    "vi": "cầu đường bộ",
+    "en": "road bridge"
+  },
+  "Q5393308": {
+    "vi": "chùa",
+    "en": "Buddhist temple"
+  },
+  "Q54050": {
+    "vi": "đồi",
+    "en": "hill"
+  },
+  "Q5410092": {
+    "vi": "Cố đô Hoa Lư",
+    "en": ""
+  },
+  "Q54111": {
+    "vi": "kiến trúc Tân cổ điển",
+    "en": "Neoclassical architecture"
+  },
+  "Q5501716": {
+    "vi": "",
+    "en": "French Colonial"
+  },
+  "Q5557813": {
+    "vi": "Gia Viễn",
+    "en": "Gia Viễn"
+  },
+  "Q5558564": {
+    "vi": "Giao Thủy",
+    "en": "Giao Thủy"
+  },
+  "Q5563341": {
+    "vi": "Gio Linh",
+    "en": "Gio Linh"
+  },
+  "Q5574953": {
+    "vi": "Gò Vấp",
+    "en": "Gò Vấp"
+  },
+  "Q56055944": {
+    "vi": "loại hình nghệ thuật",
+    "en": "type of arts"
+  },
+  "Q56061": {
+    "vi": "đơn vị hành chính",
+    "en": "administrative territorial entity"
+  },
+  "Q56242215": {
+    "vi": "",
+    "en": "Catholic cathedral"
+  },
+  "Q5638933": {
+    "vi": "Hải Hậu",
+    "en": "Hải Hậu"
+  },
+  "Q57831": {
+    "vi": "pháo đài",
+    "en": "fortress"
+  },
+  "Q5874252": {
+    "vi": "Hòa Thành",
+    "en": "Hòa Thành (thị xã)"
+  },
+  "Q590734": {
+    "vi": "Bố Trạch",
+    "en": "Bố Trạch"
+  },
+  "Q5929149": {
+    "vi": "Bảo tàng Mỹ thuật Cung đình Huế",
+    "en": "Hue Museum of Royal Fine Arts"
+  },
+  "Q5946136": {
+    "vi": "Hương Trà",
+    "en": "Hương Trà"
+  },
+  "Q5965323": {
+    "vi": "Hương Thủy",
+    "en": "Hương Thủy"
+  },
+  "Q618123": {
+    "vi": "địa điểm",
+    "en": "geographical feature"
+  },
+  "Q618618": {
+    "vi": "Văn miếu",
+    "en": "temple of Confucius"
+  },
+  "Q6409386": {
+    "vi": "Kim Sơn",
+    "en": "Kim Sơn"
+  },
+  "Q6467831": {
+    "vi": "Lạc Dương",
+    "en": "Lạc Dương"
+  },
+  "Q6480651": {
+    "vi": "Lâm Hà",
+    "en": "Lâm Hà"
+  },
+  "Q6488049": {
+    "vi": "Lấp Vò",
+    "en": "Lấp Vò"
+  },
+  "Q6506676": {
+    "vi": "Lê Chân (quận)",
+    "en": "Lê Chân"
+  },
+  "Q65963150": {
+    "vi": "Bình Hòa",
+    "en": "Binh Hoa"
+  },
+  "Q6705278": {
+    "vi": "Đá Tây",
+    "en": "West London Reef"
+  },
+  "Q6711613": {
+    "vi": "Lăng Cô",
+    "en": "Lăng Cô"
+  },
+  "Q676050": {
+    "vi": "phố cổ",
+    "en": "old town"
+  },
+  "Q6818170": {
+    "vi": "Khu đô thị Phú Mỹ Hưng",
+    "en": "Phú Mỹ Hưng Urban Area"
+  },
+  "Q6838244": {
+    "vi": "Thắng cảnh loại AAAAA",
+    "en": "Chinese AAAAA-rated tourist attraction"
+  },
+  "Q6887452": {
+    "vi": "Mộc Châu",
+    "en": "Mộc Châu"
+  },
+  "Q7022325": {
+    "vi": "Nghi Xuân",
+    "en": "Nghi Xuân"
+  },
+  "Q7022659": {
+    "vi": "Ngũ Hành Sơn",
+    "en": "Ngũ Hành Sơn"
+  },
+  "Q7023106": {
+    "vi": "Nguyễn Sinh Sắc",
+    "en": "Nguyễn Sinh Sắc"
+  },
+  "Q7023368": {
+    "vi": "Nho Quan",
+    "en": "Nho Quan"
+  },
+  "Q7038773": {
+    "vi": "Ninh Kiều",
+    "en": "Ninh Kiều"
+  },
+  "Q7188247": {
+    "vi": "Phú Lộc",
+    "en": "Phú Lộc"
+  },
+  "Q7189898": {
+    "vi": "Phước Hải",
+    "en": "Phước Hải"
+  },
+  "Q725063": {
+    "vi": "Điện Bàn",
+    "en": "Điện Bàn"
+  },
+  "Q7273059": {
+    "vi": "Quỳnh Nhai",
+    "en": "Quỳnh Nhai"
+  },
+  "Q7273083": {
+    "vi": "Sông Quây Sơn",
+    "en": "Quây Sơn River"
+  },
+  "Q72818": {
+    "vi": "Hải Phòng",
+    "en": "Haiphong"
+  },
+  "Q728904": {
+    "vi": "công viên thiên nhiên",
+    "en": "nature park"
+  },
+  "Q7333405": {
+    "vi": "Vĩnh Long",
+    "en": "Vĩnh Long"
+  },
+  "Q7395483": {
+    "vi": "Sa Pa",
+    "en": "Sa Pa"
+  },
+  "Q744373": {
+    "vi": "",
+    "en": "Romanesque Revival architecture"
+  },
+  "Q748": {
+    "vi": "Phật giáo",
+    "en": "Buddhism"
+  },
+  "Q7481070": {
+    "vi": "Lăng Minh Mạng",
+    "en": "Tomb of Emperor Minh Mang"
+  },
+  "Q7665196": {
+    "vi": "Sà Phìn",
+    "en": "Sà Phìn"
+  },
+  "Q77115": {
+    "vi": "trung tâm cộng đồng",
+    "en": "community center"
+  },
+  "Q7784093": {
+    "vi": "Thiệu Hóa",
+    "en": "Thiệu Hóa"
+  },
+  "Q7796900": {
+    "vi": "Thốt Nốt",
+    "en": "Thốt Nốt"
+  },
+  "Q7847960": {
+    "vi": "Trùng Khánh",
+    "en": "Trùng Khánh"
+  },
+  "Q7857222": {
+    "vi": "Tuy An",
+    "en": "Tuy An"
+  },
+  "Q7913140": {
+    "vi": "Văn Bàn",
+    "en": "Văn Bàn"
+  },
+  "Q7913545": {
+    "vi": "Vạn Ninh",
+    "en": "Vạn Ninh"
+  },
+  "Q7944": {
+    "vi": "động đất",
+    "en": "earthquake"
+  },
+  "Q800154": {
+    "vi": "Hà Tiên",
+    "en": "Hà Tiên"
+  },
+  "Q8045182": {
+    "vi": "Xuân Trường",
+    "en": "Xuân Trường"
+  },
+  "Q8065": {
+    "vi": "thiên tai",
+    "en": "natural disaster"
+  },
+  "Q811430": {
+    "vi": "công trình xây dựng",
+    "en": "fixed construction"
+  },
+  "Q811979": {
+    "vi": "công trình kiến trúc",
+    "en": "built structure"
+  },
+  "Q819": {
+    "vi": "Lào",
+    "en": "Laos"
+  },
+  "Q839954": {
+    "vi": "di chỉ",
+    "en": "archaeological site"
+  },
+  "Q842402": {
+    "vi": "đền Hindu",
+    "en": "Hindu temple"
+  },
+  "Q8502": {
+    "vi": "núi",
+    "en": "mountain"
+  },
+  "Q8740": {
+    "vi": "Chiến tranh Việt Nam",
+    "en": "Vietnam War"
+  },
+  "Q875157": {
+    "vi": "khu nghỉ mát",
+    "en": "resort"
+  },
+  "Q877185": {
+    "vi": "Kinh thành Huế",
+    "en": "Huế citadel"
+  },
+  "Q881": {
+    "vi": "Việt Nam",
+    "en": "Vietnam"
+  },
+  "Q88291": {
+    "vi": "thành",
+    "en": "citadel"
+  },
+  "Q890194": {
+    "vi": "Quận Ba Đình",
+    "en": "Ba Đình District"
+  },
+  "Q90987675": {
+    "vi": "Khu Tây Sa",
+    "en": "Xisha District"
+  },
+  "Q9259": {
+    "vi": "di sản thế giới",
+    "en": "World Heritage Site"
+  },
+  "Q9581": {
+    "vi": "Nho giáo",
+    "en": "Confucianism"
+  },
+  "Q958148": {
+    "vi": "tầng lửng",
+    "en": "mezzanine"
+  },
+  "Q959782": {
+    "vi": "",
+    "en": "archaeological excavation"
+  }
+}

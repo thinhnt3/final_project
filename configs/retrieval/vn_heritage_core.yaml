@@ -1,0 +1,82 @@
+# Retrieval experiments on the VN heritage core (160 places, text query -> place).
+# All paths are relative to the repository root; run commands from there.
+
+# Query build config: gives the retrieval data directory and the image directory.
+data_config: configs/data/vn_heritage_queries.yaml
+
+# Same frozen CLIP as the other datasets, so results are comparable.
+clip:
+  model_name: openai/clip-vit-base-patch32
+  device: auto
+  image_batch_size: 64
+  text_batch_size: 256
+
+embeddings_dir: data/processed/vn_heritage_core/retrieval/embeddings
+
+benchmark:
+  recall_ks: [1, 5, 10]
+  # How often an answer is inside the top-k CLIP candidates (ceiling of a top-k reranker).
+  candidate_ks: [20, 40, 80]
+  # Reranking search, on validation only: alpha * CLIP + (1 - alpha) * graph over the top-k
+  # CLIP candidates. 160 is the whole gallery.
+  alpha_step: 0.05
+  top_k_grid: [10, 40, 160]
+
+# Grids of the image gallery (772 images, the text-to-image task). The `benchmark` grids above
+# are those of the place gallery; 772 is the whole image gallery.
+image_gallery:
+  candidate_ks: [50, 100, 200]
+  top_k_grid: [20, 100, 772]
+
+# Only shuffle_seed is used here (control graph with re-paired tails); decay_grid is
+# required by the shared config class and belongs to the path-score benchmark.
+path_score:
+  decay_grid: [0.5]
+  shuffle_seed: 13
+
+# Same encoder as MKG-W: one layer reaches one hop further.
+kg_graphsage:
+  hidden_dim: 512
+  num_layers: 3
+
+# About 550 train queries, so batches are small and epochs many. Tune on validation only.
+training:
+  seeds: [13, 37, 97, 211, 503]
+  device: cpu
+  batch_size: 64
+  max_epochs: 200
+  patience: 20
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  temperature: 0.07
+  grad_clip_norm: 1.0
+  selection_metric: recall@1
+
+# AdaMF-MAT (Zhang et al., COLING 2024): a link-prediction model trained on the graph triples.
+# A relation query is scored as the missing end of (anchor, relation, ?).
+# Model values are the paper's MKG-W settings, as in configs/retrieval/mkg_w.yaml.
+# batch_size: the graph has about 630 claims (1,500 with article edges), so 128 instead of
+#   the paper's 1024 keeps several steps per epoch.
+# eval_every / patience: validation link prediction every eval_every epochs; stop after
+#   `patience` validations without a better MRR.
+adamf_mat:
+  dim: 200
+  margin: 12.0
+  epsilon: 2.0
+  negatives: 128
+  adversarial_temperature: 2.0
+  adaptive_fusion: true
+  mat: true
+  mu: 1.0
+  noise_dim: 64
+  generator_hidden_dim: 512
+  generator_learning_rate: 0.0001
+  device: cpu
+  batch_size: 128
+  learning_rate: 0.001
+  max_epochs: 1000
+  eval_every: 10
+  patience: 10
+  eval_batch_size: 64
+
+runs_dir: runs/vn_heritage_core

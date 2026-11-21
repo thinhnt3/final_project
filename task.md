@@ -10,7 +10,7 @@ Cập nhật: 18/11/2026.
 ## Mức 1
 
 - CLIP vs CLIP + GraphSAGE - done
-- Phân tích 5 truy vấn thành công, 5 thất bại - xong, chưa commit
+- Phân tích 5 truy vấn thành công, 5 thất bại - xong, trong README (mục "Ví dụ giải thích, 5 truy vấn thành công và 5 thất bại")
 - Ablation (bỏ cạnh, cạnh ngẫu nhiên) - đã chạy đủ 3 seed; code/kết quả đã merge main - Nghị
 
 ## Mức 2

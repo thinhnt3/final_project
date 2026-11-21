@@ -1,0 +1,242 @@
+[
+  {
+    "relation_id": 0,
+    "pid": "architect",
+    "label": "architect",
+    "source": "claim"
+  },
+  {
+    "relation_id": 1,
+    "pid": "architectural_style",
+    "label": "architectural_style",
+    "source": "claim"
+  },
+  {
+    "relation_id": 2,
+    "pid": "crosses",
+    "label": "crosses",
+    "source": "claim"
+  },
+  {
+    "relation_id": 3,
+    "pid": "dedicated_to",
+    "label": "dedicated_to",
+    "source": "claim"
+  },
+  {
+    "relation_id": 4,
+    "pid": "diocese",
+    "label": "diocese",
+    "source": "claim"
+  },
+  {
+    "relation_id": 5,
+    "pid": "has_part",
+    "label": "has_part",
+    "source": "claim"
+  },
+  {
+    "relation_id": 6,
+    "pid": "heritage_criterion",
+    "label": "heritage_criterion",
+    "source": "claim"
+  },
+  {
+    "relation_id": 7,
+    "pid": "heritage_designation",
+    "label": "heritage_designation",
+    "source": "claim"
+  },
+  {
+    "relation_id": 8,
+    "pid": "inception_century",
+    "label": "inception_century",
+    "source": "claim"
+  },
+  {
+    "relation_id": 9,
+    "pid": "instance_of",
+    "label": "instance_of",
+    "source": "claim"
+  },
+  {
+    "relation_id": 10,
+    "pid": "located_in_admin",
+    "label": "located_in_admin",
+    "source": "claim"
+  },
+  {
+    "relation_id": 11,
+    "pid": "located_in_province",
+    "label": "located_in_province",
+    "source": "claim"
+  },
+  {
+    "relation_id": 12,
+    "pid": "location",
+    "label": "location",
+    "source": "claim"
+  },
+  {
+    "relation_id": 13,
+    "pid": "made_from_material",
+    "label": "made_from_material",
+    "source": "claim"
+  },
+  {
+    "relation_id": 14,
+    "pid": "named_after",
+    "label": "named_after",
+    "source": "claim"
+  },
+  {
+    "relation_id": 15,
+    "pid": "part_of",
+    "label": "part_of",
+    "source": "claim"
+  },
+  {
+    "relation_id": 16,
+    "pid": "religion",
+    "label": "religion",
+    "source": "claim"
+  },
+  {
+    "relation_id": 17,
+    "pid": "significant_event",
+    "label": "significant_event",
+    "source": "claim"
+  },
+  {
+    "relation_id": 18,
+    "pid": "article:architecture_mentions",
+    "label": "article:architecture_mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 19,
+    "pid": "article:built_by",
+    "label": "article:built_by",
+    "source": "article"
+  },
+  {
+    "relation_id": 20,
+    "pid": "article:burial_of",
+    "label": "article:burial_of",
+    "source": "article"
+  },
+  {
+    "relation_id": 21,
+    "pid": "article:dated_to_period",
+    "label": "article:dated_to_period",
+    "source": "article"
+  },
+  {
+    "relation_id": 22,
+    "pid": "article:history_mentions",
+    "label": "article:history_mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 23,
+    "pid": "article:lead_mentions",
+    "label": "article:lead_mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 24,
+    "pid": "article:located_in_admin",
+    "label": "article:located_in_admin",
+    "source": "article"
+  },
+  {
+    "relation_id": 25,
+    "pid": "article:location_mentions",
+    "label": "article:location_mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 26,
+    "pid": "article:mentions",
+    "label": "article:mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 27,
+    "pid": "article:mentions_admin_unit",
+    "label": "article:mentions_admin_unit",
+    "source": "article"
+  },
+  {
+    "relation_id": 28,
+    "pid": "article:mentions_deity",
+    "label": "article:mentions_deity",
+    "source": "article"
+  },
+  {
+    "relation_id": 29,
+    "pid": "article:mentions_era",
+    "label": "article:mentions_era",
+    "source": "article"
+  },
+  {
+    "relation_id": 30,
+    "pid": "article:mentions_ethnic_group",
+    "label": "article:mentions_ethnic_group",
+    "source": "article"
+  },
+  {
+    "relation_id": 31,
+    "pid": "article:mentions_material",
+    "label": "article:mentions_material",
+    "source": "article"
+  },
+  {
+    "relation_id": 32,
+    "pid": "article:mentions_person",
+    "label": "article:mentions_person",
+    "source": "article"
+  },
+  {
+    "relation_id": 33,
+    "pid": "article:mentions_place",
+    "label": "article:mentions_place",
+    "source": "article"
+  },
+  {
+    "relation_id": 34,
+    "pid": "article:mentions_religion",
+    "label": "article:mentions_religion",
+    "source": "article"
+  },
+  {
+    "relation_id": 35,
+    "pid": "article:mentions_style",
+    "label": "article:mentions_style",
+    "source": "article"
+  },
+  {
+    "relation_id": 36,
+    "pid": "article:mentions_water",
+    "label": "article:mentions_water",
+    "source": "article"
+  },
+  {
+    "relation_id": 37,
+    "pid": "article:other_mentions",
+    "label": "article:other_mentions",
+    "source": "article"
+  },
+  {
+    "relation_id": 38,
+    "pid": "article:restored_by",
+    "label": "article:restored_by",
+    "source": "article"
+  },
+  {
+    "relation_id": 39,
+    "pid": "article:worships",
+    "label": "article:worships",
+    "source": "article"
+  }
+]

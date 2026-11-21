@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock-up báo cáo: MMKG VN Heritage</title>
+<style>
+  :root {
+    --ink: #1b2430; --muted: #5d6877; --line: #d9dee5; --paper: #ffffff; --bg: #f3f1ec;
+    --accent: #0e6b68; --accent-soft: #e2f0ef; --ok: #2f7a43; --ok-soft: #e6f2e8;
+    --warn: #a2640a; --warn-soft: #fbf0d9; --bad: #a8322a; --bad-soft: #f9e4e1; --todo-soft: #eceef1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .page { max-width: 980px; margin: 0 auto; padding: 28px 16px 64px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 36px 44px; }
+  @media (max-width: 640px) { .sheet { padding: 22px 18px; } }
+  .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font: 600 28px/1.25 Georgia, "Times New Roman", serif; margin: 6px 0 8px; text-wrap: balance; }
+  h2 { font: 600 19px/1.3 Georgia, serif; margin: 40px 0 6px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+  p { margin: 8px 0; max-width: 72ch; }
+  .lede { color: var(--muted); }
+  .note { font-size: 13px; color: var(--muted); }
+  .tag { font: 600 11px/1 -apple-system, sans-serif; letter-spacing: .04em; padding: 4px 7px; border-radius: 3px; white-space: nowrap; }
+  .tag.ok { background: var(--ok-soft); color: var(--ok); }
+  .tag.todo { background: var(--todo-soft); color: var(--muted); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); }
+  .banner { background: var(--warn-soft); border-left: 3px solid var(--warn); padding: 10px 14px; margin: 18px 0 0; font-size: 13.5px; border-radius: 0 4px 4px 0; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 6px; }
+  @media (max-width: 720px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile { border: 1px solid var(--line); border-radius: 5px; padding: 12px 14px; }
+  .tile b { display: block; font: 600 26px/1.1 Georgia, serif; font-variant-numeric: tabular-nums; }
+  .tile span { font-size: 12.5px; color: var(--muted); display: block; margin-top: 3px; }
+  .tile em { font-style: normal; font-size: 12px; display: block; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); color: var(--warn); }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 12px 0; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  code { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: #f1f3f5; padding: 1px 4px; border-radius: 3px; }
+  .cover { display: inline-block; height: 7px; background: var(--accent); border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .flow { display: grid; grid-template-columns: repeat(7, minmax(112px, 1fr)); gap: 6px; margin: 14px 0; min-width: 820px; }
+  .step { border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 4px; padding: 9px 10px; font-size: 12.5px; }
+  .step b { display: block; font-size: 13px; }
+  .step i { font-style: normal; display: block; color: var(--accent); font-weight: 600; margin-top: 5px; font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+  .find { border: 1px solid var(--line); border-left: 4px solid var(--bad); border-radius: 4px; padding: 11px 14px; margin: 10px 0; }
+  .find.mid { border-left-color: var(--warn); }
+  .find.good { border-left-color: var(--ok); }
+  .find h3 { margin: 0 0 3px; font-size: 14.5px; }
+  .find p { margin: 3px 0; font-size: 13.5px; }
+  .ph { background: repeating-linear-gradient(135deg, #f5f6f8 0 8px, #eceef1 8px 16px); color: var(--muted); text-align: center; font-size: 12.5px; }
+  .bars { display: flex; align-items: flex-end; gap: 8px; height: 150px; margin: 14px 0 4px; border-bottom: 1px solid var(--line); }
+  .bar { flex: 1; background: var(--accent); border-radius: 2px 2px 0 0; position: relative; min-width: 24px; }
+  .bar.zero { background: var(--bad); }
+  .bar span { position: absolute; top: -18px; left: 0; right: 0; text-align: center; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .axis { display: flex; gap: 8px; font-size: 11.5px; color: var(--muted); }
+  .axis div { flex: 1; text-align: center; min-width: 24px; }
+  svg text { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  ul { margin: 6px 0; padding-left: 20px; } li { margin: 3px 0; max-width: 72ch; }
+</style>
+</head>
+<body>
+<div class="page"><div class="sheet">
+
+  <div class="eyebrow">Mock-up · Báo cáo kỹ thuật · Cấp độ 3</div>
+  <h1>Chương 6. MMKG tự xây: địa điểm và di tích Việt Nam</h1>
+  <p class="lede">Bố cục đề xuất cho phần "dữ liệu tự xây" của báo cáo 12–18 trang. Mỗi mục gắn nhãn
+    <span class="tag ok">ĐÃ CÓ SỐ</span>. Mục 6.1–6.6 mô tả bản đầy đủ (build 17/11/2026) và kèm một khối "Trên bản lõi" cho bản dùng trong thực nghiệm; mục 6.7–6.8 và 6.11 chạy trên bản lõi, chấm theo ảnh (gallery 772 ảnh, 21/11/2026). Khung gạch chéo là việc còn cần người làm.</p>
+  <div class="banner">Số liệu bản đầy đủ lấy từ <code>data/processed/vn_heritage/</code>; số bản lõi lấy từ <code>data/processed/vn_heritage_core/</code> và lượt chạy ngày 21/11/2026 (<code>runs/vn_heritage_core/</code>, không nằm trong repo). Lệnh chạy lại: <code>docs/vn-heritage-results.md</code>.</div>
+
+  <h2><span class="num">6.1</span> Tổng quan bộ dữ liệu <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <div class="tiles">
+    <div class="tile"><b>1.079</b><span>địa điểm (thực thể có ảnh)</span><em>đề gợi ý 50–150 thực thể</em></div>
+    <div class="tile"><b>486</b><span>đỉnh tri thức (lớp, đơn vị hành chính, tôn giáo…)</span><em>tổng 1.548 thực thể</em></div>
+    <div class="tile"><b>2.446</b><span>triple tri thức (+3.589 cạnh ảnh → địa điểm)</span><em>đề gợi ý 300–1.000</em></div>
+    <div class="tile"><b>3.589</b><span>ảnh, tối đa 5 ảnh mỗi địa điểm</span><em>đề gợi ý 200–500</em></div>
+  </div>
+  <div class="scroll"><table>
+    <tr><th>Tập</th><th class="n">Địa điểm</th><th class="n">Ảnh</th><th>Nhóm địa điểm (toàn bộ)</th></tr>
+    <tr><td>Train</td><td class="n">720</td><td class="n">2.361</td><td rowspan="3">religious 354 · nature 307 · landmark 183 · historic 148 · museum_culture 87</td></tr>
+    <tr><td>Validation</td><td class="n">187</td><td class="n">621</td></tr>
+    <tr><td>Test</td><td class="n">172</td><td class="n">607</td></tr>
+  </table></div>
+  <p class="note">Chia theo địa điểm bằng <code>sha256("13:" + qid)</code>, tỉ lệ 70/15/15; mọi ảnh của một địa điểm cùng một tập.</p>
+
+  <h2><span class="num">6.2</span> Quy trình xây dựng <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Bảy stage trong <code>scripts/build_vn_heritage.py</code>; mỗi stage đọc file của stage trước, mọi phản hồi API được cache nên build lại không gọi mạng.</p>
+  <div class="scroll"><div class="flow">
+    <div class="step"><b>1 · candidates</b>Tìm Wikidata (P17 = Việt Nam, có toạ độ, có ảnh) ∪ bài vi.wikipedia theo 35 tiền tố tên<i>9.310 ứng viên</i></div>
+    <div class="step"><b>2 · articles</b>Toạ độ, QID, ảnh đại diện của từng bài vi.wikipedia<i>193 bài không có QID</i></div>
+    <div class="step"><b>3 · entities</b>Tải claims, nhãn, sitelink; thống kê lớp P31 để chọn whitelist<i>9.310 thực thể</i></div>
+    <div class="step"><b>4 · places</b>Lọc lớp, kiểm tra ở Việt Nam, suy tỉnh qua chuỗi P131, gán split<i>1.827 giữ lại</i></div>
+    <div class="step"><b>5 · media</b>P18 → ảnh đại diện → 30 file đầu category → ảnh riêng trong bài; lọc tên file, kích thước, caption, license<i>5.901 file → 3.592</i></div>
+    <div class="step"><b>6 · download</b>Tải thumbnail 960 px, kiểm tra decode, bỏ trùng byte<i>3.589 ảnh</i></div>
+    <div class="step"><b>7 · report</b>Ghi places, images, kg_triples, kg_nodes, stats; chỉ giữ địa điểm có ảnh<i>1.079 địa điểm</i></div>
+  </div></div>
+  <div class="scroll"><table>
+    <tr><th>Bước lọc</th><th class="n">Loại</th><th>Lý do</th></tr>
+    <tr><td>Không ở Việt Nam</td><td class="n">5.525</td><td>Tin P17 nếu có; nếu không thì cần cả bài vi.wikipedia lẫn toạ độ trong khung</td></tr>
+    <tr><td>Lớp bị loại trừ</td><td class="n">1.316</td><td>Đơn vị hành chính, khu dân cư, ga, sân bay, trường học</td></tr>
+    <tr><td>Không thuộc nhóm nào</td><td class="n">640</td><td>Lớp P31 ngoài whitelist và tên bài không khớp tiền tố</td></tr>
+    <tr><td>Ảnh không có caption đạt chuẩn</td><td class="n">1.031</td><td>Dưới 3 từ hoặc chỉ lặp tên file</td></tr>
+    <tr><td>File trùng giữa các địa điểm</td><td class="n">823</td><td>Một file chỉ gán cho một địa điểm</td></tr>
+    <tr><td>Tên file là bản đồ, logo, sơ đồ</td><td class="n">374</td><td>Regex trên tên file</td></tr>
+  </table></div>
+
+  <h2><span class="num">6.3</span> Lược đồ đồ thị và cách tạo triple <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Mỗi triple là một claim Wikidata của địa điểm, trừ <code>located_in_province</code> (suy từ chuỗi P131) và <code>depicts</code> (ảnh → địa điểm, từ bước chọn ảnh).</p>
+  <div class="scroll">
+  <svg viewBox="0 0 880 384" width="100%" style="min-width:700px" role="img" aria-label="Lược đồ đồ thị: ảnh nối tới địa điểm, địa điểm nối tới tám loại đỉnh tri thức">
+  <defs><marker id="a" markerUnits="userSpaceOnUse" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5d6877"/></marker></defs>
+  <rect x="8" y="160" width="124" height="60" rx="5" fill="#fff" stroke="#5d6877"/>
+  <text x="70" y="186" text-anchor="middle" font-size="14" font-weight="600" fill="#1b2430">Ảnh</text>
+  <text x="70" y="205" text-anchor="middle" font-size="11.5" fill="#5d6877">3.589 · bậc luôn 1</text>
+  <rect x="232" y="150" width="160" height="80" rx="5" fill="#e2f0ef" stroke="#0e6b68" stroke-width="2"/>
+  <text x="312" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#1b2430">Địa điểm</text>
+  <text x="312" y="204" text-anchor="middle" font-size="11.5" fill="#5d6877">1.079 · đầu của mọi triple</text>
+  <line x1="132" y1="190" x2="230" y2="190" stroke="#5d6877" stroke-width="5" marker-end="url(#a)"/>
+  <text x="181" y="176" text-anchor="middle" font-size="12" fill="#1b2430">depicts 3.589</text>
+  <path d="M392 162 C470 162 470 26 536 26" stroke="#5d6877" stroke-width="5" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="8" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="30.5" font-size="12" fill="#0e6b68" font-weight="600">instance_of 1.030</text>
+  <text x="862" y="30.5" font-size="12" fill="#1b2430" text-anchor="end">Lớp · 158 đỉnh</text>
+  <path d="M392 170 C470 170 470 72 536 72" stroke="#5d6877" stroke-width="3.6" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="54" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="76.5" font-size="12" fill="#0e6b68" font-weight="600">located_in_admin 667</text>
+  <text x="862" y="76.5" font-size="12" fill="#1b2430" text-anchor="end">Đơn vị hành chính · 246</text>
+  <path d="M392 178 C470 178 470 118 536 118" stroke="#5d6877" stroke-width="3" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="100" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="122.5" font-size="12" fill="#0e6b68" font-weight="600">located_in_province 525</text>
+  <text x="862" y="122.5" font-size="12" fill="#1b2430" text-anchor="end">Tỉnh, thành phố · 57</text>
+  <path d="M392 186 C470 186 470 164 536 164" stroke="#5d6877" stroke-width="1.4" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="146" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="168.5" font-size="12" fill="#0e6b68" font-weight="600">part_of 79</text>
+  <text x="862" y="168.5" font-size="12" fill="#1b2430" text-anchor="end">Quần thể chứa nó · 37</text>
+  <path d="M392 194 C470 194 470 210 536 210" stroke="#5d6877" stroke-width="1.3" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="192" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="214.5" font-size="12" fill="#0e6b68" font-weight="600">religion 65</text>
+  <text x="862" y="214.5" font-size="12" fill="#1b2430" text-anchor="end">Tôn giáo · 8</text>
+  <path d="M392 202 C470 202 470 256 536 256" stroke="#5d6877" stroke-width="1.1" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="238" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="260.5" font-size="12" fill="#0e6b68" font-weight="600">heritage_designation 40</text>
+  <text x="862" y="260.5" font-size="12" fill="#1b2430" text-anchor="end">Danh hiệu di sản · 7</text>
+  <path d="M392 210 C470 210 470 302 536 302" stroke="#5d6877" stroke-width="1" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="284" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="306.5" font-size="12" fill="#0e6b68" font-weight="600">architectural_style 23</text>
+  <text x="862" y="306.5" font-size="12" fill="#1b2430" text-anchor="end">Phong cách kiến trúc · 13</text>
+  <path d="M392 218 C470 218 470 348 536 348" stroke="#5d6877" stroke-width="1" fill="none" marker-end="url(#a)"/>
+  <rect x="538" y="330" width="334" height="36" rx="4" fill="#fff" stroke="#5d6877"/>
+  <text x="548" y="352.5" font-size="12" fill="#0e6b68" font-weight="600">named_after 17</text>
+  <text x="862" y="352.5" font-size="12" fill="#1b2430" text-anchor="end">Người, vật được đặt tên theo · 17</text>
+  <text x="705" y="380" text-anchor="middle" font-size="11.5" fill="#a8322a">Không có cạnh nào giữa các đỉnh ở cột này</text></svg></div>
+  <div class="scroll"><table>
+    <tr><th>Quan hệ</th><th>Thuộc tính Wikidata</th><th class="n">Triple</th><th>Địa điểm có cạnh này</th><th class="n">Đỉnh đích</th><th class="n">Đích chỉ nối 1 địa điểm</th></tr>
+    <tr><td><code>instance_of</code></td><td>P31</td><td class="n">1.030</td><td><span class="cover" style="width:82px"></span>889 (82%)</td><td class="n">158</td><td class="n">68</td></tr>
+    <tr><td><code>located_in_admin</code></td><td>P131</td><td class="n">667</td><td><span class="cover" style="width:49px"></span>530 (49%)</td><td class="n">246</td><td class="n">151</td></tr>
+    <tr><td><code>located_in_province</code></td><td>suy từ chuỗi P131</td><td class="n">525</td><td><span class="cover" style="width:49px"></span>525 (49%)</td><td class="n">57</td><td class="n">10</td></tr>
+    <tr><td><code>part_of</code></td><td>P361</td><td class="n">79</td><td><span class="cover" style="width:7px"></span>76 (7%)</td><td class="n">37</td><td class="n">23</td></tr>
+    <tr><td><code>religion</code></td><td>P140</td><td class="n">65</td><td><span class="cover" style="width:6px"></span>65 (6%)</td><td class="n">8</td><td class="n">5</td></tr>
+    <tr><td><code>heritage_designation</code></td><td>P1435</td><td class="n">40</td><td><span class="cover" style="width:3px"></span>34 (3%)</td><td class="n">7</td><td class="n">0</td></tr>
+    <tr><td><code>architectural_style</code></td><td>P149</td><td class="n">23</td><td><span class="cover" style="width:2px"></span>20 (2%)</td><td class="n">13</td><td class="n">10</td></tr>
+    <tr><td><code>named_after</code></td><td>P138</td><td class="n">17</td><td><span class="cover" style="width:2px"></span>17 (2%)</td><td class="n">17</td><td class="n">17</td></tr>
+  </table></div>
+  <p class="note">320 trong 525 cạnh <code>located_in_province</code> trùng cặp (địa điểm, đích) với một cạnh <code>located_in_admin</code>, nên số triple mang thông tin riêng là 2.126.</p>
+
+  <p><b>Trên bản lõi</b> (160 địa điểm, xem 6.11). 981 claim Wikidata gồm 889 claim của địa điểm và 92 cạnh phân cấp đơn vị hành chính → đơn vị cha (tính trong <code>located_in_admin</code>); thêm 902 cạnh rút từ bài.</p>
+  <div class="scroll"><table>
+    <tr><th>Quan hệ</th><th>Thuộc tính Wikidata</th><th class="n">Triple</th><th>Địa điểm có cạnh này</th><th class="n">Đỉnh đích</th><th class="n">Đích chỉ nối 1 địa điểm</th></tr>
+    <tr><td><code>located_in_admin</code></td><td>P131</td><td class="n">279</td><td><span class="cover" style="width:96px"></span>154 (96%)</td><td class="n">103</td><td class="n">81</td></tr>
+    <tr><td><code>instance_of</code></td><td>P31</td><td class="n">228</td><td><span class="cover" style="width:100px"></span>160 (100%)</td><td class="n">94</td><td class="n">58</td></tr>
+    <tr><td><code>located_in_province</code></td><td>suy từ chuỗi P131</td><td class="n">77</td><td><span class="cover" style="width:48px"></span>77 (48%)</td><td class="n">31</td><td class="n">15</td></tr>
+    <tr><td><code>inception_century</code></td><td>P571, gom theo thế kỷ</td><td class="n">64</td><td><span class="cover" style="width:40px"></span>64 (40%)</td><td class="n">12</td><td class="n">7</td></tr>
+    <tr><td><code>religion</code></td><td>P140</td><td class="n">47</td><td><span class="cover" style="width:29px"></span>47 (29%)</td><td class="n">7</td><td class="n">4</td></tr>
+    <tr><td><code>has_part</code></td><td>P527</td><td class="n">37</td><td><span class="cover" style="width:9px"></span>15 (9%)</td><td class="n">37</td><td class="n">37</td></tr>
+    <tr><td><code>diocese</code></td><td>P708</td><td class="n">35</td><td><span class="cover" style="width:22px"></span>35 (22%)</td><td class="n">18</td><td class="n">9</td></tr>
+    <tr><td><code>heritage_designation</code></td><td>P1435</td><td class="n">32</td><td><span class="cover" style="width:16px"></span>26 (16%)</td><td class="n">7</td><td class="n">1</td></tr>
+    <tr><td><code>part_of</code></td><td>P361</td><td class="n">32</td><td><span class="cover" style="width:19px"></span>30 (19%)</td><td class="n">20</td><td class="n">16</td></tr>
+    <tr><td><code>significant_event</code></td><td>P793</td><td class="n">30</td><td><span class="cover" style="width:10px"></span>16 (10%)</td><td class="n">20</td><td class="n">14</td></tr>
+    <tr><td><code>heritage_criterion</code></td><td>P2614</td><td class="n">23</td><td><span class="cover" style="width:6px"></span>9 (6%)</td><td class="n">9</td><td class="n">3</td></tr>
+    <tr><td><code>architectural_style</code></td><td>P149</td><td class="n">21</td><td><span class="cover" style="width:11px"></span>18 (11%)</td><td class="n">13</td><td class="n">10</td></tr>
+    <tr><td><code>location</code></td><td>P276</td><td class="n">20</td><td><span class="cover" style="width:12px"></span>20 (12%)</td><td class="n">15</td><td class="n">13</td></tr>
+    <tr><td><code>crosses</code></td><td>P177</td><td class="n">17</td><td><span class="cover" style="width:11px"></span>17 (11%)</td><td class="n">12</td><td class="n">8</td></tr>
+    <tr><td><code>named_after</code></td><td>P138</td><td class="n">13</td><td><span class="cover" style="width:8px"></span>13 (8%)</td><td class="n">13</td><td class="n">13</td></tr>
+    <tr><td><code>made_from_material</code></td><td>P186</td><td class="n">10</td><td><span class="cover" style="width:6px"></span>10 (6%)</td><td class="n">5</td><td class="n">1</td></tr>
+    <tr><td><code>dedicated_to</code></td><td>P825</td><td class="n">9</td><td><span class="cover" style="width:6px"></span>9 (6%)</td><td class="n">6</td><td class="n">4</td></tr>
+    <tr><td><code>architect</code></td><td>P84</td><td class="n">7</td><td><span class="cover" style="width:4px"></span>7 (4%)</td><td class="n">4</td><td class="n">2</td></tr>
+    <tr><td>cạnh rút từ bài (mọi sơ đồ đặt tên)</td><td>liên kết thân bài vi.wikipedia</td><td class="n">902</td><td><span class="cover" style="width:81px"></span>129 (81%)</td><td class="n">417</td><td class="n">220</td></tr>
+  </table></div>
+  <p class="note">Cặp <code>located_in_province</code> trùng với <code>located_in_admin</code> đã bị bỏ khi cắt lõi. Số đỉnh đích của <code>located_in_admin</code> chỉ tính đích của địa điểm.</p>
+
+  <h2><span class="num">6.4</span> Đặc điểm cấu trúc <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <div class="two">
+    <div>
+      <p><b>Số triple tri thức mỗi địa điểm</b> (trung bình 2,27)</p>
+      <div class="bars">
+        <div class="bar zero" style="height:61%"><span>184</span></div><div class="bar" style="height:100%"><span>299</span></div>
+        <div class="bar" style="height:19%"><span>56</span></div><div class="bar" style="height:87%"><span>260</span></div>
+        <div class="bar" style="height:61%"><span>182</span></div><div class="bar" style="height:24%"><span>72</span></div>
+        <div class="bar" style="height:9%"><span>26</span></div>
+      </div>
+      <div class="axis"><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6+</div></div>
+      <p class="note">Cột đỏ: 184 địa điểm (17%) không có triple nào ngoài ảnh của chính nó.</p>
+    </div>
+    <div>
+      <table>
+        <tr><th>Chỉ số</th><th class="n">Giá trị</th></tr>
+        <tr><td>Thành phần liên thông lớn nhất</td><td class="n">885 / 1.079 địa điểm</td></tr>
+        <tr><td>Địa điểm cô lập</td><td class="n">182</td></tr>
+        <tr><td>Địa điểm chỉ có <code>instance_of</code> hoặc không có gì</td><td class="n">502 (47%)</td></tr>
+        <tr><td>Bỏ <code>instance_of</code>: thành phần lớn nhất</td><td class="n">533 địa điểm</td></tr>
+        <tr><td>Đỉnh đích chỉ nối 1 địa điểm</td><td class="n">256 / 486 (53%)</td></tr>
+        <tr><td>Đỉnh trục lớn nhất</td><td class="n" style="white-space:normal">TP.HCM 219, chùa Việt Nam 131, Hà Nội 119, cầu 109</td></tr>
+        <tr><td>Cạnh địa điểm → địa điểm</td><td class="n">188</td></tr>
+        <tr><td>Triple trên mỗi thực thể</td><td class="n">1,58 (đề gợi ý 2–20)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p><b>Trên bản lõi.</b> Số triple tri thức mỗi địa điểm: trung bình 11,19, trung vị 9, lớn nhất 49 (chỉ tính claim: trung bình 5,56).</p>
+  <div class="two">
+    <div>
+      <div class="bars">
+        <div class="bar" style="height:63%"><span>25</span></div><div class="bar" style="height:75%"><span>30</span></div>
+        <div class="bar" style="height:98%"><span>39</span></div><div class="bar" style="height:100%"><span>40</span></div>
+        <div class="bar" style="height:45%"><span>18</span></div><div class="bar" style="height:20%"><span>8</span></div>
+      </div>
+      <div class="axis"><div>4–5</div><div>6–7</div><div>8–10</div><div>11–15</div><div>16–25</div><div>26+</div></div>
+      <p class="note">Không còn địa điểm nào dưới 4 triple.</p>
+    </div>
+    <div>
+      <table>
+        <tr><th>Chỉ số (bản lõi)</th><th class="n">Giá trị</th></tr>
+        <tr><td>Thành phần liên thông lớn nhất</td><td class="n">160 / 160 địa điểm</td></tr>
+        <tr><td>Chỉ dùng claim, không có cạnh từ bài</td><td class="n">158 / 160</td></tr>
+        <tr><td>Bỏ <code>instance_of</code>: thành phần lớn nhất</td><td class="n">160 địa điểm</td></tr>
+        <tr><td>Đỉnh đích chỉ nối 1 địa điểm</td><td class="n">365 / 677 (54%)</td></tr>
+        <tr><td>Đỉnh trục lớn nhất</td><td class="n" style="white-space:normal">TP.HCM 49, Công giáo 36, Hà Nội 31, thế kỷ 20 29, Huế 19</td></tr>
+        <tr><td>Cạnh địa điểm → địa điểm</td><td class="n">92 (31 claim, 61 từ bài)</td></tr>
+        <tr><td>Cạnh giữa hai đỉnh tri thức</td><td class="n">92 (phân cấp hành chính)</td></tr>
+        <tr><td>Triple trên mỗi thực thể</td><td class="n">2,22 (đề gợi ý 2–20)</td></tr>
+        <tr><td>Khoảng cách ngắn nhất giữa hai địa điểm</td><td class="n" style="white-space:normal">trung bình 3,35 bước; 2 bước 25%, 3 bước 16%, 4 bước 56%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2><span class="num">6.5</span> Liên kết ảnh với thực thể <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <ul>
+    <li>Thứ tự nguồn: ảnh P18 của Wikidata, ảnh đại diện bài vi.wikipedia, 30 file đầu của Commons category (P373), rồi ảnh trong bài vi.wikipedia.</li>
+    <li>Ảnh trong bài chỉ nhận khi file không xuất hiện ở bài của địa điểm khác; file dùng chung thường là ảnh nhỏ trong hộp điều hướng.</li>
+    <li>Mỗi file chỉ gán cho một địa điểm; địa điểm nào xét trước thì giữ file.</li>
+    <li>Phân bố: 298 địa điểm có 1 ảnh, 119 có 2, 97 có 3, 63 có 4, 502 có đủ 5.</li>
+    <li>Caption: 1.793 ảnh có caption tiếng Việt, 1.796 ảnh chỉ có tiếng Anh hoặc không gắn ngôn ngữ; trung vị 9 từ; 1.652 caption (46%) chứa tên địa điểm.</li>
+  </ul>
+  <p><b>Trên bản lõi</b> (772 ảnh): 143 địa điểm có đủ 5 ảnh, 6 có 4, 11 có 3. 186 ảnh là ảnh P18 hoặc ảnh đại diện của bài. Caption: 305 ảnh có tiếng Việt, 276 chỉ tiếng Anh, 191 không gắn ngôn ngữ; trung vị 9 từ; 336 caption (44%) chứa tên địa điểm. License nhiều nhất: CC BY-SA 3.0 (188), CC BY-SA 4.0 (164), Public domain (105).</p>
+  <table><tr><td class="ph">Cần người làm: kiểm tra tay một mẫu ngẫu nhiên (ví dụ 100 ảnh của bản lõi) xem ảnh có đúng địa điểm không, báo cáo tỉ lệ đúng. Mô hình không tự chấm được việc này một cách đáng tin.</td></tr></table>
+
+  <h2><span class="num">6.6</span> Chia tập và rò rỉ <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Bảng đầu là bản đầy đủ, còn hai lỗ hổng (cạnh vắt qua tập, ảnh gần trùng chưa đo); bản lõi xử lý cả hai.</p>
+  <div class="scroll"><table>
+    <tr><th>Kiểm tra</th><th class="n">Kết quả</th><th>Ghi chú</th></tr>
+    <tr><td>Ảnh của một địa điểm nằm ở hai tập</td><td class="n">0</td><td>Split theo địa điểm</td></tr>
+    <tr><td>Cạnh địa điểm → địa điểm vắt qua hai tập</td><td class="n">67 / 188</td><td>Chủ yếu <code>part_of</code> của Mỹ Sơn và Huế; hash theo QID không gom quần thể</td></tr>
+    <tr><td>Triple của địa điểm test có đích chưa thấy ở train</td><td class="n">51 / 391</td><td>Đỉnh đích này không có vector học được nếu dùng embedding theo id</td></tr>
+    <tr><td>Cạnh suy từ thống kê</td><td class="n">không có</td><td>Mọi cạnh là claim Wikidata, không cần ràng buộc "chỉ từ train"</td></tr>
+    <tr><td>Ảnh gần trùng (crop, tải lại)</td><td class="n">chưa đo</td><td>Mới chỉ bỏ trùng byte (3 ảnh)</td></tr>
+  </table></div>
+
+  <p><b>Trên bản lõi.</b> Thực nghiệm dùng hai cách chia: địa điểm chia theo nhóm (cho truy vấn tên) và claim chia theo cặp đỉnh (cho truy vấn gián tiếp, xem 6.7).</p>
+  <div class="scroll"><table>
+    <tr><th>Kiểm tra (bản lõi)</th><th class="n">Kết quả</th><th>Ghi chú</th></tr>
+    <tr><td>Ảnh của một địa điểm nằm ở hai tập</td><td class="n">0</td><td>Split theo địa điểm</td></tr>
+    <tr><td>Claim địa điểm → địa điểm vắt qua hai tập địa điểm</td><td class="n">0 / 31</td><td>Địa điểm nối qua <code>part_of</code>, <code>has_part</code>, <code>location</code> được gom vào một tập</td></tr>
+    <tr><td>Cạnh từ bài địa điểm → địa điểm vắt qua hai tập</td><td class="n">28 / 61</td><td>Không gom: cạnh từ bài không phải sự kiện bị hỏi, chỉ là ngữ cảnh</td></tr>
+    <tr><td>Claim bị giấu còn đọc được từ quan hệ nghịch hoặc thuộc tính khác</td><td class="n">0</td><td>Mọi claim nối cùng hai đỉnh nằm cùng một tập</td></tr>
+    <tr><td>Cạnh từ bài nối đúng cặp của một claim</td><td class="n">0</td><td>Bị bỏ khi build lõi, nên không truy vấn nào có đáp án cách 1 bước</td></tr>
+    <tr><td>Claim bị giấu của truy vấn train còn trong đồ thị lúc học</td><td class="n">0</td><td>Bị gỡ khỏi đồ thị ở batch chứa truy vấn đó</td></tr>
+    <tr><td>Cặp ảnh gần trùng giữa hai địa điểm (cosine CLIP ≥ 0,95)</td><td class="n">0</td><td>15 cặp gần trùng đều thuộc cùng một địa điểm; ở ngưỡng 0,92 có 4 cặp khác địa điểm trong 54 cặp</td></tr>
+  </table></div>
+
+  <h2><span class="num">6.7</span> Bộ truy vấn đánh giá <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Dựng trên bản lõi (6.11) bằng <code>scripts/build_vn_heritage_queries.py</code>. Bài toán là truy hồi ảnh bằng văn bản: gallery gồm 772 ảnh của 160 địa điểm, và ảnh đúng là ảnh của địa điểm trả lời. Mỗi cặp (truy vấn, địa điểm trả lời) được một hạng, là hạng của ảnh tốt nhất của địa điểm đó; ảnh của các địa điểm đúng khác của cùng truy vấn bị bỏ ra khi xếp hạng.</p>
+  <ul>
+    <li><b>Truy vấn gián tiếp:</b> giấu 40% claim Wikidata của địa điểm (15% validation, 25% test). Mỗi claim bị giấu (địa điểm, quan hệ, đích) thành câu "địa điểm có quan hệ đó với đích", ví dụ "a heritage site located in Đà Lạt". Claim train là cạnh của đồ thị; claim validation và test không bao giờ nằm trong đồ thị.</li>
+    <li><b>Chia theo cặp đỉnh:</b> mọi claim nối cùng hai đỉnh vào cùng một tập, nên sự kiện bị giấu không đọc lại được từ quan hệ nghịch (<code>part_of</code> / <code>has_part</code>) hay từ một thuộc tính khác nói cùng điều.</li>
+    <li><b>Truy vấn trực tiếp:</b> tên địa điểm, chia theo split địa điểm (97 · 22 · 41).</li>
+    <li><b>Cạnh rút từ bài</b> không bao giờ bị hỏi; chúng chỉ là bằng chứng trong đồ thị, mang tiền tố <code>article:</code> để không trộn với claim cùng tên.</li>
+    <li><b>Lọc:</b> quan hệ cần từ 8 claim train và có mẫu câu; bỏ truy vấn có hơn 20 địa điểm đúng (ví dụ "nơi thờ tự của Phật giáo").</li>
+  </ul>
+  <div class="scroll"><table>
+    <tr><th>Đại lượng (10 cách chia claim, seed 1–10)</th><th class="n">Train</th><th class="n">Validation</th><th class="n">Test</th></tr>
+    <tr><td>Truy vấn trực tiếp (cố định)</td><td class="n">97</td><td class="n">22</td><td class="n">41</td></tr>
+    <tr><td>Truy vấn gián tiếp</td><td class="n">283–322</td><td class="n">85–108</td><td class="n">138–154</td></tr>
+    <tr><td>Đáp án gián tiếp (cặp truy vấn, địa điểm)</td><td class="n">459–501</td><td class="n">100–135</td><td class="n">177–205</td></tr>
+  </table></div>
+  <div class="scroll"><table>
+    <tr><th>Khoảng cách từ thực thể được hỏi tới đáp án trong đồ thị train (truy vấn test, gộp 10 cách chia)</th><th class="n">Số truy vấn</th><th class="n">Tỉ lệ</th></tr>
+    <tr><td>2 bước</td><td class="n">477</td><td class="n">33%</td></tr>
+    <tr><td>3 bước</td><td class="n">366</td><td class="n">25%</td></tr>
+    <tr><td>Hơn 3 bước hoặc không có đường đi</td><td class="n">605</td><td class="n">42%</td></tr>
+  </table></div>
+  <div class="scroll"><table>
+    <tr><th>Tầng theo độ đông đúc (số triple chạm vào thực thể được hỏi hoặc hàng xóm của nó)</th><th class="n">Truy vấn train</th><th class="n">Validation</th><th class="n">Test</th><th class="n">Đáp án test, gộp 10 cách chia</th></tr>
+    <tr><td>Thưa: 0–10 triple</td><td class="n">56–87</td><td class="n">30–46</td><td class="n">57–76</td><td class="n">684</td></tr>
+    <tr><td>Vừa: 11–50 triple</td><td class="n">140–159</td><td class="n">23–38</td><td class="n">42–53</td><td class="n">631</td></tr>
+    <tr><td>Dày: trên 50 triple</td><td class="n">67–87</td><td class="n">20–32</td><td class="n">25–42</td><td class="n">550</td></tr>
+  </table></div>
+  <p class="note">17 hướng quan hệ được hỏi: <code>located_in_admin</code>, <code>located_in_province</code>, <code>instance_of</code>, <code>inception_century</code>, <code>religion</code>, <code>diocese</code>, <code>heritage_designation</code>, <code>heritage_criterion</code>, <code>significant_event</code>, <code>architectural_style</code>, <code>crosses</code>, và hai chiều của <code>part_of</code>, <code>has_part</code>, <code>location</code>. Truy vấn viết bằng tiếng Anh vì CLIP dùng chung với cấp độ 1/2 chỉ học tiếng Anh; nhãn thực thể lấy tiếng Anh trước, thiếu thì lấy tiếng Việt. Không có truy vấn 1 bước: bước build lõi đã bỏ mọi cạnh rút từ bài trùng cặp với một claim. Phân tầng theo ngưỡng ví dụ của đề (0–10, 11–50, trên 50), đếm trên đồ thị train có cạnh từ bài. Bộ này nhỏ nên không bốc mẫu: giữ mọi truy vấn và báo cáo kết quả theo từng tầng cùng trung bình ba tầng (6.8). Seed chia claim: 1–10; seed huấn luyện: 13, 37, 97, 211, 503.</p>
+
+  <h2><span class="num">6.8</span> Kết quả và khả năng chuyển giao <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Bài toán là truy hồi ảnh bằng văn bản: gallery gồm 772 ảnh, một ảnh đúng khi nó chụp địa điểm trả lời. Cùng CLIP ViT-B/32 đóng băng và cùng công thức trộn α·CLIP + (1−α)·đồ thị như cấp độ 1/2; bộ mã hoá đồ thị là GraphSAGE có vector quan hệ, 3 lớp, mỗi thực thể khởi tạo bằng vector CLIP của tên. Một ảnh nhận điểm đồ thị của địa điểm mà nó mô tả, tức đi qua cạnh "ảnh – mô tả – địa điểm". Số là phần trăm trên test, trung bình ± độ lệch chuẩn qua 10 cách chia claim; mỗi cách chia là trung bình của 5 seed huấn luyện. α và k chọn trên validation, theo ảnh.</p>
+  <div class="scroll"><table>
+    <tr><th>Phương pháp (gallery 772 ảnh)</th><th>Nhóm truy vấn</th><th class="n">R@1</th><th class="n">R@5</th><th class="n">R@10</th><th class="n">MRR</th></tr>
+    <tr><td>CLIP</td><td>trực tiếp</td><td class="n">4,9</td><td class="n">24,4</td><td class="n">31,7</td><td class="n">14,2</td></tr>
+    <tr><td>CLIP</td><td>gián tiếp</td><td class="n">6,7 ± 1,7</td><td class="n">17,8 ± 2,7</td><td class="n">25,1 ± 3,2</td><td class="n">13,3 ± 1,8</td></tr>
+    <tr><td>CLIP + GraphSAGE, đồ thị Wikidata</td><td>trực tiếp</td><td class="n">5,9 ± 1,8</td><td class="n">16,4 ± 6,7</td><td class="n">24,3 ± 8,7</td><td class="n">12,6 ± 3,1</td></tr>
+    <tr><td>CLIP + GraphSAGE, đồ thị Wikidata</td><td>gián tiếp</td><td class="n">8,6 ± 1,0</td><td class="n">17,3 ± 2,8</td><td class="n">24,4 ± 3,9</td><td class="n">14,1 ± 1,5</td></tr>
+    <tr><td>CLIP + GraphSAGE, bỏ hết cạnh</td><td>trực tiếp</td><td class="n">12,9 ± 2,9</td><td class="n">29,1 ± 7,2</td><td class="n">40,8 ± 8,1</td><td class="n">22,1 ± 3,1</td></tr>
+    <tr><td>CLIP + GraphSAGE, bỏ hết cạnh</td><td>gián tiếp</td><td class="n">8,8 ± 0,8</td><td class="n">16,4 ± 3,9</td><td class="n">23,3 ± 5,1</td><td class="n">13,8 ± 1,9</td></tr>
+    <tr><td>CLIP + GraphSAGE, cạnh ngẫu nhiên</td><td>gián tiếp</td><td class="n">9,0 ± 1,0</td><td class="n">15,8 ± 3,4</td><td class="n">21,7 ± 4,3</td><td class="n">13,6 ± 1,7</td></tr>
+  </table></div>
+  <p class="note">Mỗi cặp (truy vấn, địa điểm trả lời) có một hạng: hạng của ảnh tốt nhất của địa điểm đó giữa ảnh của các địa điểm sai. "Đồ thị Wikidata": các cạnh là claim Wikidata còn lại sau khi giấu 40% (khoảng 630 cạnh, gồm cả phân cấp hành chính), không có cạnh rút từ bài; mục 6.11 thêm cạnh từ bài vào đồ thị này. "Bỏ hết cạnh": bộ mã hoá chỉ còn là MLP trên vector tên của từng thực thể. "Cạnh ngẫu nhiên": giữ đầu, quan hệ và đuôi, ghép lại đuôi ngẫu nhiên. Bộ mã hoá được huấn luyện để xếp hạng địa điểm; chỉ bước chấm điểm và chọn α, k là theo ảnh. Truy vấn trực tiếp không đổi giữa các cách chia nên CLIP không có độ lệch.</p>
+  <div class="scroll"><table>
+    <tr><th>Chênh lệch ghép cặp trên truy vấn gián tiếp (điểm phần trăm)</th><th class="n">R@1 theo ảnh</th><th class="n">R@10 theo ảnh</th><th class="n">Thắng/thua</th><th class="n">R@10 theo địa điểm</th><th class="n">Thắng/thua</th></tr>
+    <tr><td>Đồ thị Wikidata − CLIP</td><td class="n">+1,9 ± 0,5</td><td class="n">−0,7 ± 1,4</td><td class="n">4 / 6</td><td class="n">+5,3 ± 1,1</td><td class="n">10 / 0</td></tr>
+    <tr><td>Đồ thị Wikidata − cạnh ngẫu nhiên</td><td class="n">−0,4 ± 0,4</td><td class="n">+2,8 ± 1,5</td><td class="n">8 / 2</td><td class="n">+4,4 ± 1,0</td><td class="n">9 / 1</td></tr>
+    <tr><td>Đồ thị Wikidata − bỏ hết cạnh</td><td class="n">−0,1 ± 0,1</td><td class="n">+1,2 ± 1,8</td><td class="n">6 / 4</td><td class="n">+1,1 ± 1,1</td><td class="n">7 / 3</td></tr>
+    <tr><td>Đồ thị Wikidata − cạnh ngẫu nhiên, riêng truy vấn 3 bước</td><td class="n">+1,1 ± 1,0</td><td class="n">+7,0 ± 2,1</td><td class="n">8 / 1</td><td class="n">+10,9 ± 1,5</td><td class="n">10 / 0</td></tr>
+  </table></div>
+  <p class="note">± ở bảng này là sai số chuẩn của chênh lệch qua 10 cách chia. Các cách chia dùng chung 160 địa điểm và claim chồng lấn, nên sai số này lạc quan hơn thực tế. Cột "theo địa điểm" chấm cùng các vector thực thể trên gallery 160 địa điểm (điểm của địa điểm là điểm ảnh tốt nhất của nó).</p>
+  <p><b>Theo độ đông đúc của vùng lân cận</b> (phân tầng ở 6.7; truy vấn gián tiếp, gallery ảnh, R@1 · R@10).</p>
+  <div class="scroll"><table>
+    <tr><th>Phương pháp</th><th class="n">Thưa (0–10)</th><th class="n">Vừa (11–50)</th><th class="n">Dày (trên 50)</th><th class="n">Trung bình ba tầng</th></tr>
+    <tr><td>CLIP</td><td class="n">9,5 · 26,1</td><td class="n">7,0 · 27,3</td><td class="n">2,7 · 21,0</td><td class="n">6,4 · 24,8</td></tr>
+    <tr><td>CLIP + GraphSAGE, đồ thị Wikidata</td><td class="n">11,9 · 28,5</td><td class="n">7,9 · 24,4</td><td class="n">5,3 · 19,4</td><td class="n">8,4 · 24,1</td></tr>
+    <tr><td>CLIP + GraphSAGE, bỏ hết cạnh</td><td class="n">12,1 · 27,4</td><td class="n">7,8 · 22,3</td><td class="n">5,5 · 19,3</td><td class="n">8,4 · 23,0</td></tr>
+    <tr><td>CLIP + GraphSAGE, cạnh ngẫu nhiên</td><td class="n">13,1 · 28,1</td><td class="n">7,4 · 19,9</td><td class="n">5,6 · 16,1</td><td class="n">8,7 · 21,4</td></tr>
+    <tr><td>CLIP + GraphSAGE, Wikidata + bài (<code>cue</code>)</td><td class="n">12,1 · 28,4</td><td class="n">8,2 · 24,7</td><td class="n">4,8 · 19,5</td><td class="n">8,4 · 24,2</td></tr>
+    <tr><td>Đồ thị Wikidata − cạnh ngẫu nhiên, R@10</td><td class="n">+0,4 ± 1,7 (6 / 4)</td><td class="n">+4,4 ± 2,4 (8 / 2)</td><td class="n">+3,4 ± 1,6 (7 / 2)</td><td></td></tr>
+  </table></div>
+  <p class="note">"Trung bình ba tầng" cho mỗi tầng trọng số bằng nhau, tương đương cách lấy số truy vấn bằng nhau ở mỗi tầng mà đề gợi ý.</p>
+  <p><b>Chấm theo địa điểm</b> (để đối chiếu; cùng mô hình, gallery 160 địa điểm).</p>
+  <div class="scroll"><table>
+    <tr><th>Phương pháp (gallery 160 địa điểm)</th><th class="n">R@1 gián tiếp</th><th class="n">R@10 gián tiếp</th><th class="n">R@10 trực tiếp</th></tr>
+    <tr><td>CLIP</td><td class="n">6,7 ± 1,7</td><td class="n">30,5 ± 3,8</td><td class="n">34,2</td></tr>
+    <tr><td>CLIP + GraphSAGE, đồ thị Wikidata</td><td class="n">8,6 ± 0,9</td><td class="n">35,8 ± 2,8</td><td class="n">41,1 ± 3,7</td></tr>
+    <tr><td>CLIP + GraphSAGE, bỏ hết cạnh</td><td class="n">8,9 ± 0,7</td><td class="n">34,7 ± 2,4</td><td class="n">59,8 ± 8,2</td></tr>
+    <tr><td>CLIP + GraphSAGE, cạnh ngẫu nhiên</td><td class="n">9,1 ± 0,8</td><td class="n">31,4 ± 2,5</td><td class="n">38,6 ± 7,2</td></tr>
+  </table></div>
+  <div class="find"><h3>Theo ảnh, đồ thị không vượt CLIP ở top 10</h3>
+    <p>Trên truy vấn gián tiếp, đồ thị Wikidata so với CLIP là −0,7 ± 1,4 điểm R@10 (thắng 4, thua 6 trong 10 cách chia). Cùng các vector đó chấm theo địa điểm thì hơn CLIP +5,3 ± 1,1 điểm (10 / 0). Lợi ích ở mức địa điểm không chuyển thành lợi ích ở mức ảnh.</p></div>
+  <div class="find mid"><h3>Cạnh thật vẫn hơn cạnh ngẫu nhiên</h3>
+    <p>Đồ thị Wikidata hơn bản ghép lại đuôi ngẫu nhiên +2,8 ± 1,5 điểm R@10 theo ảnh (8 / 2); ở tầng vừa là +4,4 ± 2,4 (8 / 2). Cấu trúc đồ thị mang tín hiệu, nhưng yếu hơn so với khi chấm theo địa điểm (+4,4 ± 1,0).</p></div>
+  <div class="find mid"><h3>Phần tăng ở hạng 1 không đến từ cạnh</h3>
+    <p>R@1 gián tiếp tăng +1,9 ± 0,5 điểm so với CLIP, nhưng bản bỏ hết cạnh và bản cạnh ngẫu nhiên tăng ngang vậy (đồ thị Wikidata − bỏ hết cạnh: −0,1 ± 0,1). Phần tăng này đến từ việc huấn luyện trên truy vấn.</p></div>
+  <div class="find"><h3>CLIP gần như không biết các địa điểm này</h3>
+    <p>Gõ đúng tên địa điểm chỉ đưa một ảnh đúng lên hạng 1 ở 4,9% truy vấn. Mọi phương pháp đều dưới 14% R@1, thấp hơn nhiều so với Visual Genome ∩ COCO.</p></div>
+  <div class="find mid"><h3>Thêm cạnh làm hỏng truy vấn tên</h3>
+    <p>Biến thể bỏ hết cạnh đạt R@10 40,8% trên truy vấn trực tiếp (CLIP 31,7%), đồ thị Wikidata chỉ 24,3%. Tổng hợp lân cận kéo vector của địa điểm lệch khỏi tên của chính nó.</p></div>
+  <p><b>Vì sao theo ảnh kém hơn theo địa điểm.</b> Mọi ảnh của một địa điểm nhận cùng điểm đồ thị, nên một địa điểm sai được đẩy lên kéo theo tất cả ảnh của nó. Đếm trên mọi cặp (truy vấn gián tiếp, địa điểm trả lời) của test, gộp 10 cách chia × 5 seed (<code>scripts/analyze_vn_heritage_image_crowding.py</code>).</p>
+  <div class="scroll"><table>
+    <tr><th>Điểm xếp hạng</th><th class="n">Địa điểm sai đứng trên đáp án</th><th class="n">Ảnh sai đứng trên đáp án</th><th class="n">Ảnh mỗi địa điểm sai</th><th class="n">Đáp án trong 10 ảnh đầu</th><th class="n">Đáp án trong 10 địa điểm đầu</th></tr>
+    <tr><td>CLIP</td><td class="n">42,2</td><td class="n">96,6</td><td class="n">2,29</td><td class="n">25,0</td><td class="n">30,4</td></tr>
+    <tr><td>CLIP + GraphSAGE</td><td class="n">37,8</td><td class="n">122,0</td><td class="n">3,23</td><td class="n">24,4</td><td class="n">35,6</td></tr>
+    <tr><td>CLIP + GraphSAGE, điểm đồ thị chỉ cho ảnh tốt nhất của mỗi địa điểm</td><td class="n">37,8</td><td class="n">52,3</td><td class="n">1,38</td><td class="n">35,2</td><td class="n">35,6</td></tr>
+  </table></div>
+  <div class="find good"><h3>Giả thuyết được xác nhận: ảnh cùng địa điểm chen nhau trong top 10</h3>
+    <p>Đồ thị làm giảm số địa điểm sai đứng trên đáp án, nhưng mỗi địa điểm sai giờ mang theo nhiều ảnh hơn, nên số ảnh sai đứng trên lại tăng. Hệ quả: gallery địa điểm tương đương với việc trả về mỗi địa điểm một ảnh (ảnh khớp truy vấn nhất). Hai cách chấm chỉ khác nhau ở chỗ các ảnh trùng địa điểm có được tính là kết quả riêng hay không.</p></div>
+  <p class="note">Dòng cuối là phép thử chẩn đoán, không phải phương pháp được báo cáo: α và k của nó lấy lại từ dòng thứ hai chứ không chọn riêng trên validation. Khi mỗi địa điểm chỉ có một ảnh được cộng điểm đồ thị, kết quả theo ảnh trùng với kết quả theo địa điểm.</p>
+  <p><b>Ablation cấu trúc đồ thị</b> (cùng bộ phép can thiệp với cấp độ 1; 10 cách chia × 5 seed, truy vấn gián tiếp trên test; chênh lệch ghép cặp là bản đầy đủ − biến thể ± sai số chuẩn, trong ngoặc là số cách chia thắng/thua).</p>
+  <div class="scroll"><table>
+    <tr><th>Biến thể</th><th class="n">R@1 theo ảnh</th><th class="n">R@10 theo ảnh</th><th class="n">R@10 so với CLIP</th><th class="n">Đầy đủ − biến thể, R@10 theo ảnh</th><th class="n">R@10 theo địa điểm</th><th class="n">Đầy đủ − biến thể, R@10 theo địa điểm</th><th class="n">R@10 theo địa điểm, chỉ dùng điểm đồ thị</th></tr>
+    <tr><td>Đầy đủ (đồ thị Wikidata)</td><td class="n">8,6 ± 1,0</td><td class="n">24,4 ± 3,9</td><td class="n">−0,7</td><td class="n"></td><td class="n">35,8 ± 2,8</td><td class="n"></td><td class="n">32,4</td></tr>
+    <tr><td>Bỏ hết cạnh (<code>no_edges</code>)</td><td class="n">8,8 ± 0,8</td><td class="n">23,3 ± 5,1</td><td class="n">−1,8</td><td class="n">+1,2 ± 1,8 (6/4)</td><td class="n">34,7 ± 2,4</td><td class="n">+1,1 ± 1,1 (7/3)</td><td class="n">31,7</td></tr>
+    <tr><td>Cạnh ngẫu nhiên (<code>claims_shuffled</code>)</td><td class="n">9,0 ± 1,0</td><td class="n">21,7 ± 4,3</td><td class="n">−3,4</td><td class="n">+2,8 ± 1,5 (8/2)</td><td class="n">31,4 ± 2,5</td><td class="n">+4,4 ± 1,0 (9/1)</td><td class="n">27,5</td></tr>
+    <tr><td>Bỏ nhãn quan hệ (<code>claims_untyped</code>)</td><td class="n">8,4 ± 1,5</td><td class="n">24,6 ± 3,1</td><td class="n">−0,5</td><td class="n">−0,2 ± 1,0 (5/4)</td><td class="n">34,8 ± 2,1</td><td class="n">+1,0 ± 0,4 (8/2)</td><td class="n">29,6</td></tr>
+    <tr><td>Không hướng (<code>claims_undirected</code>)</td><td class="n">8,7 ± 1,0</td><td class="n">24,9 ± 4,0</td><td class="n">−0,2</td><td class="n">−0,5 ± 1,2 (4/6)</td><td class="n">36,8 ± 2,1</td><td class="n">−1,0 ± 0,8 (4/6)</td><td class="n">31,5</td></tr>
+  </table></div>
+  <div class="find mid"><h3>Chỉ phép cạnh ngẫu nhiên tách được khỏi bản đầy đủ</h3>
+    <p>+2,8 ± 1,5 (8/2) điểm R@10 theo ảnh, +4,4 ± 1,0 (9/1) theo địa điểm. Việc "ai nối với ai" mang tín hiệu. Cạnh ngẫu nhiên kém cả bản bỏ hết cạnh (21,7% so với 23,3% R@10 theo ảnh).</p></div>
+  <div class="find"><h3>Bỏ hết cạnh gần ngang bản đầy đủ</h3>
+    <p>+1,2 ± 1,8 (6/4) theo ảnh, +1,1 ± 1,1 (7/3) theo địa điểm, đều trong khoảng hai sai số chuẩn. Phần lớn kết quả đến từ vector tên của thực thể và việc huấn luyện trên truy vấn. Cấp độ 1 cũng cho thấy điều tương tự: danh sách vật thể gánh phần lớn, cạnh góp ít.</p></div>
+  <div class="find mid"><h3>Nhãn quan hệ và hướng cạnh gần như không được dùng</h3>
+    <p>theo ảnh, bỏ nhãn quan hệ −0,2 ± 1,0 (5/4), bỏ hướng −0,5 ± 1,2 (4/6). Theo địa điểm, bỏ nhãn quan hệ làm giảm nhẹ nhưng đều (+1,0 ± 0,4, 8/2); bỏ hướng thì không (−1,0 ± 0,8, 4/6).</p></div>
+  <p class="note">Sai số chuẩn lạc quan hơn thực tế vì 10 cách chia dùng chung 160 địa điểm và claim chồng lấn. Cột cuối chấm theo địa điểm vì trên gallery ảnh mọi ảnh của một địa điểm có cùng điểm đồ thị, nên chỉ dùng điểm đồ thị thì các ảnh hoà nhau. "Bỏ nhãn quan hệ": mọi cạnh mang chung một quan hệ. "Không hướng": mỗi cạnh có thêm bản đảo chiều.</p>
+  <div class="scroll"><table>
+    <tr><th>So sánh chuyển giao</th><th>Visual Genome ∩ COCO</th><th>VN Heritage (lõi)</th></tr>
+    <tr><td>Loại đồ thị</td><td>Scene graph riêng từng ảnh</td><td>KG dùng chung, ảnh nối qua địa điểm; không có scene graph</td></tr>
+    <tr><td>Ngôn ngữ truy vấn</td><td>Tiếng Anh</td><td>Tiếng Anh, tên riêng tiếng Việt</td></tr>
+    <tr><td>Đơn vị đáp án</td><td>Một ảnh</td><td>Ảnh của địa điểm trả lời (3–5 ảnh mỗi địa điểm)</td></tr>
+    <tr><td>Cỡ gallery và tập test</td><td>1.500 ảnh · 7.500 truy vấn</td><td>772 ảnh của 160 địa điểm · 41 truy vấn tên + khoảng 145 truy vấn gián tiếp mỗi cách chia</td></tr>
+    <tr><td>Mức thay đổi của đồ thị so với CLIP</td><td>R@1 43,89 → 48,12 · R@10 82,64 → 83,87</td><td>Gián tiếp: R@1 6,7 → 8,6 · R@10 25,1 → 24,4</td></tr>
+    <tr><td>Đồ thị thật so với cạnh ngẫu nhiên</td><td>R@1 48,12 so với 47,79 (+0,33) · R@10 bằng nhau 83,87</td><td>R@1 −0,4 · R@10 +2,8</td></tr>
+    <tr><td>α và k chọn trên validation</td><td>0,78–0,84 · 10–500</td><td>α trung vị 0,70 (tứ phân vị 0,45–0,86) · k = cả gallery ở 41/50 lần chạy · α = 1 (bỏ điểm đồ thị) ở 4/50</td></tr>
+  </table></div>
+  <p class="note">Số Visual Genome ∩ COCO lấy từ lượt chạy lại ngày 18/11 trong <code>runs/benchmark/</code> (mô hình chính và biến thể <code>random_edges</code>, 3 seed). Số VN Heritage lấy từ lượt chạy ngày 21/11; huấn luyện không tái lập từng bit nên chạy lại có thể lệch dưới 1 điểm.</p>
+
+  <h2><span class="num">6.9</span> Nguồn, giấy phép và điều kiện sử dụng <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <div class="scroll"><table>
+    <tr><th>Nguồn</th><th>Lấy gì</th><th>Giấy phép</th></tr>
+    <tr><td>Wikidata</td><td>Thực thể, nhãn, toạ độ, quan hệ</td><td>CC0</td></tr>
+    <tr><td>Wikipedia vi, en</td><td>Danh sách ứng viên, ảnh trong bài, đoạn mở đầu</td><td>CC BY-SA 4.0</td></tr>
+    <tr><td>Wikimedia Commons</td><td>Ảnh, caption, tác giả, license từng file</td><td>CC BY-SA 3.0 (1.092) · CC BY-SA 4.0 (760) · Public domain (600) · CC BY 2.0 (275) · CC BY 3.0 (244) · CC0 (233) · CC BY 4.0 (205) · khác (180)</td></tr>
+  </table></div>
+  <p class="note">Mỗi ảnh lưu <code>license</code>, <code>license_url</code>, <code>artist</code>, <code>source_page</code>. Ảnh không có license bị loại. Demo công khai phải ghi công từng ảnh; ảnh CC BY-SA kéo theo share-alike.</p>
+
+  <h2><span class="num">6.10</span> Hạn chế <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <div class="find"><h3>Đồ thị hình sao, không có đường đi dài hơn hai bước</h3>
+    <p>Mọi triple đều xuất phát từ một địa điểm. Không có cạnh giữa các đỉnh tri thức (phường → quận → tỉnh, lớp con → lớp cha), dù chuỗi P131 đã được tải về <code>admin_graph.json</code>. Giải thích dạng đường đi chỉ có một kiểu: địa điểm → đỉnh trục → địa điểm.</p></div>
+  <div class="find"><h3>Thưa: gần nửa số địa điểm không có tri thức nào ngoài loại</h3>
+    <p>502 địa điểm (47%) chỉ có <code>instance_of</code> hoặc không có cạnh nào. Bốn quan hệ giàu nghĩa nhất (tôn giáo, danh hiệu, phong cách, đặt tên theo) cộng lại 145 triple, mỗi quan hệ phủ tối đa 6% địa điểm.</p></div>
+  <div class="find"><h3>Ảnh không mang cấu trúc riêng</h3>
+    <p>Mỗi ảnh có đúng một cạnh tới địa điểm, nên mọi ảnh của một địa điểm giống hệt nhau về mặt đồ thị. Điểm đồ thị chỉ phân biệt được địa điểm, không phân biệt được ảnh.</p></div>
+  <div class="find mid"><h3>Lớp và trang danh sách lọt vào làm địa điểm</h3>
+    <p>"chùa Việt Nam" vừa là một địa điểm có ảnh, vừa là đích <code>instance_of</code> của 131 ngôi chùa; tương tự "Di tích Việt Nam", "Di tích quốc gia đặc biệt". Nguyên nhân: tiền tố tên bài được ưu tiên hơn lớp P31.</p></div>
+  <div class="find mid"><h3>Chưa thuần tiếng Việt</h3>
+    <p>51 địa điểm và 36 đỉnh đích không có nhãn tiếng Việt (ví dụ "Romanesque Revival architecture"). Một nửa số ảnh không có caption tiếng Việt.</p></div>
+  <div class="find mid"><h3>Tỉnh thiếu và không cùng mốc thời gian</h3>
+    <p>Chỉ 525 địa điểm (49%) suy được tỉnh; tỉnh là trước hoặc sau sáp nhập 2025 tuỳ cách Wikidata ghi.</p></div>
+  <div class="find good"><h3>Điểm mạnh giữ lại</h3>
+    <p>Văn bản do người viết, không sinh bằng mô hình; license và tác giả từng ảnh; cache API nên tái lập được; split xác định theo thực thể; quy tắc gán ảnh có lý do và có số lọc từng bước.</p></div>
+
+  <h2><span class="num">6.11</span> Bản lõi dùng cho thực nghiệm <span class="tag ok">ĐÃ CÓ SỐ</span></h2>
+  <p>Bước <code>scripts/build_vn_heritage_core.py</code> (nhánh <code>feat/vn-heritage-core</code>) cắt từ bản đầy đủ một lõi dày, bổ sung tri thức từ ba nguồn và xử lý bốn hạn chế ở 6.10.</p>
+  <ul>
+    <li><b>Claim Wikidata chưa dùng:</b> 10 quan hệ mới đọc từ claim đã cache của địa điểm (giáo phận, sự kiện, vật liệu, kiến trúc sư, thế kỷ khởi dựng…).</li>
+    <li><b>Bài vi.wikipedia:</b> cào mã nguồn 988 bài; mỗi liên kết trong thân bài tới một thực thể thành cạnh <code>mentions</code>. Bỏ liên kết trong bản mẫu (hộp điều hướng, hộp thông tin), chú thích và các mục "Xem thêm", "Tham khảo", "Liên kết ngoài".</li>
+    <li><b>Lọc đích:</b> chỉ nhận đích xác định được loại (người, triều đại hoặc thời kỳ, thần Phật, dân tộc, địa điểm, đơn vị hành chính, vật liệu, phong cách, tôn giáo, sông hồ); thực thể mới phải được ít nhất 3 bài nhắc tới; bỏ đích được hơn 5% số bài nhắc tới; bỏ liên kết đứng ngay sau "đường", "phố", "đại lộ" (tên đường mang tên người).</li>
+    <li><b>Chọn lõi:</b> từ 4 claim Wikidata (không tính <code>mentions</code>), từ 3 ảnh, có nhãn tiếng Việt; loại địa điểm là lớp hoặc danh hiệu.</li>
+    <li><b>Phân cấp và split:</b> thêm cạnh đơn vị hành chính → đơn vị cha; địa điểm nối qua <code>part_of</code>, <code>has_part</code>, <code>location</code> vào cùng một tập.</li>
+  </ul>
+  <div class="scroll"><table>
+    <tr><th>Chỉ số</th><th class="n">Bản đầy đủ</th><th class="n">Bản lõi</th><th>Đề gợi ý</th></tr>
+    <tr><td>Địa điểm</td><td class="n">1.079</td><td class="n">160</td><td>50–150 thực thể</td></tr>
+    <tr><td>Đỉnh tri thức</td><td class="n">486</td><td class="n">689</td><td></td></tr>
+    <tr><td>Loại quan hệ tri thức</td><td class="n">8</td><td class="n">33</td><td></td></tr>
+    <tr><td>Triple tri thức</td><td class="n">2.446</td><td class="n">1.883</td><td>300–1.000</td></tr>
+    <tr><td>trong đó claim Wikidata của địa điểm</td><td class="n">2.446</td><td class="n">889</td><td></td></tr>
+    <tr><td>trong đó cạnh rút từ bài Wikipedia</td><td class="n">0</td><td class="n">902</td><td></td></tr>
+    <tr><td>trong đó cạnh phân cấp hành chính</td><td class="n">0</td><td class="n">92</td><td></td></tr>
+    <tr><td>Ảnh</td><td class="n">3.589</td><td class="n">772</td><td>200–500</td></tr>
+    <tr><td>Triple mỗi địa điểm (nhỏ nhất · trung bình)</td><td class="n">0 · 2,27</td><td class="n">4 · 11,19</td><td></td></tr>
+    <tr><td>Địa điểm trong thành phần liên thông lớn nhất</td><td class="n">885 (82%)</td><td class="n">160 (100%)</td><td></td></tr>
+    <tr><td>Train · validation · test (địa điểm)</td><td class="n">720 · 187 · 172</td><td class="n">97 · 22 · 41</td><td></td></tr>
+    <tr><td>Train · validation · test (ảnh)</td><td class="n">2.361 · 621 · 607</td><td class="n">464 · 108 · 200</td><td></td></tr>
+  </table></div>
+  <div class="scroll"><table>
+    <tr><th>Quan hệ mới</th><th>Nguồn</th><th class="n">Triple trong lõi</th><th>Ví dụ</th></tr>
+    <tr><td>cạnh rút từ bài (xem bảng dưới)</td><td>liên kết thân bài vi.wikipedia</td><td class="n">902</td><td>Lam Kinh → Lê Thái Tổ; Chùa Dạm → Nhà Lý; Chùa Tây Phương → Quan Âm</td></tr>
+    <tr><td><code>inception_century</code></td><td>P571, gom theo thế kỷ</td><td class="n">64</td><td>Bảo tàng Lịch sử Quân sự Việt Nam → thế kỷ 20</td></tr>
+    <tr><td><code>has_part</code></td><td>P527</td><td class="n">37</td><td>Chùa Dạm → Cột đá Chùa Dạm</td></tr>
+    <tr><td><code>diocese</code></td><td>P708</td><td class="n">35</td><td>Nhà thờ Cam Ly → Giáo phận Đà Lạt</td></tr>
+    <tr><td><code>significant_event</code></td><td>P793</td><td class="n">30</td><td>Chùa Dạm → lễ khởi công</td></tr>
+    <tr><td><code>heritage_criterion</code></td><td>P2614</td><td class="n">23</td><td>Vườn quốc gia Cát Tiên → (vii)</td></tr>
+    <tr><td><code>location</code></td><td>P276</td><td class="n">20</td><td>Chùa Đọi Sơn → Tiên Sơn</td></tr>
+    <tr><td><code>crosses</code></td><td>P177</td><td class="n">17</td><td>Cầu Thê Húc → hồ Hoàn Kiếm</td></tr>
+    <tr><td><code>made_from_material</code></td><td>P186</td><td class="n">10</td><td>Tháp Đồng Dương → gạch</td></tr>
+    <tr><td><code>dedicated_to</code></td><td>P825</td><td class="n">9</td><td>Nhà thờ chính tòa Đà Lạt → Nicôla thành Myra</td></tr>
+    <tr><td><code>architect</code></td><td>P84</td><td class="n">7</td><td>Bảo tàng Lịch sử Quân sự Việt Nam → Nikken Sekkei</td></tr>
+  </table></div>
+  <p><b>Đặt tên quan hệ cho cạnh rút từ bài.</b> Mỗi cạnh được mô tả theo ba cách; bước build xuất cùng một đồ thị dưới bốn sơ đồ đặt tên (<code>kg_triples_&lt;sơ đồ&gt;.tsv</code>) để so sánh trong ablation. Bằng chứng từng cạnh (mục bài, từ khoá, câu chứa liên kết) nằm ở <code>mention_evidence.jsonl</code>.</p>
+  <div class="scroll"><table>
+    <tr><th>Sơ đồ</th><th>Tên quan hệ lấy từ</th><th class="n">Loại quan hệ</th><th>Ví dụ</th></tr>
+    <tr><td><code>generic</code></td><td>một quan hệ chung</td><td class="n">19</td><td><code>mentions</code></td></tr>
+    <tr><td><code>kind</code></td><td>loại của đích (P31 hoặc vai trò trong đồ thị)</td><td class="n">28</td><td><code>mentions_person</code> 315 · <code>mentions_place</code> 201 · <code>mentions_admin_unit</code> 155 · <code>mentions_era</code> 86 · <code>mentions_material</code> 51</td></tr>
+    <tr><td><code>section</code></td><td>mục của bài chứa liên kết</td><td class="n">23</td><td><code>history_mentions</code> 310 · <code>other_mentions</code> 221 · <code>lead_mentions</code> 185 · <code>architecture_mentions</code> 159 · <code>location_mentions</code> 27</td></tr>
+    <tr><td><code>cue</code> (mặc định)</td><td>từ khoá trong câu, không có thì theo loại đích</td><td class="n">33</td><td><code>located_in_admin</code> 82 · <code>worships</code> 81 · <code>dated_to_period</code> 46 · <code>built_by</code> 13 · <code>burial_of</code> 5 · <code>restored_by</code> 2; 673 cạnh còn lại theo loại đích</td></tr>
+  </table></div>
+  <p><b>Ablation cạnh rút từ bài.</b> Cùng thiết lập với 6.8 (gallery 772 ảnh); số là phần trăm trên test, trung bình qua 10 cách chia claim × 5 seed.</p>
+  <div class="scroll"><table>
+    <tr><th>Đồ thị</th><th class="n">R@1 tất cả</th><th class="n">R@10 tất cả</th><th class="n">MRR tất cả</th><th class="n">R@1 gián tiếp</th><th class="n">R@10 gián tiếp</th><th class="n">R@10 trực tiếp</th></tr>
+    <tr><td>Đồ thị Wikidata (không có cạnh từ bài)</td><td class="n">8,1</td><td class="n">24,4</td><td class="n">13,9</td><td class="n">8,6</td><td class="n">24,4</td><td class="n">24,3</td></tr>
+    <tr><td>Wikidata + bài, <code>generic</code></td><td class="n">7,8</td><td class="n">24,2</td><td class="n">13,6</td><td class="n">8,4</td><td class="n">23,9</td><td class="n">25,7</td></tr>
+    <tr><td>Wikidata + bài, <code>kind</code></td><td class="n">7,8</td><td class="n">24,2</td><td class="n">13,5</td><td class="n">8,6</td><td class="n">23,9</td><td class="n">25,2</td></tr>
+    <tr><td>Wikidata + bài, <code>section</code></td><td class="n">7,9</td><td class="n">23,7</td><td class="n">13,5</td><td class="n">8,5</td><td class="n">23,5</td><td class="n">24,2</td></tr>
+    <tr><td>Wikidata + bài, <code>cue</code></td><td class="n">7,8</td><td class="n">24,6</td><td class="n">13,6</td><td class="n">8,6</td><td class="n">24,5</td><td class="n">25,3</td></tr>
+    <tr><td>Wikidata + bài, <code>cue</code>, cạnh ngẫu nhiên</td><td class="n">8,6</td><td class="n">22,4</td><td class="n">13,6</td><td class="n">9,0</td><td class="n">21,9</td><td class="n">24,9</td></tr>
+  </table></div>
+  <div class="scroll"><table>
+    <tr><th>Chênh lệch ghép cặp trên truy vấn gián tiếp (điểm phần trăm ± sai số chuẩn)</th><th class="n">R@1</th><th class="n">R@10</th><th class="n">Thắng/thua ở R@10</th></tr>
+    <tr><td><code>generic</code> − đồ thị Wikidata</td><td class="n">−0,2 ± 0,3</td><td class="n">−0,5 ± 1,0</td><td class="n">3 / 7</td></tr>
+    <tr><td><code>cue</code> − đồ thị Wikidata</td><td class="n">+0,0 ± 0,3</td><td class="n">+0,0 ± 1,3</td><td class="n">5 / 5</td></tr>
+    <tr><td><code>kind</code> − <code>generic</code></td><td class="n">+0,1 ± 0,2</td><td class="n">−0,0 ± 0,9</td><td class="n">4 / 6</td></tr>
+    <tr><td><code>section</code> − <code>generic</code></td><td class="n">+0,1 ± 0,2</td><td class="n">−0,4 ± 1,0</td><td class="n">4 / 5</td></tr>
+    <tr><td><code>cue</code> − <code>generic</code></td><td class="n">+0,2 ± 0,2</td><td class="n">+0,5 ± 1,0</td><td class="n">5 / 5</td></tr>
+    <tr><td><code>cue</code> − <code>cue</code> cạnh ngẫu nhiên</td><td class="n">−0,4 ± 0,4</td><td class="n">+2,6 ± 1,3</td><td class="n">8 / 2</td></tr>
+  </table></div>
+  <div class="find"><h3>Cạnh rút từ bài không giúp khôi phục claim bị giấu</h3>
+    <p>Thêm 902 cạnh từ bài làm R@10 gián tiếp thay đổi −0,5 ± 1,0 điểm (<code>generic</code>) và +0,0 ± 1,3 điểm (<code>cue</code>) so với đồ thị chỉ có claim Wikidata: không khác biệt đo được. Đồ thị có cạnh từ bài vẫn hơn bản cạnh ngẫu nhiên của chính nó (+2,6 ± 1,3 điểm R@10, 8 / 2).</p></div>
+  <div class="find mid"><h3>Bốn sơ đồ đặt tên không tách được nhau</h3>
+    <p>Chênh lệch giữa các sơ đồ nằm trong sai số chuẩn. Đặt tên quan hệ chi tiết hơn (<code>kind</code>, <code>cue</code>) không cho lợi ích đo được trên bộ này.</p></div>
+  <p class="note">Giới hạn của ablation: cạnh từ bài trùng cặp với một claim đã bị bỏ khi build, nên bài chỉ giúp được qua đường đi 2–3 bước, chưa được thử ở vai trò "bài nhắc lại đúng sự kiện bị hỏi". Siêu tham số lấy nguyên của MKG-W, chưa tinh chỉnh. Nhiều cặp được so trên nhiều nhóm truy vấn; chênh lệch cỡ 1 điểm với tỉ số 7/3 không nên coi là phát hiện. Huấn luyện không tái lập từng bit giữa các lần chạy; chạy lại có thể lệch dưới 1 điểm.</p>
+  <p><b>Mốc phụ: AdaMF-MAT</b> (Zhang và cộng sự, COLING 2024), mô hình dự đoán liên kết. Chỉ chạy 3 cách chia claim (1, 2, 7) × 5 seed, chấm theo địa điểm, truy vấn gián tiếp trên test.</p>
+  <div class="scroll"><table>
+    <tr><th>Phương pháp (3 cách chia, gallery 160 địa điểm)</th><th class="n">R@1</th><th class="n">R@10</th><th class="n">MRR dự đoán liên kết</th></tr>
+    <tr><td>CLIP</td><td class="n">7,1</td><td class="n">30,8</td><td class="n">–</td></tr>
+    <tr><td>CLIP + GraphSAGE, đồ thị Wikidata</td><td class="n">8,5</td><td class="n">37,2</td><td class="n">–</td></tr>
+    <tr><td>CLIP + AdaMF-MAT, đồ thị Wikidata</td><td class="n">11,0</td><td class="n">40,1</td><td class="n">0,292</td></tr>
+    <tr><td>CLIP + AdaMF-MAT, cạnh ngẫu nhiên</td><td class="n">5,5</td><td class="n">29,0</td><td class="n">0,080</td></tr>
+    <tr><td>CLIP + AdaMF-MAT, Wikidata + bài <code>generic</code></td><td class="n">10,0</td><td class="n">41,8</td><td class="n">0,290</td></tr>
+    <tr><td>CLIP + AdaMF-MAT, Wikidata + bài <code>cue</code></td><td class="n">11,4</td><td class="n">48,9</td><td class="n">0,315</td></tr>
+    <tr><td>CLIP + RotatE (bỏ ảnh và văn bản), đồ thị Wikidata</td><td class="n">6,5</td><td class="n">26,6</td><td class="n">0,084</td></tr>
+  </table></div>
+  <p class="note">Không so sánh ngang được với GraphSAGE: AdaMF-MAT được cho sẵn thực thể neo và quan hệ của truy vấn lấy từ metadata, còn GraphSAGE chỉ nhìn vector văn bản của câu truy vấn. Tham số mô hình lấy của bài báo cho MKG-W, batch 128, chưa tinh chỉnh. Ba cách chia là quá ít cho so sánh ghép cặp; lượt chạy dừng ở đây vì hướng này lệch khỏi bài toán truy hồi ảnh.</p>
+  <p><b>Độ chính xác của cạnh rút từ bài.</b> Mẫu 100 cạnh ngẫu nhiên (seed 13) của bản lõi hiện tại, do mô hình ngôn ngữ đọc câu chứa liên kết rồi chấm, chưa có người kiểm lại. Bảng chấm từng dòng: <code>plans/reports/mentions-sample-261120-1300-model-checked.csv</code>.</p>
+  <div class="scroll"><table>
+    <tr><th>Tiêu chí</th><th class="n">Đúng / tổng</th><th>Ghi chú</th></tr>
+    <tr><td>Đích đúng thực thể và đúng loại</td><td class="n">98 / 100</td><td>2 lỗi: danh từ chung ("nhà thờ họ", "chuông") bị xếp là địa điểm. 5 đích là vùng (Tây Nguyên, Nam Bộ…) xếp tạm vào đơn vị hành chính hoặc địa điểm, tính là đúng</td></tr>
+    <tr><td>Quan hệ gán theo từ khoá đúng với câu</td><td class="n">11 / 21</td><td>Chỉ 21 cạnh trong mẫu khớp từ khoá</td></tr>
+    <tr><td>&nbsp;&nbsp;<code>worships</code></td><td class="n">7 / 10</td><td>Sai: "tượng trưng" khớp "tượng"; người ra lệnh thờ; tượng đài kỷ niệm</td></tr>
+    <tr><td>&nbsp;&nbsp;<code>located_in_admin</code></td><td class="n">1 / 5</td><td>Sai: "phường", "tỉnh", "thành phố" đứng gần một địa danh không phải vị trí của địa điểm</td></tr>
+    <tr><td>&nbsp;&nbsp;<code>built_by</code></td><td class="n">2 / 4</td><td>Sai: chúa ban tặng bức hoành; tin đồn Eiffel thiết kế cầu Long Biên</td></tr>
+    <tr><td>&nbsp;&nbsp;<code>dated_to_period</code> · <code>restored_by</code></td><td class="n">1 / 1 · 0 / 1</td><td>Quá ít để kết luận</td></tr>
+  </table></div>
+  <p class="note">Việc nhận diện đích và loại đích đáng tin; việc đoán quan hệ bằng từ khoá thì không (khoảng một nửa sai trên mẫu nhỏ này). Điều đó khớp với ablation: sơ đồ <code>cue</code> không hơn <code>kind</code>.</p>
+  <p class="note">Còn lại sau khi cắt: ảnh vẫn chỉ có một cạnh; 43 đỉnh tri thức chưa có nhãn tiếng Việt; chỉ 229 trong 902 cạnh rút từ bài khớp được từ khoá; từ khoá bắt nhầm khoảng một nửa trên mẫu đã chấm; cạnh rút từ bài giữa hai địa điểm có thể vắt qua hai tập. Đỉnh thế kỷ là đỉnh tự suy. Mục 6.3–6.6 có khối "Trên bản lõi" bên cạnh số của bản đầy đủ; mục 6.7–6.8 chạy trên bản lõi.</p>
+
+</div></div>
+</body>
+</html>

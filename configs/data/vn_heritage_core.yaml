@@ -1,0 +1,136 @@
+# Dense core of the VN heritage graph. The level-3 brief suggests 50-150 entities, 300-1,000
+# triples and 200-500 images; this core is deliberately larger. Paths are relative to the repo root.
+
+paths:
+  source_dir: data/processed/vn_heritage        # output of scripts/build_vn_heritage.py
+  raw_dir: data/raw/vn_heritage                 # admin_graph.json and entities.json (git-ignored)
+  out_dir: data/processed/vn_heritage_core
+
+selection:
+  # A place stays when it has at least this many knowledge triples (image edges not counted,
+  # duplicated province edges removed first) and this many images.
+  min_triples: 4
+  min_images: 3
+  label_language: vi
+  # A place that is the tail of one of these relations is a category, not a site.
+  class_relations: [instance_of, heritage_designation]
+  # relation -> relation that makes it redundant when both hold the same (place, target) pair.
+  shadowed_relations:
+    located_in_province: located_in_admin
+
+# Extra knowledge read from the cached Wikidata claims of each place (entities.json).
+extra:
+  relations:
+    P177: crosses              # bridge -> river
+    P708: diocese
+    P527: has_part
+    P276: location
+    P793: significant_event
+    P2614: heritage_criterion
+    P186: made_from_material
+    P825: dedicated_to
+    P84: architect
+  # A date claim becomes an edge to a synthetic century node shared by places of the same era.
+  inception_property: P571
+  inception_relation: inception_century
+  # Labels of the new target items are fetched once and cached in raw_dir/extra_labels.json.
+  wikidata_endpoint: https://www.wikidata.org/w/api.php
+  user_agent: Project3-VNHeritage/0.1
+  request_interval_s: 6.5      # anonymous limit is about 10 requests per minute
+  request_timeout_s: 30.0
+
+# Edges from the body of each place's Wikipedia article: article of X links to the article of Y.
+articles:
+  language: vi
+  endpoint: https://vi.wikipedia.org/w/api.php
+  relation: mentions
+  # A long article must not pull in a place that Wikidata describes poorly, so by default
+  # the core is selected on claims only and mentions are added afterwards.
+  count_toward_selection: false
+  # Links below these headings are reading lists and sources, not statements about the place.
+  stop_sections: [xem thêm, tham khảo, chú thích, liên kết ngoài, ghi chú, đọc thêm, nguồn]
+  # Word found in a heading -> section bucket. Text before the first heading is "lead";
+  # other top-level sections are "other".
+  section_buckets:
+    lịch sử: history
+    hình thành: history
+    kiến trúc: architecture
+    cấu trúc: architecture
+    quy mô: architecture
+    vị trí: location
+    địa lý: location
+  # A link right after one of these words names a street, not the person or place it honours.
+  skip_after: [đường, phố, đại lộ, ngõ, hẻm, quảng trường]
+  # Kind of a target, from its Wikidata class (P31). Checked before `kind_of_role`.
+  class_property: P31
+  kind_of_class:
+    Q5: person
+    Q164950: era          # dynasty
+    Q11514315: era        # historical period
+    Q3024240: era         # former country
+    Q178149: deity        # bodhisattva
+    Q3027597: deity       # Taoist deity
+    Q41710: ethnic_group
+  # Kind of a target already in the graph, from the relation that most often points at it.
+  # Targets with no kind (classes, common nouns) are not linked.
+  kind_of_role:
+    located_in_admin: admin_unit
+    located_in_province: admin_unit
+    location: admin_unit
+    made_from_material: material
+    architectural_style: style
+    religion: religion
+    diocese: religion
+    dedicated_to: deity
+    part_of: place
+    has_part: place
+    crosses: water
+  place_kind: place
+  # An entity not yet in the graph becomes a node only when this many articles link to it.
+  min_articles: 3
+  # An entity linked from more than this share of the articles is too generic to keep.
+  max_share: 0.05
+  # Cue words in the sentence of the link -> relation, for targets of the listed kinds.
+  # The cue closest before the link wins; otherwise the first one after it.
+  cues:
+    - relation: built_by
+      kinds: [person]
+      keywords: [cho xây, xây dựng bởi, do vua, do chúa, khởi dựng, sáng lập, lập nên, thiết kế]
+    - relation: restored_by
+      kinds: [person]
+      keywords: [trùng tu, tu bổ, tôn tạo, đại trùng tu]
+    - relation: worships
+      kinds: [person, deity]
+      keywords: [thờ, phụng thờ, thờ phụng, tôn thờ, tượng]
+    - relation: burial_of
+      kinds: [person]
+      keywords: [an táng, lăng mộ, nơi yên nghỉ, mộ của, lăng của]
+    - relation: dated_to_period
+      kinds: [person, era]
+      # Bare "thời" is left out: it also matches "lâm thời", "đồng thời", "thời gian".
+      keywords: [dưới thời, vào thời, từ thời, thời vua, thời nhà, thời chúa, triều, đời vua, niên hiệu]
+    - relation: located_in_admin
+      kinds: [admin_unit]
+      keywords: [tọa lạc, nằm ở, nằm tại, thuộc, phường, xã, huyện, quận, tỉnh, thành phố, thị xã, thị trấn]
+  # Relation naming of the mentions in kg_triples.tsv; every scheme in `ablation_schemes`
+  # is also written to kg_triples_<scheme>.tsv (generic | kind | section | cue).
+  relation_scheme: cue
+  ablation_schemes: [generic, kind, section, cue]
+
+hierarchy:
+  # Targets of these relations are administrative units; their P131 parents become edges.
+  admin_relations: [located_in_admin, located_in_province]
+  relation: located_in_admin
+  # The walk upwards stops at units typed as one of these, so the country is never a hub.
+  province_classes:
+    - Q2824648   # province of Vietnam
+    - Q1259618   # municipality of Vietnam
+    - Q1381899   # centrally-run city of Vietnam
+    - Q137325529 # former province (pre-2025 merger)
+
+split:
+  seed: 13
+  val_fraction: 0.15
+  test_fraction: 0.15
+  # Places joined through these relations (directly or via a shared target) share one split.
+  group_relations: [part_of, has_part, location]
